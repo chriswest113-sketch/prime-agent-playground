@@ -110,9 +110,12 @@ The second clause is where this study was wrong, and an independent audit caught
 it. The original matrix marked complete harness-state reconstruction as PARTIAL
 for `/refine`, reasoning from the absence of a full-state snapshot. That was an
 assertion, not a result — and it is false. A `/refine`-only history
-**reverse-replays to the exact earlier state** (T02.C1): `appliedEdits` carries
-`before` *and* `after` for every touched entry, so the ordered edit log is
-itself a complete differential record and the snapshot is unnecessary.
+**reverse-replays to the exact earlier `HarnessState.entries`** (T02.C1):
+`appliedEdits` carries `before` *and* `after` for every touched entry, so the
+ordered edit log is itself a complete differential record over that object and
+the snapshot is unnecessary. The supported object is the entry set — not the
+full `HarnessState`, not `refinements[]`, not `schema` history, and not the
+effective system prompt.
 
 Revised form (narrowed twice — once after the Codex audit, once after the
 self-audit that followed it):
@@ -151,7 +154,9 @@ apart:
 | **Detection** — the contamination is visible in the records | **ESTABLISHED for this fixture** (T02.C3), and specific: zero signals on the clean history (T02.C4) |
 | **Attribution** — recovering what the foreign write was, and when | **NOT ESTABLISHED** (T02.C5) |
 
-Four independent record-consistency signals fire on the contaminated fixture:
+Four distinct record-consistency signals fire on the contaminated fixture (they
+are distinct checks over the same records, not statistically or logically
+independent evidence — a single foreign write can trip several at once):
 `CHAIN-BREAK` (a recorded `before` ≠ the prior recorded `after`), `VERSION-GAP`
 (entry version advances outside the `/refine` edit chain), `SOURCE-MISMATCH`
 (`before.source` becomes `agent` after a prior `refine`), and `ORPHAN` (a

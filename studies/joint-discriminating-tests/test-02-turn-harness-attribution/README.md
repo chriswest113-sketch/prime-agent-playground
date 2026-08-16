@@ -131,8 +131,10 @@ log is itself a complete differential record. The snapshot is unnecessary.
 in two directions of its own.
 
 *It claimed the foreign-writer failure is silent.* It is not. Using only
-production records, four signals fire on the contaminated fixture and **zero**
-on the clean one:
+production records, four **distinct** signals fire on the contaminated fixture
+and **zero** on the clean one. They are four distinct checks over the same
+records, not statistically or logically independent evidence — one foreign write
+can trip several at once:
 
 | Signal | Meaning |
 | --- | --- |
@@ -167,19 +169,30 @@ That is a writer *class* label, not an identity.
 
 ## What this result DOES establish
 
-- The full eight-dimension reconstruction profile for both writers, from real
-  persisted files.
+- The full reconstruction profile for both writers, from real persisted files.
 - That "provenance / no provenance" is the wrong frame: the answer is
   writer-dependent and dimension-dependent.
-- That **neither** writer supports reconstruction of the complete effective
-  harness state at a given turn, because no full-state snapshot or hash is
-  persisted per turn by either path.
+- **The exact object shown to be reconstructible is `HarnessState.entries`**, for
+  a tested linear, scope-filtered `/refine` history — recovered by reverse-replay
+  of the ordered edit log, with no full-state snapshot or hash needed. Everything
+  below is outside that object and is *not* covered by T02.C1:
+
+  | Not the supported object | Status |
+  | --- | --- |
+  | the full `HarnessState` object | not reconstructed |
+  | historical `refinements[]` | not reconstructed — it grows monotonically and is never truncated by replay |
+  | `schema` history | not reconstructed |
+  | the effective system prompt actually sent | not recoverable from any record (T02.A8) |
+  | arbitrary branch / compaction / concurrency histories | not exercised; replay was tested on a linear history only |
 
 ## What this result DOES NOT establish
 
-- Anything about global-scope refinement history
-  (`appendGlobalRefinement` → `refinements.jsonl`), which adds a cross-session
-  log for global edits only. This probe exercised local scope.
+- The cross-session global refinement **log** (`appendGlobalRefinement` →
+  `refinements.jsonl`), which global edits get and local edits do not. The
+  *mixed global/local session* case **was** exercised (T02.C6–C8): both scopes
+  write `prime-agent.refinement` entries into one session JSONL, and the replay
+  helper uses the recorded `harnessStatePath` as store identity to filter them.
+  What remains unexercised is the separate `refinements.jsonl` log itself.
 - Anything about reconstruction across compaction, branching, or session forks.
 - That direct CRUD is *unobservable in principle* — an external observer
   watching file mtimes could order it. The claim is only that the **records**

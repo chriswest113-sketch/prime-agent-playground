@@ -72,12 +72,14 @@ between source and packaged build behaviour is untested.
 ## Out of scope for this phase, by instruction
 
 ### U8 — Does the external Verifiers / prime-rl side close the loop?
-`DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED`. Established here: no adapter, no
-environment module, no reward/score concept in this repository; the only inbound
-channel is untyped free text; the outbound ACP `_meta` surface reports gate
-state and refinement completion as two separate unlinked payloads. What the
-external repositories do cannot be determined from here, and the brief forbids
-inferring intent from comments.
+`DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED`. Established here: no typed,
+internally closed score/reward → refinement protocol was found in this
+repository. The examined typed refinement input accepts untyped instructions;
+other untyped information routes also exist. No adapter and no environment
+module are present, and the outbound ACP `_meta` surface reports gate state and
+refinement completion as two separate unlinked payloads. What the external
+repositories do cannot be determined from here, and the brief forbids inferring
+intent from comments.
 
 ### U9 — Does continual harness refinement improve future task outcomes?
 Explicitly the *next* phase. Not begun.
@@ -110,11 +112,14 @@ was not exercised.
 conversation slice. Its coupling and provenance characteristics were not
 measured; only explicit `refine()` was.
 
-### U14 — Global-scope refinement history
+### U14 — The separate global refinement log
 Global refinements also append to `refinements.jsonl` via
-`appendGlobalRefinement`, adding a cross-session log local refinements do not
-have. Test 02 exercised local scope only, so the reconstruction matrix does not
-cover global-scope provenance, which is likely *better* than what is reported.
+`appendGlobalRefinement`, a cross-session log local refinements do not have.
+Test 02 **did** exercise a mixed global/local session (T02.C6–C8) — both scopes
+write refinement entries into one session JSONL, and replay filters them by the
+recorded `harnessStatePath`. What remains untested is the `refinements.jsonl`
+log itself, whose cross-session provenance is likely *better* than what the
+matrix reports.
 
 ### U15 — Reconstruction across branch, fork, and rollback
 Session trees support branching and refinements support rollback

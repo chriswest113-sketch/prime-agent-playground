@@ -173,9 +173,11 @@ Equality appears only when segmentation is coalesced as well.
   finding: model *content* equality is largely a restatement of fixture
   construction, since the responses are authored by the probe. What is not
   trivial is that nothing in the surrounding machinery perturbed them.
-- Input-token accounting is **not** reproducible across processes, and the cause
-  is identified: volatile temp-path length crossing the token quantisation
-  boundary. It is framing, not drift.
+- Input-token accounting is **not** reproducible across processes. The observed
+  ±1 input-token variance is consistent with, and mechanistically explained by,
+  the known character-length estimator combined with variable prompt-length
+  framing from the temporary session path. Sole causation was not experimentally
+  established — the probe tests a necessary condition, not an intervention.
 - Identifier nondeterminism is a *default*, not a property: explicit ids are
   stable, so a harness that supplies them gets identifier reproducibility.
 
