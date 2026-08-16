@@ -1,0 +1,11 @@
+{
+  "id": "finding-03-reviewer-shift",
+  "hypothesis": "The deterministic independent reviewer remains perfectly precise under a minimally shifted candidate distribution.",
+  "falsified": true,
+  "observation": {
+    "promoted": 3,
+    "falsePositive": 1,
+    "precision": 0.6666666666666666
+  },
+  "implication": "Experiment 4's perfect precision comes from shared labeling rules and cannot predict independent-model review quality."
+}

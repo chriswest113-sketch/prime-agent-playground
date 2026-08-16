@@ -1,0 +1,11 @@
+{
+  "id": "finding-04-derived-contamination",
+  "hypothesis": "Rolling back a harmful refinement restores behavior even when a later refinement derived harmful state from it.",
+  "falsified": true,
+  "observation": {
+    "actorPassed": false,
+    "exactHashRecovered": false,
+    "derivedEntryRetained": true
+  },
+  "implication": "Rollback is entry-local and needs dependency/lineage handling to undo causally derived harm."
+}

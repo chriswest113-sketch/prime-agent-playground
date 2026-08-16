@@ -1,0 +1,41 @@
+command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/daemon-serialized-refine-process.test.ts
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+
+ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
+
+ ❯ test/suite/daemon-serialized-refine-process.test.ts (1 test | 1 failed) 853ms
+     × daemon supervisor scrubs inherited worker env, checkpoint applies refine_complete before agent_end 850ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/suite/daemon-serialized-refine-process.test.ts > Real-process serializedRefine — JSON mode > daemon supervisor scrubs inherited worker env, checkpoint applies refine_complete before agent_end
+AssertionError: expected { code: 1, signal: null, …(2) } to match object { code: +0, signal: null }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "signal": null,
+  }
+
+ ❯ test/suite/daemon-serialized-refine-process.test.ts:208:18
+    206|   // Clean exit — the production env scrub allowed the supervisor
+    207|   // to start correctly despite the inherited worker role env var.
+    208|   expect(result).toMatchObject({ code: 0, signal: null });
+       |                  ^
+    209|   expect(result.stderr).not.toContain("Timed out waiting for daemon");
+    210|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  08:17:35
+   Duration  1.77s (transform 371ms, setup 0ms, import 474ms, tests 853ms, environment 0ms)
+
+exit: 1

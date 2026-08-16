@@ -1,0 +1,56 @@
+{
+  "experiment": 1,
+  "baseline": "7b69442ed56d3d72e30ab81fc71d2e79a30807de",
+  "records": [
+    {
+      "runId": "experiment-1-A-disabled",
+      "condition": "A-disabled",
+      "agentDir": "<experiment-root>/experiment-1-A-disabled/agent-home",
+      "sessionFile": "<experiment-root>/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl",
+      "localStatePath": "<experiment-root>/experiment-1-A-disabled/session-runtime/session-artifacts/01a00785-476d-779d-b223-e6e915c77df4/harness/harness_state.json",
+      "globalStatePath": "<experiment-root>/experiment-1-A-disabled/agent-home/harness/harness_state.json",
+      "refinementIds": [],
+      "promptIncluded": false,
+      "rollbackApplied": false,
+      "stateHashes": {
+        "session": "0bf05e5484eaaa1b441bad5a87614bf992e9f22a35cf0cc61e5930978ae21ac9"
+      }
+    },
+    {
+      "runId": "experiment-1-B-local",
+      "condition": "B-local",
+      "agentDir": "<experiment-root>/experiment-1-B-local/agent-home",
+      "sessionFile": "<experiment-root>/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl",
+      "localStatePath": "<experiment-root>/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json",
+      "globalStatePath": "<experiment-root>/experiment-1-B-local/agent-home/harness/harness_state.json",
+      "refinementIds": [
+        "refine_20260815222251179",
+        "refine_20260815222251186"
+      ],
+      "promptIncluded": true,
+      "rollbackApplied": true,
+      "stateHashes": {
+        "session": "7fae2e36f2f0414fe4d6357cc8859107edcab13507d39117622ad3bc8a42e478",
+        "localHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
+      }
+    },
+    {
+      "runId": "experiment-1-C-global",
+      "condition": "C-global",
+      "agentDir": "<experiment-root>/experiment-1-C-global/agent-home",
+      "sessionFile": "<experiment-root>/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl",
+      "localStatePath": "<experiment-root>/experiment-1-C-global/session-runtime/session-artifacts/01a00785-4c94-77f1-ab87-591179c19ee7/harness/harness_state.json",
+      "globalStatePath": "<experiment-root>/experiment-1-C-global/agent-home/harness/harness_state.json",
+      "refinementIds": [
+        "refine_20260815222251806",
+        "refine_20260815222251810"
+      ],
+      "promptIncluded": true,
+      "rollbackApplied": true,
+      "stateHashes": {
+        "session": "087be955b95b6aab48caa71975b51be0686960b12bb3a4486235141f59bc6a1e",
+        "globalHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
+      }
+    }
+  ]
+}

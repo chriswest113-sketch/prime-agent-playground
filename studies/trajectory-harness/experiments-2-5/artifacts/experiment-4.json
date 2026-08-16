@@ -1,0 +1,31 @@
+{
+  "candidates": 8,
+  "truthSupported": 4,
+  "strategies": {
+    "selfImmediate": {
+      "promoted": 8,
+      "truePositive": 4,
+      "falsePositive": 4,
+      "precision": 0.5
+    },
+    "independentReview": {
+      "promoted": 4,
+      "truePositive": 4,
+      "falsePositive": 0,
+      "precision": 1
+    },
+    "independentProposal": {
+      "promoted": 4,
+      "truePositive": 4,
+      "falsePositive": 0,
+      "precision": 1
+    }
+  },
+  "syntheticCost": {
+    "selfImmediateTokens": 0,
+    "independentReviewTokens": 0,
+    "independentProposalTokens": 0,
+    "reviewPasses": 1
+  },
+  "blinding": "strategy evaluator consumed labels/evidence classification, not entry prose"
+}

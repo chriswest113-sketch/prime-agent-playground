@@ -1,0 +1,7 @@
+command: PRIME_AGENT_INSTALL_UV=1 ./scripts/setup-kernel-venv.sh
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+› setting up python kernel (one-time, ~30s)…
+Failed to set up the Python kernel runtime. /root/.local/bin/uv python install 3.11 failed with exit code 1
+First-time setup needs internet to install uv, Python, ipykernel, prime-agent-runtime, and default Python packages; once set up, prime-agent runs offline. Set PRIME_AGENT_KERNEL_PYTHON to a Python with ipykernel, a current prime-agent-runtime, and default Python packages installed to skip auto-bootstrap.
+exit: 1

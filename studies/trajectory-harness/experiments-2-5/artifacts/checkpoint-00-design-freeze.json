@@ -1,0 +1,14 @@
+{
+  "id": "checkpoint-00-design-freeze",
+  "status": "pass",
+  "stateHash": "db15a2faa1117ce90309e399e0dc3f5b01c5af6d79cd327496c20e16ca43c170",
+  "metrics": {
+    "heldoutTasks": 8,
+    "sentinelTasks": 4,
+    "externalModelCalls": 0
+  },
+  "limitations": [
+    "Deterministic actor behavior is intentionally coupled to explicit prompt markers.",
+    "This validates causal plumbing and evaluation bookkeeping, not natural-language model learning."
+  ]
+}

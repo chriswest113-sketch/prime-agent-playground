@@ -1,0 +1,97 @@
+{
+  "conditions": {
+    "disabled": {
+      "before": {
+        "passed": 0,
+        "total": 8,
+        "errors": [
+          "validation-heldout-1: repeated npm test",
+          "validation-heldout-2: repeated npm test",
+          "validation-heldout-3: repeated npm test",
+          "validation-heldout-4: repeated npm test",
+          "inspection-heldout-1: relied on search snippets",
+          "inspection-heldout-2: relied on search snippets",
+          "inspection-heldout-3: relied on search snippets",
+          "inspection-heldout-4: relied on search snippets"
+        ]
+      },
+      "after": {
+        "passed": 0,
+        "total": 8,
+        "errors": [
+          "validation-heldout-1: repeated npm test",
+          "validation-heldout-2: repeated npm test",
+          "validation-heldout-3: repeated npm test",
+          "validation-heldout-4: repeated npm test",
+          "inspection-heldout-1: relied on search snippets",
+          "inspection-heldout-2: relied on search snippets",
+          "inspection-heldout-3: relied on search snippets",
+          "inspection-heldout-4: relied on search snippets"
+        ]
+      }
+    },
+    "enabled": {
+      "before": {
+        "passed": 0,
+        "total": 8,
+        "errors": [
+          "validation-heldout-1: repeated npm test",
+          "validation-heldout-2: repeated npm test",
+          "validation-heldout-3: repeated npm test",
+          "validation-heldout-4: repeated npm test",
+          "inspection-heldout-1: relied on search snippets",
+          "inspection-heldout-2: relied on search snippets",
+          "inspection-heldout-3: relied on search snippets",
+          "inspection-heldout-4: relied on search snippets"
+        ]
+      },
+      "after": {
+        "passed": 8,
+        "total": 8,
+        "errors": []
+      }
+    }
+  },
+  "sentinel": {
+    "disabled": {
+      "passed": 4,
+      "total": 4,
+      "errors": []
+    },
+    "enabled": {
+      "passed": 4,
+      "total": 4,
+      "errors": []
+    }
+  },
+  "pairedDifferences": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "meanPairedDifference": 1,
+  "bootstrap95Interval": [
+    1,
+    1
+  ],
+  "turns": {
+    "disabled": 2,
+    "enabled": 2
+  },
+  "tokens": {
+    "disabled": 0,
+    "enabled": 0,
+    "note": "deterministic simulator; no provider tokens"
+  },
+  "refinementFrequency": {
+    "disabled": 0,
+    "enabled": 1
+  },
+  "rollbackCount": 0,
+  "appliedEdits": 2
+}

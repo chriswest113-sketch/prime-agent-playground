@@ -1,0 +1,58 @@
+command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
+cwd: /workspace/prime-agent-playground/packages/coding-agent
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+
+ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
+
+ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9706ms
+     × terminates the autonomous gate process tree when the timeout expires 2441ms
+     × terminates an autonomous gate without mutating retry state when the session is aborted 2269ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/suite/agent-session-autonomous.test.ts:458:52
+    456|    expect(Date.now() - startedAt).toBeLessThan(3000);
+    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
+    458|    expect(await waitForProcessExit(descendantPid)).toBe(true);
+       |                                                    ^
+    459|   } finally {
+    460|    if (descendantPid && isProcessRunning(descendantPid)) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/suite/agent-session-autonomous.test.ts:488:46
+    486|    await prompt;
+    487|
+    488|    expect(await waitForProcessExit(gatePid)).toBe(true);
+       |                                              ^
+    489|    expect(harness.session.getAutonomousStatus()).toMatchObject({
+    490|     continuationsUsed: 0,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 20 passed (22)
+   Start at  07:51:08
+   Duration  18.50s (transform 6.06s, setup 0ms, import 8.36s, tests 9.71s, environment 0ms)
+
+exit: 1

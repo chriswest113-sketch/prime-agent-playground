@@ -1,0 +1,21 @@
+{
+  "verdict": "GOOD_SCAFFOLD_WITH_LIMITATIONS",
+  "goodFor": [
+    "isolated harness-state experiments",
+    "faux-provider integration tests",
+    "scope and rollback studies",
+    "evidence artifact capture"
+  ],
+  "notYetEvidenceFor": [
+    "real-model self-improvement",
+    "generalization",
+    "safe global promotion",
+    "causal validity of self-authored evidence"
+  ],
+  "blockingBeforeRealClaim": [
+    "credentialed or local real-model study",
+    "independent task/evaluator design",
+    "non-synthetic held-out tasks",
+    "production candidate/review/promotion mechanism or external equivalent"
+  ]
+}

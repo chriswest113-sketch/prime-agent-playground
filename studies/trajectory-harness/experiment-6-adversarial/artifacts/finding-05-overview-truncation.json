@@ -1,0 +1,11 @@
+{
+  "id": "finding-05-overview-truncation",
+  "hypothesis": "A persisted refinement is necessarily visible in the default next-turn harness overview.",
+  "falsified": true,
+  "observation": {
+    "storedPromptEntries": 7,
+    "visibleByDefault": false,
+    "visibleWhenExpanded": true
+  },
+  "implication": "Accumulation can leave correct state persisted but absent from the model-facing overview due to entry limits/order."
+}

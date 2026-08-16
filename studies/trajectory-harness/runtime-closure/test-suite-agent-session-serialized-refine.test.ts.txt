@@ -1,0 +1,13 @@
+command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-serialized-refine.test.ts
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+
+ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
+
+
+ Test Files  1 passed (1)
+      Tests  71 passed (71)
+   Start at  08:17:14
+   Duration  16.71s (transform 6.65s, setup 0ms, import 8.89s, tests 7.42s, environment 0ms)
+
+exit: 0
