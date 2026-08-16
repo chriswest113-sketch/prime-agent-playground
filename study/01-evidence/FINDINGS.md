@@ -168,7 +168,25 @@ the *learning* state.
 For empirical work the decisive question is: given a recorded session, can you determine what the model
 actually saw at turn *t*?
 
-**No.**
+**Partly — and the split is instructive.** The *conversation* is preserved well. The *configuration
+that produced it* is not.
+
+### What IS recoverable (and is a genuine strength)
+
+- The session JSONL is **append-only**: `_appendEntry` → `appendFileSync` (`session-manager.ts:1472-1482`).
+  Compaction does not delete anything; it appends a `CompactionEntry` carrying `summary`,
+  `firstKeptEntryId`, and `tokensBefore`. Full-file rewrites happen only on migration, corruption
+  reset, and fork.
+- Therefore **compaction is lossy for the model's context, not for the record**. The dropped span is
+  exactly reconstructible after the fact by intersecting the branch path with `firstKeptEntryId`.
+- Entries form a tree via `id`/`parentId`, so branches are retained and a session can be forked with
+  `parentSession` provenance recorded in the header.
+- The header captures a `git` context (`session-manager.ts:75-85`) — a workspace-commit pin at
+  session start.
+- Failed, cancelled and skipped compactions leave durable typed records, so compaction failure rate is
+  measurable from session files alone.
+
+### What is NOT recoverable
 
 - `SessionHeader` records `type, version, id, timestamp, cwd, parentSession, rlmDepth, git`
   (`session-manager.ts:75-85`). No system prompt, no harness-state reference, no harness version,
@@ -184,9 +202,27 @@ carries `before`/`after` per edit, so the state could in principle be replayed b
 breaks the moment the Python CRUD path writes (§5), and local-scope refinements live only in the
 session JSONL.
 
+**Model configuration is not recorded either.** `Model` (`packages/ai/src/types.ts:440-472`) carries
+`id`, `provider`, prices and window sizes — but **no revision, snapshot date, or catalog hash**.
+`models.generated.ts` contains no generation timestamp. Model equality is `id === id && provider ===
+provider` (`packages/ai/src/models.ts:107`), so a config-overridden model with different prices
+compares equal to the built-in one. There is **no seed, and `temperature` is plumbed through
+`StreamOptions` but never set by the agent** — every request runs at the provider's server-side
+default, a provider-controlled variable that can change with no client-visible signal. Model selection
+is fuzzy substring matching with an alias preference, so `--model opus` can bind to different catalog
+entries across package versions. Thinking levels clamp silently, including down to `off` on a
+non-reasoning model, with no record of the downgrade.
+
 **Consequence for the research question:** in the abstraction `Y_t = F(G, M_t, S_t, H_t, C_t, ...)`,
-Prime Agent mutates `H_t` continuously but does not record `H_t` alongside `Y_t`. Outcomes cannot be
-attributed to harness states after the fact. Two runs "on the same harness" are not verifiably the same.
+Prime Agent preserves `C_t` (the transcript) well, pins part of `E_t` (the git context), and records
+essentially nothing about `H_t` or `M_t` at the moment a turn is produced. It mutates `H_t`
+continuously without recording it, and treats `M_t` as a name rather than a version. Outcomes cannot be
+attributed to harness or model states after the fact, and two runs "on the same model and the same
+harness" are not verifiably the same.
+
+There is also **no re-execution engine**: nothing consumes a session JSONL and re-runs it. "Replay" in
+this codebase means daemon UI event replay, not run replay. A session file is a transcript of what
+happened, not a program that can be run again.
 
 ---
 
@@ -277,6 +313,37 @@ plumbing (protocol shapes, lifecycle, persistence, process supervision), not age
 `refinement.test.ts` mocks `completeSimple` (`refinement.test.ts:33-43`) and asserts edit application,
 scope, rollback and concurrency semantics. This is appropriate unit testing; it is **not** evaluation
 of whether refinement improves behavior, and the repository contains no harness that measures that.
+
+### The evaluation surface itself is not deterministic
+
+The `faux` provider (`packages/ai/src/providers/faux.ts`) is an **author-written FIFO script queue**,
+not a recorder: `pendingResponses.shift()` per request (`faux.ts:433`), no HTTP at any layer
+(`baseUrl` is the sentinel `http://localhost:0`, `faux.ts:24`). A step is either a literal
+`AssistantMessage` or a factory closure that may branch on the outgoing `Context`.
+
+- **No cassette/VCR replay of a real trajectory exists.** Searched; NOT_FOUND. The faux provider can
+  only replay what an author wrote by hand.
+- **No seed exists anywhere.** Streamed chunk boundaries are drawn from unseeded `Math.random()`
+  between 3 and 5 characters (`faux.ts:241-251`, `:25-26`), so two runs of the same test emit
+  different delta counts and splits. `randomId()` mixes `Date.now()` and `Math.random()`
+  (`faux.ts:132-134`) and supplies api names, registry source ids, and tool-call ids; timestamps
+  default to `Date.now()`. **No run of the suite produces a stable identifier set**, so two runs
+  cannot be diffed field-for-field.
+- **Token counting is `ceil(len/4)` fiction** (`faux.ts:128-130`). Compaction thresholds and goal token
+  budgets are therefore asserted against a heuristic, not a tokenizer. Compaction compounds this: the
+  *trigger* uses real provider usage totals while the *cut* uses the chars/4 estimate — mixed units.
+- **Cost is hardcoded to zero** on every faux response, so budget enforcement cannot be exercised
+  through the faux path at all.
+- **Under-scripting degrades silently.** A test whose agent loop takes one more turn than the author
+  scripted receives a well-formed assistant error turn rather than a failure. A test can therefore
+  pass while measuring something other than what its author intended — an instance of the general
+  hazard that a check whose negative result is indistinguishable from its own side effect is not a
+  check.
+- Real-provider tests exist but **never run in CI**; real-process supervisor stress and real-IPython
+  kernel behavior are excluded from the default run.
+
+This matters beyond Prime Agent: the deterministic-looking layer of an LLM system's test harness can
+itself be nondeterministic in ways that only show up when you try to compare two runs byte-for-byte.
 
 ---
 
