@@ -13,12 +13,11 @@ failures were caused by missing `dist/` output.
 
 **What actually happened:**
 
-1. `npm run build` **failed**. `packages/ai` does not compile at this commit in this
-   environment: `src/models.ts(20,82): error TS2536: Type 'TProvider' cannot be used to
-   index type ...` (three occurrences), under `tsgo` (TypeScript 7.0.0-dev native preview,
-   pinned in `package.json` devDependencies). Build stopped at `packages/ai`; therefore
-   `packages/agent/dist` and `packages/coding-agent/dist` were **never produced**, and the
-   extension-loader failures were never actually addressed.
+1. `npm run build` **failed** at `packages/ai` with
+   `src/models.ts(20,82): error TS2536: Type 'TProvider' cannot be used to index type ...`
+   (three occurrences) under `tsgo` (TypeScript 7.0.0-dev native preview). Build stopped there,
+   so `packages/agent/dist` and `packages/coding-agent/dist` were never produced.
+   **This is not a pre-existing repository defect** — see the causal test below.
 
 2. **I misread the exit status.** My command was
    `npm run build > log 2>&1; echo "BUILD_EXIT=$?"; tail -5 log`, and I took the harness's
@@ -56,8 +55,15 @@ It must not be compared to the pre-build run. Specifically:
 - 22 × `Error: Timed out waiting for condition` in `agent-session-recursion.test.ts` are
   explained by CPU starvation, not by a defect.
 
-**Retained as valid:** the pre-build run (11 files / 64 tests failed, 4,091 passed, 264s) on a
-clean tree at `97b994c` with `npm install` only. See `TEST_BASELINE.md`.
+**Causal test (run after remediation).** With the pristine `models.generated.ts` restored,
+`cd packages/ai && npx tsgo -p tsconfig.build.json` exits **0** with no diagnostics, and building
+`tui`, `ai`, and `agent` directly (skipping `generate-models`) all succeed. The TS2536 error was
+therefore **caused by the generator's own offline output**, not by the source at `97b994c`.
+The accurate statement is: *the repository compiles; its default build command is not hermetic.*
+
+**Superseded, not retained:** the pre-build run (64 failures) was itself a build-state artifact —
+51 of its failures were extension tests needing `dist/`, which pass 63/63 once `dist/` exists.
+The authoritative baseline is the third run (8 failures / 4,147 passed). See `TEST_BASELINE.md`.
 
 **Lesson for the study protocol:** check `git status` after *any* command that could touch the
 tree, and never read `$?` through a pipeline or a trailing command.

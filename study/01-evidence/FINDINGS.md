@@ -243,32 +243,34 @@ cannot tell you whether it is improving.
 
 ## 9. Test-suite baseline (executed, not inferred)
 
-Full `coding-agent` suite, credentials unset, `PI_NO_LOCAL_LLM=1`, clean tree at `97b994c`
-with `npm install` only:
+Full details in `TEST_BASELINE.md`. Authoritative run — `dist/` built, pristine tree, credentials
+unset, `PI_NO_LOCAL_LLM=1`:
 
-**300 files passed / 11 failed; 4,091 tests passed / 64 failed / 59 skipped; 264s.**
+**305 files passed / 6 failed / 8 skipped; 4,147 tests passed / 8 failed / 59 skipped; 257s.**
 
-Dominant failure cause, reproduced in isolation with a minimal repro harness:
-`Failed to load extension: Cannot find package '.../@earendil-works/pi-agent-core/dist/index.js'
-imported from src/core/extensions/loader.ts`. The extension loader resolves extensions against the
-package's **built** entry point; a fresh `npm install` symlinks workspaces to source and produces no
-`dist/`. 51 of the 64 failures are the three `extensions-*` files.
+All 8 residual failures are environmental — three assume a non-root user (this run was root, so
+`0444` does not deny reads), the rest require provider credentials or stored auth. **None indicates
+a defect.** Fair summary: the suite passes here.
 
-**The repository does not build from a clean checkout in this environment.** `npm run build` fails at
-`packages/ai` with `TS2536: Type 'TProvider' cannot be used to index type ...` (`src/models.ts:20,34,36`)
-under the pinned `tsgo` (TypeScript 7 native preview). `packages/agent/dist` and
-`packages/coding-agent/dist` are therefore never produced, so the extension failures are not fixable by
-building here.
+Two earlier runs were discarded, and the reasons matter more than the numbers:
 
-An earlier draft of this document stated that the build succeeds. It does not; see
-`study/02-experiments/INCIDENTS.md` (INC-001) for how that error arose, and for the more consequential
-finding that the failed build **silently rewrote tracked source** — `generate-models` runs before the
-compile and regenerated `models.generated.ts` from 20,733 to 2,103 lines in this network-restricted
-environment. That is a hidden-variable mutation (`M_t`) triggered by the project's own documented build
-command, with no version stamp and no warning. The tree has been restored and re-verified.
+- A clean-install run showed 64 failures, 51 of them the three `extensions-*` files. Cause,
+  reproduced in isolation: the extension loader resolves against the package's **built** entry point,
+  and `npm install` symlinks workspaces to source without producing `dist/`. With `dist/` present those
+  files pass 63/63.
+- A "post-build" run showed 141 failures and is **VOID**. `npm run build` failed — but not because the
+  repository is broken. `packages/ai`'s build script is `npm run generate-models && tsgo -p
+  tsconfig.build.json`; the generator is **network-dependent** and, offline, rewrote the tracked file
+  `packages/ai/src/models.generated.ts` from 20,733 lines to 2,103, after which `src/models.ts` no
+  longer typechecked. With the pristine catalog restored, `tsgo -p tsconfig.build.json` exits 0 and all
+  three buildable packages compile.
 
-A "post-build" suite run (141 failures) is recorded as **VOID** — it measured the gutted catalog under
-CPU contention. It is not comparable to the figure above.
+**The repository compiles fine; its default build command is not hermetic.** Running the project's own
+documented build offline silently corrupts the model catalog that other tests assert against. In the
+terms of the research question this is a hidden-variable (`M_t`) mutation triggered as a side effect of
+an unrelated action, with no version stamp and no warning — the exact failure mode that makes two runs
+silently incomparable. An earlier draft of this document reported the build as succeeding; that was
+wrong, and the correction path is recorded in `study/02-experiments/INCIDENTS.md` (INC-001).
 
 **Honest characterization:** the suite is large, fast, and overwhelmingly *mechanical* — it asserts
 plumbing (protocol shapes, lifecycle, persistence, process supervision), not agent quality.
