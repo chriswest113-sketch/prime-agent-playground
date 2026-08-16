@@ -1,0 +1,129 @@
+PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3
+command: npx tsx studies/trajectory-harness/live-kernel-probe.ts
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+{
+  "python": "/root/.pyenv/shims/python3",
+  "separateExecutionValue": 42,
+  "freshKernelHarnessOutput": [
+    "[('memory', 'memory_probe'), ('prompt', 'prompt_probe'), ('skill', 'skill_probe'), ('subagent', 'subagent_probe')]",
+    "[('live kernel probe', 'separate live-kernel execution', 'state file written')]",
+    "[('memory', 'global_probe')]"
+  ],
+  "localState": {
+    "schema": 1,
+    "entries": {
+      "prompt": {
+        "prompt_probe": {
+          "id": "prompt_probe",
+          "kind": "prompt",
+          "title": "Prompt",
+          "content": "Prompt content",
+          "path": "policy",
+          "scope": "local",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "agent",
+          "created_at": "2026-08-15T08:16:44.729333+00:00",
+          "updated_at": "2026-08-15T08:16:44.729355+00:00",
+          "version": 1
+        }
+      },
+      "memory": {
+        "memory_probe": {
+          "id": "memory_probe",
+          "kind": "memory",
+          "title": "Memory",
+          "content": "Memory content",
+          "path": "general",
+          "scope": "local",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "agent",
+          "created_at": "2026-08-15T08:16:44.729778+00:00",
+          "updated_at": "2026-08-15T08:16:44.729787+00:00",
+          "version": 1
+        }
+      },
+      "skill": {
+        "skill_probe": {
+          "id": "skill_probe",
+          "kind": "skill",
+          "title": "Skill",
+          "content": "Skill content",
+          "path": "general",
+          "scope": "local",
+          "reference": {
+            "type": "python",
+            "import": "probe",
+            "callable": "run"
+          },
+          "arguments": {},
+          "metadata": {},
+          "source": "agent",
+          "created_at": "2026-08-15T08:16:44.730296+00:00",
+          "updated_at": "2026-08-15T08:16:44.730305+00:00",
+          "version": 1
+        }
+      },
+      "subagent": {
+        "subagent_probe": {
+          "id": "subagent_probe",
+          "kind": "subagent",
+          "title": "Subagent",
+          "content": "Subagent content",
+          "path": "general",
+          "scope": "local",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "agent",
+          "created_at": "2026-08-15T08:16:44.730751+00:00",
+          "updated_at": "2026-08-15T08:16:44.730760+00:00",
+          "version": 1
+        }
+      }
+    },
+    "refinements": [
+      {
+        "id": "refine_0001",
+        "trigger": "live kernel probe",
+        "changes": [
+          "created four local kinds"
+        ],
+        "evidence": "separate live-kernel execution",
+        "outcome": "state file written",
+        "created_at": "2026-08-15T08:16:44.731206+00:00"
+      }
+    ]
+  },
+  "globalState": {
+    "schema": 1,
+    "entries": {
+      "prompt": {},
+      "memory": {
+        "global_probe": {
+          "id": "global_probe",
+          "kind": "memory",
+          "title": "Global",
+          "content": "Global content",
+          "path": "general",
+          "scope": "global",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "agent",
+          "created_at": "2026-08-15T08:16:44.731873+00:00",
+          "updated_at": "2026-08-15T08:16:44.731881+00:00",
+          "version": 1
+        }
+      },
+      "skill": {},
+      "subagent": {}
+    },
+    "refinements": []
+  }
+}
+exit: 0

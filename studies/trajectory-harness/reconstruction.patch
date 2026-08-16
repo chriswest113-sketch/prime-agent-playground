@@ -1,0 +1,1298 @@
+diff --git a/studies/trajectory-harness/README.md b/studies/trajectory-harness/README.md
+new file mode 100644
+index 0000000..d2d6705
+--- /dev/null
++++ b/studies/trajectory-harness/README.md
+@@ -0,0 +1,27 @@
++# Trajectory-Driven Harness Refinement Study
++
++This directory is an isolated, challengeable baseline study of Prime Agent at the repository state recorded in [provenance.md](provenance.md). It separates product documentation, source confirmation, observed runtime behavior, inference, and unknowns. It does not treat repository claims as ground truth.
++
++Artifacts:
++
++- [provenance.md](provenance.md): exact Git baseline and repository relationship.
++- [implementation-map.md](implementation-map.md): ownership and data-flow map.
++- [claim-evidence-ledger.md](claim-evidence-ledger.md): material claims, classifications, source anchors, negative evidence, and limitations.
++- [runtime-reproduction.md](runtime-reproduction.md): exact commands, environment limitations, and observed results.
++- [unresolved-questions.md](unresolved-questions.md): questions not settled by this pass.
++- [experiment-plan.md](experiment-plan.md): smallest controlled comparisons proposed after baseline characterization.
++- `runtime/*.log`: raw command output, including warnings and failures.
++
++## Evidence labels
++
++- **DOCUMENTED**: asserted by repository documentation; not independently established.
++- **IMPLEMENTATION-CONFIRMED**: directly represented by inspected source paths and control/data flow.
++- **RUNTIME-CONFIRMED**: observed by an executed test or reproduction in this environment.
++- **INFERENCE**: a reasoned interpretation not directly guaranteed by source or runtime.
++- **UNKNOWN**: evidence is unavailable or insufficient.
++
++A claim may carry multiple labels. Runtime confirmation is bounded to the exact exercised path and is not evidence of end-to-end model quality.
++
++## Baseline closure
++
++The follow-up closure pass is recorded in [baseline-closure.md](baseline-closure.md), with exact commands in [exact-commands.md](exact-commands.md), a reproducible live-kernel probe in `live-kernel-probe.ts`, raw output in `runtime-closure/`, a SHA-256 manifest, and a reconstruction patch. No continual-harness A/B experiment has begun.
+diff --git a/studies/trajectory-harness/baseline-closure.md b/studies/trajectory-harness/baseline-closure.md
+new file mode 100644
+index 0000000..b5ac3f4
+--- /dev/null
++++ b/studies/trajectory-harness/baseline-closure.md
+@@ -0,0 +1,79 @@
++# Baseline-Closure Pass
++
++Date: 2026-08-15 UTC. This pass closes specific runtime gaps without beginning continual-harness A/B experiments.
++
++## Persistent kernel
++
++### Supported provisioning path
++
++The repository-supported entry point is `./scripts/setup-kernel-venv.sh`, which invokes `ensureKernelPython()`. The bootstrap uses `uv`, installs Python 3.11, `ipykernel`, the checkout's `prime-agent-runtime`, `dill`, and the default RLM packages into `~/.prime/agent/kernel-venv`, or a configured `PRIME_AGENT_KERNEL_VENV`. A fully provisioned interpreter may instead be selected with `PRIME_AGENT_KERNEL_PYTHON` (`scripts/setup-kernel-venv.sh`; `packages/coding-agent/src/core/kernel/bootstrap.ts`).
++
++Provisioning was attempted with `PRIME_AGENT_INSTALL_UV=1 ./scripts/setup-kernel-venv.sh`. It failed at `uv python install 3.11` because the environment's network tunnel could not download the repository-selected standalone CPython archive after three retries. The installed system Python 3.12 has `ipykernel` but lacks `dill`, `rlm`, and most default packages. It therefore does not satisfy `ensureKernelPython()`'s supported override validation and was not represented as a fully provisioned Prime Agent kernel environment.
++
++### Highest feasible real-kernel boundary
++
++With `PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3`:
++
++- upstream `test/ipython-bootstrap.test.ts` ran six tests against real kernel processes and passed;
++- separate `KernelManager.execute()` calls preserved `study_value` in the same live kernel namespace;
++- a fresh kernel process imported the checkout's Python runtime through `PYTHONPATH`, accessed `rlm.harness`, created all four local entry kinds and one global entry, recorded evidence/history, and reloaded those files;
++- this confirms same-process namespace persistence and disk-backed harness persistence across a fresh kernel process;
++- it does **not** confirm dill snapshot/restore, arbitrary Python-object persistence, or full worker/session restart recovery.
++
++`test/kernel-state-roundtrip.test.ts` still skipped all six tests because its eligibility check requires both `ipykernel` and `dill`. Consequently:
++
++| Requested behavior | Result |
++|---|---|
++| Variables survive separate executions in one live kernel | **RUNTIME-CONFIRMED** |
++| Snapshot/restore into a fresh kernel | **NOT RUNTIME-CONFIRMED**; supported provisioning blocked by network and `dill` unavailable |
++| Unpicklable state is skipped/reported | **NOT RUNTIME-CONFIRMED**; only implementation/test definition inspected |
++| Harness access from a live kernel | **RUNTIME-CONFIRMED** at direct Python harness CRUD boundary |
++| Harness disk state survives disposal and a fresh kernel process | **RUNTIME-CONFIRMED** for the isolated state directories in `live-kernel-probe.ts` |
++| IPython namespace survives fresh kernel process without snapshot | **NOT CLAIMED** |
++| State survives daemon worker restart | **NOT RUNTIME-CONFIRMED** |
++
++## `/refine` integration boundary
++
++No credentials or external model calls were introduced. The highest successful integration level was a real `AgentSession` using the faux provider/planner boundary with the production application path. `test/suite/agent-session-serialized-refine.test.ts` passed 71 tests. Its non-mocked application case runs production `applyRefinementProposal`, atomic harness persistence, system-prompt rebuild, and `refine_complete` emission, while mocking only the LLM planning result. This is not a real model-driven refinement.
++
++The real-process daemon/JSON-mode refinement test was also attempted and failed before its expected clean CLI exit (`code: 1` rather than `0`). The test captures child stderr without printing it at the failing assertion, so this pass does not attribute a cause. It provides no additional runtime confirmation.
++
++| `/refine` behavior | Highest runtime evidence |
++|---|---|
++| Prompt creation | Host refinement application tests; not session-level non-mocked apply and not model-driven |
++| Memory creation | Production AgentSession apply/persist/prompt-rebuild event path with faux plan |
++| Skill creation | Host refinement application tests, including Python reference/argument validation; not executable skill synthesis |
++| Subagent-state creation | Host refinement application tests; textual harness spec only, not child spawn |
++| Local/global scope | Host storage/merge/planning tests; direct live-kernel local/global harness persistence |
++| Evidence/history | Host refinement result/history tests; direct live-kernel `record_refinement` persistence |
++| Rollback | Host planning/application tests over before/after snapshots |
++| Persistence after reload | Host save/load and history reload tests; direct live-harness state across fresh kernel process |
++| Real model-generated proposal | **NOT RUNTIME-CONFIRMED** |
++| Daemon real-process `/refine` | **NOT RUNTIME-CONFIRMED** in this pass |
++
++The distinction matters: mechanics and one AgentSession application pipeline are runtime-confirmed, while the empirical quality and reliability of model-selected edits remain unknown.
++
++## Autonomous cleanup triage
++
++The original two assertions are:
++
++1. timeout case, line 458: `expect(await waitForProcessExit(descendantPid)).toBe(true)`;
++2. session-abort case, line 488: `expect(await waitForProcessExit(gatePid)).toBe(true)`.
++
++The unmodified suite failed both assertions in the prior pass. For diagnosis only, the test was temporarily instrumented to read `/proc/<pid>/stat`; the file was restored byte-for-byte afterward. Three diagnostic repetitions each failed the same two tests (20 passed, 2 failed). A final after-wait probe showed both reported Node processes in state `Z` with parent PID 1 after the two-second wait.
++
++The timeout descendant was a Node child executing a 60-second timer. The abort PID was the Node gate command writing `gate.pid` and executing a 60-second timer. They had received termination and become zombies; the test helper uses `process.kill(pid, 0)`, which counts zombies as running. Container PID 1 did not reap them within the assertion window. Repository utility code separately defines zombie-aware `isProcessAlive()`, but this test helper does not use it.
++
++Classification: **consistently reproducible, environment-sensitive assertion behavior with an implementation/test-observability mismatch**. The evidence supports “killed but unreaped zombie,” not “still executing.” No production repair was made. This does not invalidate harness-refinement mechanics, but repeated gate subprocesses in this container can accumulate zombie PIDs and make cleanup assertions misleading. Planned experiments using autonomous shell gates must record zombie state separately and bound run counts; this is an execution-environment limitation, not evidence about refinement quality.
++
++## Decision gate
++
++**YES WITH LIMITATIONS.** An independent second investigator can reconstruct the study, locate implementation ownership, rerun the credential-free integration boundaries, and challenge the evidence labels without first resolving additional architectural ambiguity. Remaining limitations are:
++
++1. repository-supported kernel provisioning could not complete because network access to the CPython archive failed;
++2. dill snapshot/restore and unpicklable-state behavior are not runtime-confirmed;
++3. no real model-driven refinement was executed, so proposal quality and evidence grounding remain unknown;
++4. daemon detach/reattach, worker restart, and real-process `/refine` are not runtime-confirmed;
++5. autonomous cleanup assertions observe unreaped zombies in this container and require environment-aware interpretation;
++6. provider-backed child execution remains source-confirmed rather than runtime-confirmed;
++7. upstream/default-branch provenance remains unknown because the checkout has no remote metadata.
+diff --git a/studies/trajectory-harness/claim-evidence-ledger.md b/studies/trajectory-harness/claim-evidence-ledger.md
+new file mode 100644
+index 0000000..93f657f
+--- /dev/null
++++ b/studies/trajectory-harness/claim-evidence-ledger.md
+@@ -0,0 +1,40 @@
++# Claim/Evidence Ledger
++
++Source anchors use repository-relative paths and baseline line numbers. “Negative evidence” records what the inspected path does not establish; it is not a repository-wide proof of absence.
++
++| ID | Material claim | Classification | Evidence | Bounds / negative evidence |
++|---|---|---|---|---|
++| C01 | The RLM interface is persistent IPython plus typed host calls; Python does not own provider execution. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `docs/rlm-runtime.md`; `prime-agent-runtime/src/rlm/__init__.py:84-150`; `agent-session.ts:8764-8768` | End-to-end provider-backed RLM was not run. |
++| C02 | One live kernel serializes ordinary cells and retains its namespace across tool calls. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `docs/rlm-runtime.md` Jupyter Transport; `core/kernel/index.ts` execute queue/state | Real-kernel round-trip tests were skipped because no eligible configured kernel Python was found. Not RUNTIME-CONFIRMED here. |
++| C03 | Restart persistence is selective dill snapshot/restore, not arbitrary process preservation. | IMPLEMENTATION-CONFIRMED | `kernel/index.ts:1481-1569`; `kernel/state-snapshot.ts`; `test/kernel-state-roundtrip.test.ts` | Runtime suite skipped; sockets, generators, live handles, and other unpicklable values are not promised. |
++| C04 | `/refine` can create/update/delete four supplemental kinds but cannot rewrite the base system prompt through its schema. | DOCUMENTED, IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `refinement.ts:30-32,123-173,633-804`; refinement test log (59 passed) | Source edits/extensions can still alter system prompt construction. “Immutable” is subsystem-relative. |
++| C05 | Local refinement is default; global refinement is explicit and cross-session. | DOCUMENTED, IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `refinement.ts:140-148,269-342`; refinement test log | No multi-session live daemon reproduction. Global effect follows prompt loading and storage paths. |
++| C06 | Refinement application is immediate after proposal; it is not candidate/review/promotion. | IMPLEMENTATION-CONFIRMED | `refinement.ts:857-930,1000-1017` | A model review gates auto-refine scheduling, but there is no independent post-proposal reviewer/promotion state in this path. Searches for `candidate`, `promotion`, and refinement approval yielded no such lifecycle in refinement code. |
++| C07 | Refinements carry free-text rationale/evidence, expected outcome, edits, and snapshots. | IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `refinement.ts:50-101,787-799`; refinement test log | No mandatory trajectory entry IDs, reproducer, metric delta, uncertainty, or external evidence schema. Evidence can be plausible prose only. |
++| C08 | Rollback applies inverse entry edits from snapshots and records a new refinement. | IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `refinement.ts:804-888`; rollback cases in `test/refinement.test.ts` | Not transactional rollback of code, kernel, session tree, or external effects. Concurrent changes may make inverse edits fail. |
++| C09 | Harness “skill” refinement stores a Python callable reference and arguments but does not create executable code. | IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `refinement.ts:134-138,664-705`; skill validation tests | A pre-existing installed Python callable is required. No executable skill synthesis is performed by `applyRefinementProposal`. |
++| C10 | Subagent refinement stores a reusable textual spec, distinct from spawning a child. | IMPLEMENTATION-CONFIRMED | Generic `HarnessEntry`; `refinement.ts:134-148`; `agent-session.ts:10035+` | No binding automatically instantiates a child from a subagent entry. Model compliance is uncertain. |
++| C11 | Python harness CRUD can bypass `/refine`'s model planning and evidence convention. | IMPLEMENTATION-CONFIRMED | `prime-agent-runtime/src/rlm/harness.py` CRUD and `record_refinement` | Direct writes still use typed store validation, but evidence is optional text and mutation does not require a recorded event. |
++| C12 | Sessions are append-only JSONL trees and branching preserves alternate descendants. | DOCUMENTED, IMPLEMENTATION-CONFIRMED, RUNTIME-CONFIRMED | `session-manager.ts:75-99,248-263,1930-2134`; tree test log (31 passed) | Tests cover manager behavior, not concurrent daemon writers or crash recovery. |
++| C13 | Compaction is lossy context transformation while full entries remain in session storage. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `docs/compaction.md`; `session-manager.ts:465-590,1542-1565` | No semantic fidelity metric; this pass did not run the compaction suite. |
++| C14 | Compaction does not itself clear an extant kernel or child registry. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | separate transcript compaction and kernel/child ownership in `agent-session.ts` | Cross-restart restoration remains selective and was not runtime-confirmed. |
++| C15 | RLM child admission returns a handle before completion; results require explicit messaging/files. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `rlm/__init__.py:28-32,143-150`; `agent-session.ts:10035+` | No live model child was spawned in this pass. |
++| C16 | Child lifecycle includes list, retained addressability, cancellation/deletion, and durable registry/ledger data. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `agent-session.ts:9164-9481`; `modes/daemon/rlm-ledger.ts` | “Survives restart” was not end-to-end runtime reproduced. Deletion does not prove disk erasure. |
++| C17 | Detached work is designed to continue in resident workers. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `docs/long-running-agents.md`; daemon supervisor/mode sources | UNKNOWN at runtime in this environment because detach/reattach was not exercised. |
++| C18 | Model/provider dispatch is extensible and normalized around streaming events. | IMPLEMENTATION-CONFIRMED | `packages/ai/src/types.ts:6-164`; `api-registry.ts:23-97`; built-in registration | Cross-provider behavioral equivalence is not guaranteed and was not tested. |
++| C19 | Autonomous completion is constrained by budgets and optional shell gates; gate success is scoped evidence. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `core/autonomous.ts:254-347`; docs | The selected runtime suite had 2 failures in process-tree termination, so lifecycle reliability is not runtime-confirmed. |
++| C20 | In this container, autonomous timeout/abort tests left probed descendant processes observable beyond their wait bound. | RUNTIME-CONFIRMED | `runtime/test-suite-agent-session-autonomous.test.ts.txt` | This may be environment-sensitive; no root-cause claim is made. 20 other tests passed. |
++| C21 | Kernel and daemon process boundaries are not security sandboxes. | DOCUMENTED, IMPLEMENTATION-CONFIRMED | `docs/rlm.md` Trust Model; `docs/rlm-runtime.md` Trust Boundary; process launch sources | No OS sandbox escape test was attempted because the implementation explicitly runs with user permissions. |
++| C22 | Durable global harness content is a cross-session prompt/trust surface. | IMPLEMENTATION-CONFIRMED, INFERENCE | global store merge plus `system-prompt.ts:106,141` | Security impact depends on who can write the agent directory and on model behavior; no exploit test performed. |
++| C23 | The repository does not yet establish that refinement causes durable generalizable improvement. | INFERENCE | State mutation/rollback tests establish mechanics only; no paired task evaluation or held-out generalization evidence found in inspected refinement tests | Absence from selected search/inspection is not proof no external evaluation exists. Repository-local evidence is insufficient. |
++
++## Baseline-closure additions
++
++| ID | Material claim | Classification | Evidence | Bounds / negative evidence |
++|---|---|---|---|---|
++| C24 | Separate executions retain Python variables in one real live kernel. | RUNTIME-CONFIRMED | `live-kernel-probe.ts`; `runtime-closure/live-kernel-probe.txt` | Same kernel process only; not restart persistence. |
++| C25 | Disk-backed local/global Python harness state can be written from a real kernel and read from a fresh kernel process. | RUNTIME-CONFIRMED | live-kernel probe and output | Direct harness CRUD, not `/refine`; source runtime injected with `PYTHONPATH` because supported full provisioning was blocked. |
++| C26 | Dill snapshot/restore and unpicklable-state handling remain unconfirmed at runtime. | UNKNOWN at runtime, IMPLEMENTATION-CONFIRMED | skipped round-trip output; snapshot implementation | The supported bootstrap failed on a network download and system Python lacks `dill`. |
++| C27 | The production AgentSession refinement application path persists a faux-planned memory, rebuilds its prompt, and emits completion. | RUNTIME-CONFIRMED | serialized-refine suite, 71 passed | Planner output is mocked; not a real model-driven proposal. Other kinds are confirmed at lower host-test level. |
++| C28 | The two autonomous cleanup failures consistently observe killed but unreaped Node zombies rather than executing descendants after the wait. | RUNTIME-CONFIRMED | four diagnostic logs with `/proc/<pid>/stat` | Container PID 1 behavior is environment-sensitive; no general host claim. |
++| C29 | Credential-free real-process daemon `/refine` did not complete in this pass. | UNKNOWN | daemon serialized-refine process log | Child stderr was captured but absent from assertion output; cause not inferred. |
+diff --git a/studies/trajectory-harness/evidence-bundle.md b/studies/trajectory-harness/evidence-bundle.md
+new file mode 100644
+index 0000000..d192cd7
+--- /dev/null
++++ b/studies/trajectory-harness/evidence-bundle.md
+@@ -0,0 +1,43 @@
++# Self-Contained Evidence Bundle
++
++This directory is the evidence artifact. It is local to this checkout and is **not preserved on GitHub**; no remote is configured.
++
++## Repository and study commits
++
++- Baseline before study files: `97b994c3d7c45ca1ae635190e91e9e58ddf2577c`.
++- Initial archaeology study: `0fc38f4fabafdf260256e545436dad347e9c0dcc` (`docs(study): add trajectory-driven harness baseline study and runtime logs`).
++- Baseline-closure study: `7401ea97b3e1ed56f80dda605e60e46323e40a55` (`docs(study): close baseline runtime gaps`).
++- The earlier conversation referenced study commit `6608e84`; that object is not present in the current Git object database (`git cat-file -t 6608e84` fails). The current history exposes `0fc38f4` with the initial study content and baseline parent. This discrepancy is preserved rather than reconciled by inference.
++
++The preservation metadata commit is the next descendant containing this file and `manifest.sha256`. Its identity is discoverable from a copied repository but is not required to apply the reconstruction patch.
++
++## Contents
++
++- baseline and Git provenance: `provenance.md`;
++- implementation conclusions: `implementation-map.md` and `baseline-closure.md`;
++- classified claim/evidence ledger: `claim-evidence-ledger.md`;
++- runtime results and raw outputs: `runtime-reproduction.md`, `runtime/`, and `runtime-closure/`;
++- exact commands/outcomes: `exact-commands.md`;
++- unresolved questions: `unresolved-questions.md`;
++- controlled experimental plan, not yet executed: `experiment-plan.md`;
++- reproducible credential-free probe: `live-kernel-probe.ts`;
++- integrity inventory: `manifest.sha256`;
++- reconstruction material: `reconstruction.patch`.
++
++## Reconstruction
++
++From a checkout at baseline `97b994c3d7c45ca1ae635190e91e9e58ddf2577c`:
++
++```bash
++git apply --index studies/trajectory-harness/reconstruction.patch
++```
++
++Because the patch is itself carried inside the evidence directory, a recipient outside Git should first copy `reconstruction.patch` to any temporary path, check out the baseline, and run `git apply --index /path/to/reconstruction.patch`. The patch recreates every substantive study file plus this bundle metadata and manifest; it intentionally does not recreate itself, avoiding self-referential patch content.
++
++Verify reconstructed files from the repository root:
++
++```bash
++sha256sum -c studies/trajectory-harness/manifest.sha256
++```
++
++`manifest.sha256` excludes itself and `reconstruction.patch`. The former cannot contain its own stable digest; the latter is the transport used to reconstruct the manifested content.
+diff --git a/studies/trajectory-harness/exact-commands.md b/studies/trajectory-harness/exact-commands.md
+new file mode 100644
+index 0000000..d4e30fd
+--- /dev/null
++++ b/studies/trajectory-harness/exact-commands.md
+@@ -0,0 +1,19 @@
++# Baseline-Closure Commands and Outcomes
++
++Commands were run on 2026-08-15 UTC. Raw output is under `runtime-closure/`.
++
++| Working directory | Command | Outcome |
++|---|---|---|
++| repository root | `git switch -c study/baseline-closure` | Created isolated closure branch from study commit `0fc38f4`. |
++| repository root | `PRIME_AGENT_INSTALL_UV=1 ./scripts/setup-kernel-venv.sh` | Failed: `uv python install 3.11` exited 1. |
++| repository root | `/root/.local/bin/uv python install 3.11` | Failed after three retries: network tunnel could not download the standalone CPython archive. |
++| `packages/coding-agent` | `PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3 npx tsx ../../node_modules/vitest/dist/cli.js --run test/kernel-state-roundtrip.test.ts` | Exit 0 with 1 file/6 tests skipped; interpreter lacks `dill`. |
++| `packages/coding-agent` | `PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3 npx tsx ../../node_modules/vitest/dist/cli.js --run test/ipython-bootstrap.test.ts` | Exit 0; 6 passed, including real-kernel cases. |
++| repository root | `PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3 npx tsx studies/trajectory-harness/live-kernel-probe.ts` | Exit 0; same-kernel variable persistence and fresh-kernel harness reload passed. |
++| `packages/coding-agent` | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-serialized-refine.test.ts` | Exit 0; 71 passed. |
++| `packages/coding-agent` | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/daemon-serialized-refine-process.test.ts` | Exit 1; expected CLI code 0, received 1. |
++| `packages/coding-agent` | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts` (temporary `/proc` diagnostics, repeated three times) | Each run: 20 passed, 2 failed; observed timeout descendant as zombie every run and abort gate as running immediately in two runs/zombie in one. |
++| `packages/coding-agent` | same autonomous command with temporary diagnostics after the two-second wait | 20 passed, 2 failed; both target PIDs were zombies parented to PID 1. |
++| `packages/coding-agent` | `cmp -s /tmp/agent-session-autonomous.test.ts.baseline2 test/suite/agent-session-autonomous.test.ts` | Passed; diagnostic mutation reverted byte-for-byte. |
++
++The bootstrap's first failure suppresses the nested `uv` stderr. The direct `uv` invocation was used only to expose the cause; it is the same repository-selected installer command, not an alternative environment.
+diff --git a/studies/trajectory-harness/experiment-plan.md b/studies/trajectory-harness/experiment-plan.md
+new file mode 100644
+index 0000000..02b695e
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-plan.md
+@@ -0,0 +1,91 @@
++# Small Controlled Experiments
++
++These experiments follow baseline characterization. They deliberately avoid building a general evaluation platform.
++
++## Shared minimal record
++
++For each run, preserve:
++
++- immutable run ID, baseline commit, branch, model/provider/API, task/variant ID, seed/temperature where supported;
++- assigned condition and whether the actor/reviewer saw prior trajectories;
++- transcript/session file and harness snapshots before/after each refinement;
++- assistant turns, input/output/cache tokens, wall time, child count/usage, compactions;
++- repeated error signatures, refinement count/kind/scope, evidence references, apply failures, rollbacks;
++- exact quality-gate commands, exit codes, bounded output hashes, and workspace commit/diff hash;
++- task success rubric, regressions, and held-out variant score;
++- missing data and environment failures separately from task failure.
++
++Use repository-native JSONL plus a small study-owned manifest. Do not mutate global user state: set a temporary agent home per run and archive it.
++
++## Experiment 1: mechanics and contamination check
++
++**Purpose:** establish that assigned conditions remain isolated before measuring quality.
++
++Use one deterministic faux-provider trajectory that contains a repeated correctable error. Run:
++
++- A: refinement disabled;
++- B: local refinement enabled;
++- C: global refinement requested in a temporary isolated agent home.
++
++Verify exact harness diffs, session records, rollback, prompt inclusion on the next turn, no leakage across agent homes, and no mutation of the baseline worktree. This tests instrumentation, not improvement.
++
++**Stop condition:** any cross-condition contamination, missing lineage, or non-reproducible state hash.
++
++## Experiment 2: enabled versus disabled paired tasks
++
++**Purpose:** test durable improvement with the least causal structure.
++
++Select 6–10 short tasks in two families, each with:
++
++1. a training variant designed to expose a reusable failure;
++2. an isomorphic held-out variant with renamed entities/data;
++3. an unrelated sentinel task that detects broad regressions.
++
++Randomly assign paired fresh sessions to:
++
++- A: refinement disabled;
++- B: local immediate self-refinement after the training trajectory.
++
++Evaluate held-out variants in fresh context while loading only the condition's intended harness state. Primary outcome: held-out task success. Secondary outcomes: repeated-error rate, gate attempts, tokens, turns, and regressions. Report paired differences and bootstrap intervals; do not treat harness-entry count or eloquence as success.
++
++**Durability criterion:** benefit must appear on held-out variants after a session restart/reload, not only in the refining turn.
++
++## Experiment 3: evidence requirement
++
++Only if Experiment 2 shows measurable signal, compare:
++
++- B1: unrestricted immediate refinement;
++- B2: proposal rejected unless every edit names at least one preserved trajectory entry/tool-result ID and a validation step.
++
++Initially enforce the requirement in the study runner/manifest rather than modifying production schema. Measure invalid/unsupported refinement rate, held-out score, regressions, and review cost.
++
++## Experiment 4: self versus independent review/promotion
++
++Only if unsupported or regressive edits remain material, compare:
++
++- C1: self-proposed, immediately applied;
++- C2: self-proposed candidate reviewed in fresh context by an independent model/run, then promoted or rejected;
++- C3: independently proposed from the same redacted trajectory.
++
++Candidates live only under the study directory until promotion; do not write production global harness state. Blind the evaluator to condition and entry prose. Measure promotion precision, improvement, regressions, latency, and tokens.
++
++## Experiment 5: rollback stress
++
++Inject a known harmful but plausible entry after establishing baseline scores. Test:
++
++1. detection on sentinel/held-out failures;
++2. direct rollback;
++3. behavior after restart;
++4. whether later derived refinements preserve the harm.
++
++Distinguish record restoration from behavioral recovery. A rollback is successful only if state hashes and task outcomes recover within declared tolerance.
++
++## Analysis rules
++
++- Predeclare task rubrics, primary outcomes, exclusions, and stopping rules before inspecting condition results.
++- Keep task generation separate from evaluation where practical.
++- Preserve failures and skipped runs; never replace them silently.
++- Compare identical model/provider versions and budgets within a pair.
++- Report effect sizes and uncertainty, not only pass counts.
++- Treat repeated variants from one task family as clustered, not independent samples.
++- Do not promote global refinements from these experiments without explicit human review.
+diff --git a/studies/trajectory-harness/implementation-map.md b/studies/trajectory-harness/implementation-map.md
+new file mode 100644
+index 0000000..2618c21
+--- /dev/null
++++ b/studies/trajectory-harness/implementation-map.md
+@@ -0,0 +1,73 @@
++# Implementation Map
++
++## Execution and ownership
++
++1. `AgentSession` is the central host-side coordinator for prompts, provider turns, tools, compaction, refinement, autonomous policy, and RLM children (`packages/coding-agent/src/core/agent-session.ts`).
++2. The default model-facing execution surface is the IPython tool (`packages/coding-agent/src/core/tools/ipython.ts`), backed by a lazily created `KernelManager` that uses Jupyter/ZeroMQ (`packages/coding-agent/src/core/kernel/index.ts`).
++3. Python's `rlm` callable is a shim over typed `host.request` comm messages; the TypeScript session handles `rlm.run`, list, and delete (`prime-agent-runtime/src/rlm/__init__.py:84-150`; `packages/coding-agent/src/core/agent-session.ts:8764-8768`). Provider execution does not occur in the Python shim.
++4. Daemon supervisor and resident worker code own attachment, routing, process continuity, and family-level child discovery (`packages/coding-agent/src/modes/daemon/daemon-supervisor.ts`; `packages/coding-agent/src/modes/daemon/daemon-mode.ts`; `packages/coding-agent/src/modes/daemon/rlm-ledger.ts`). These are process boundaries, not privilege boundaries.
++
++## Persistent IPython state
++
++- In-process state persists because calls share one kernel namespace.
++- `KernelManager.snapshotState()` and `restoreState()` serialize selected user names to a session artifact using generated dill code (`packages/coding-agent/src/core/kernel/index.ts:1481-1569`; `packages/coding-agent/src/core/kernel/state-snapshot.ts`).
++- Live/internal handles are excluded; unpicklable values are reported/skipped. Persistence is therefore selective, not a guarantee that arbitrary Python state survives restart.
++- Compaction changes transcript context, not the kernel object, so an extant kernel survives compaction. Cross-process revival depends on the snapshot path and serializability.
++
++## Continual Harness and `/refine`
++
++- Editable kinds are `prompt`, `memory`, `skill`, and `subagent`; actions are create/update/delete; scopes are local/global (`packages/coding-agent/src/core/refinement/refinement.ts:30-32`).
++- Global state is `<agentDir>/harness/harness_state.json`; local state is `<sessionArtifactDir>/harness/harness_state.json` (`refinement.ts:269-278`). Writes use a temporary file and rename, retaining mode (`refinement.ts:345-358`).
++- The base system prompt is source-defined. Harness prompt entries are appended as formatted supplemental context in the system-prompt builder (`packages/coding-agent/src/core/system-prompt.ts:6,106,141`). Thus “immutable” means `/refine` has no edit operation for the base prompt, not that deployed source/configuration can never change it.
++- Planning invokes a model over serialized trajectory, current merged harness overview, and refinement history. Application is a separate phase and uses a baseline state to reject target entries changed during planning (`refinement.ts:857-930`, `707-804`).
++- The refinement record stores rationale as `evidence`, a claimed expected outcome, and before/after entry snapshots. There is no required structured trajectory pointer, test result, counterfactual, confidence, reviewer identity, or promotion decision (`refinement.ts:50-101`, `787-799`).
++- Auto-refinement has a separate model review gate at turn intervals or compaction. The gate itself judges whether the trajectory contains reusable evidence (`refinement.ts:175-185`, `936-998`). This is model judgment, not an empirical quality gate.
++- Python `rlm.harness` exposes direct CRUD and refinement-event recording. It can mutate harness state without going through the `/refine` proposal/review path (`prime-agent-runtime/src/rlm/harness.py`).
++
++## Refinement semantics by kind
++
++| Kind | Stored behavior |
++|---|---|
++| Prompt | Supplemental text included in the harness overview; does not rewrite base prompt. |
++| Memory | Durable declarative text included in the same overview. |
++| Skill | Description plus required Python reference and argument contract. A harness entry describes/routes a callable; `/refine` does not synthesize or install executable Python implementation files. |
++| Subagent | Reusable textual delegation specification. It is not itself a running child or executable wrapper. |
++
++All kinds share the same generic record and prompt-injection path. Local and global entries are merged; ID collisions retain both by display-prefixing the local entry (`refinement.ts:326-342`).
++
++## Rollback
++
++Rollback constructs inverse edits from recorded `before` and `after` snapshots and applies them as a new refinement (`refinement.ts:804-836`, `878-888`). Global history is appended to a cross-session JSONL file; local history is stored as custom entries in the session transcript (`refinement.ts:369-418`; `packages/coding-agent/src/core/agent-session.ts`). This is logical entry rollback, not full session, file-system, installed-skill, model, or kernel rollback.
++
++## Sessions, branching, and compaction
++
++- A JSONL session header is followed by typed entries with `id` and `parentId`; the active leaf selects one root-to-leaf path (`packages/coding-agent/src/core/session-manager.ts:75-99,248-263,1183-1189`).
++- `branch()` moves the leaf pointer without deleting other descendants; a subsequent append creates another child. `createBranchedSession()` copies a selected path into a new session file (`session-manager.ts:1930-2134`).
++- Compaction appends a lossy summary entry while the full historical entries remain in the JSONL tree. Context reconstruction uses the latest compaction summary plus retained and later messages (`session-manager.ts:465-590,1542-1565`).
++- Branch summaries similarly preserve an abandoned path as summary context. Neither summary provides a cryptographic or semantic fidelity guarantee.
++
++## Persistent/background execution
++
++Normal interactive execution uses daemon-managed resident workers. Detaching a client need not end the worker, schedules, kernel, or child sessions (`packages/coding-agent/src/modes/daemon/daemon-supervisor.ts`; `daemon-mode.ts`). Recovery uses JSONL and session artifacts. Evidence in this pass is source/documentation only; an end-to-end detach/reattach reproduction was not completed.
++
++## Subagent lifecycle and communication
++
++- `rlm.run` admits a child and returns a handle, then child execution continues independently (`agent-session.ts:10035+`; `prime-agent-runtime/src/rlm/__init__.py:143-150`).
++- Depth is checked host-side; default/configuration is represented by `RLM_DEPTH` and `RLM_MAX_DEPTH` (`agent-session.ts:9699`, `session-manager.ts:768-774`).
++- The direct-child registry supports list/delete and survives through transcript/artifact-backed reconciliation (`agent-session.ts:9164-9481`; daemon ledger implementation).
++- Answers are not part of the admission return. Communication uses explicit daemon-routed agent messages or shared files. Deletion tombstones/removes addressability but intentionally does not imply artifact erasure.
++
++## Provider/model abstraction
++
++`packages/ai` separates model metadata (`provider`, `api`, model ID, token/cost capabilities) from API implementations. A registry maps an API identifier to `stream` and `streamSimple` functions and checks API compatibility (`packages/ai/src/types.ts:6-164`; `packages/ai/src/api-registry.ts:23-97`). Built-ins are lazily loaded and registered (`packages/ai/src/providers/register-builtins.ts:324-394`). Extensions can register providers, so known unions are not closed-world catalogs.
++
++## Autonomous mode and gates
++
++Autonomous mode is bounded by continuations, turns, non-cache tokens, and wall time. Configured shell gates run before completion; failure output is returned in a continuation. Repeated failed gates are not rerun against an unchanged Git snapshot (`packages/coding-agent/src/core/autonomous.ts:254-347`). Gate success establishes only command exit success. It does not validate semantic task completion outside the command's coverage.
++
++## Security and trust boundaries
++
++- Model-generated Python, shell commands, extensions, and installed skills execute with the worker user's OS permissions. Kernel/worker separation is lifecycle isolation, not a sandbox.
++- Provider credentials stay host-side and Python receives selected metadata/typed capabilities rather than the full auth store.
++- Host handlers validate request shapes and recursion policy, while project content and skill instructions can influence privileged model-generated code.
++- Harness entries are prompt content and therefore a durable prompt-injection surface. Global mutation expands blast radius across sessions. No independent approval is required for ordinary refinement application in the inspected path.
+diff --git a/studies/trajectory-harness/live-kernel-probe.ts b/studies/trajectory-harness/live-kernel-probe.ts
+new file mode 100644
+index 0000000..40ef20c
+--- /dev/null
++++ b/studies/trajectory-harness/live-kernel-probe.ts
+@@ -0,0 +1,67 @@
++import { mkdtempSync, readFileSync, rmSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join, resolve } from "node:path";
++import { KernelManager } from "../../packages/coding-agent/src/core/kernel/index.js";
++
++const python = process.env.PRIME_AGENT_KERNEL_PYTHON;
++if (!python) throw new Error("PRIME_AGENT_KERNEL_PYTHON is required");
++
++const root = mkdtempSync(join(tmpdir(), "prime-agent-study-kernel-"));
++const localDir = join(root, "local-harness");
++const globalDir = join(root, "global-harness");
++const runtimeSrc = resolve("prime-agent-runtime/src");
++const env = {
++	PYTHONPATH: runtimeSrc,
++	RLM_HARNESS_STATE_DIR: localDir,
++	RLM_GLOBAL_HARNESS_STATE_DIR: globalDir,
++};
++
++try {
++	const manager = new KernelManager({ python, cwd: root, env });
++	try {
++		const first = await manager.execute("study_value = 41");
++		const second = await manager.execute("print(study_value + 1)");
++		if (first.status !== "ok" || second.stdout.trim() !== "42") {
++			throw new Error(`separate execution persistence failed: ${JSON.stringify({ first, second })}`);
++		}
++		const harness = await manager.execute(`
++from rlm.harness import get_harness_state
++h = get_harness_state()
++h.create_prompt_note("Prompt", "Prompt content", id="prompt_probe")
++h.create_memory("Memory", "Memory content", id="memory_probe")
++h.create_skill("Skill", "Skill content", id="skill_probe", reference={"type":"python","import":"probe","callable":"run"}, arguments={})
++h.create_subagent("Subagent", "Subagent content", id="subagent_probe")
++h.record_refinement("live kernel probe", ["created four local kinds"], evidence="separate live-kernel execution", outcome="state file written")
++h.create_memory("Global", "Global content", id="global_probe", global_=True)
++print(len(h.list()), len(h.list(global_=True)))
++`);
++		if (harness.status !== "ok" || harness.stdout.trim() !== "4 1") {
++			throw new Error(`live harness access failed: ${JSON.stringify(harness)}`);
++		}
++	} finally {
++		await manager.dispose();
++	}
++
++	const reloaded = new KernelManager({ python, cwd: root, env });
++	try {
++		const reload = await reloaded.execute(`
++from rlm.harness import get_harness_state
++h = get_harness_state()
++print(sorted((entry.kind, entry.id) for entry in h.list()))
++print([(event.trigger, event.evidence, event.outcome) for event in h.refinements])
++print([(entry.kind, entry.id) for entry in h.list(global_=True)])
++`);
++		if (reload.status !== "ok") throw new Error(`fresh-kernel harness reload failed: ${JSON.stringify(reload)}`);
++		console.log(JSON.stringify({
++			python,
++			separateExecutionValue: 42,
++			freshKernelHarnessOutput: reload.stdout.trim().split("\n"),
++			localState: JSON.parse(readFileSync(join(localDir, "harness_state.json"), "utf8")),
++			globalState: JSON.parse(readFileSync(join(globalDir, "harness_state.json"), "utf8")),
++		}, null, 2));
++	} finally {
++		await reloaded.dispose();
++	}
++} finally {
++	rmSync(root, { recursive: true, force: true });
++}
+diff --git a/studies/trajectory-harness/manifest.sha256 b/studies/trajectory-harness/manifest.sha256
+new file mode 100644
+index 0000000..79b4719
+--- /dev/null
++++ b/studies/trajectory-harness/manifest.sha256
+@@ -0,0 +1,26 @@
++d4af4fbd7d8ded4d411717dcd42c57779f25632bd1f2f2c50b408d33e2a8b40b  studies/trajectory-harness/README.md
++56683435b5c8fef3a6c27b8878527cfd03e29b070755022269aa85683dedb354  studies/trajectory-harness/baseline-closure.md
++0eb7462791b6fbe9c3bf3946f98941574e3ba2696f7dbca9b42545dc911682fc  studies/trajectory-harness/claim-evidence-ledger.md
++76910f1cd3a8116796c1d5d3b3c480f6f8ce43023960d6dd44dd733cf692e5f4  studies/trajectory-harness/evidence-bundle.md
++11cb4b5dfd6408bc5d4f558eebd41111a04a27530ed72cce530fe264d0578a76  studies/trajectory-harness/exact-commands.md
++8caf3e2bd26cc57c053a6d9ac056883e2f1206504fad0515547ddb65ca48ab9b  studies/trajectory-harness/experiment-plan.md
++484dd81b2152e67db596950d17f8fc9c438f55d477b1eb128921a73d2037e9d6  studies/trajectory-harness/implementation-map.md
++b601f479889cd8d5ff8ac0b3b247f21960c2a884cb9a958615b344056ee8fb00  studies/trajectory-harness/live-kernel-probe.ts
++94adc976566d04e68cfd1509a236041a919025f3a4bd5f6327309a1213932d28  studies/trajectory-harness/provenance.md
++32dbdb6b5dda550b7f10aa52d4c8bb68bfbdeca24c3b9fa77b4715b0e3bb1e3d  studies/trajectory-harness/runtime-closure/autonomous-diagnostic-after-wait.txt
++184fd46486db3150601a493702e6c5a24001a96eb290b4cd142167e32a8d493d  studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-1.txt
++cc62d0689c6e7acaa06bbd279c307636182ad5f5da8a66b80b0873fbef8b9618  studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-2.txt
++3ae642dca96eec7fd8b147004262c267d0d836011ade8a7f2ec1377f27213fd3  studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-3.txt
++48557a3bd7c0053dd2fff81a6c223909748867e468cbae126a13a34a0bfde02e  studies/trajectory-harness/runtime-closure/ipython-bootstrap.txt
++826cd147eb648084bcd9e58727dfa12653b90ed914e722cb7b6eee7b312e6d1b  studies/trajectory-harness/runtime-closure/kernel-bootstrap.txt
++674947b4244ceafbce22f1603e699b8b5ed798f4b95e83d30cd1d6cb4f19a06c  studies/trajectory-harness/runtime-closure/kernel-state-roundtrip.txt
++b1f29fc6a66a7352c0b6ddf4ed9f2d899167496d40f35140de1199554ed33a04  studies/trajectory-harness/runtime-closure/live-kernel-probe.txt
++a0de5dff5e59998f7e48ad1d573a27f37d0550c0a88f7eff868bfa3d2b77f0b3  studies/trajectory-harness/runtime-closure/test-suite-agent-session-serialized-refine.test.ts.txt
++32c757296a45d5c0d12a4089e849fdb5c35828c0d9d88510d8c8e8e21591ea2e  studies/trajectory-harness/runtime-closure/test-suite-daemon-serialized-refine-process.test.ts.txt
++2fe2b6dc041d70395c0d65cab66cf7227dceb90208db479d04d99946e306e178  studies/trajectory-harness/runtime-closure/uv-python-install.txt
++e69a2aa93584df56dfe3a363c0ae13809dad19c33af363fb7bef339b9af1f728  studies/trajectory-harness/runtime-reproduction.md
++ba964c11118f216a0d8421465b580dcfb43f99aa029b6b17768eac885a680cbc  studies/trajectory-harness/runtime/test-kernel-state-roundtrip.test.ts.txt
++890e50b7f69362266a52e74a9b1b81af788bd2775f06660d07695128cc4047f7  studies/trajectory-harness/runtime/test-refinement.test.ts.txt
++6b72f99c296281a5228cd089c504a51d507971069e4888bd65d26908bbc3d1f0  studies/trajectory-harness/runtime/test-session-manager-tree-traversal.test.ts.txt
++8aada45a1bcb08319f6801af5cb8b694ca9c5a62e8f9a2725acc194b36a4b7ca  studies/trajectory-harness/runtime/test-suite-agent-session-autonomous.test.ts.txt
++7bbf49a5068bef0a4b214ee30463b6ce6f576be9e504321c2f989b753fc9abb3  studies/trajectory-harness/unresolved-questions.md
+diff --git a/studies/trajectory-harness/provenance.md b/studies/trajectory-harness/provenance.md
+new file mode 100644
+index 0000000..3a123e5
+--- /dev/null
++++ b/studies/trajectory-harness/provenance.md
+@@ -0,0 +1,32 @@
++# Baseline Provenance
++
++Recorded before experimentation on 2026-08-15 UTC.
++
++| Field | Recorded value |
++|---|---|
++| Repository path | `/workspace/prime-agent-playground` |
++| Initial branch | `work` |
++| Baseline HEAD | `97b994c3d7c45ca1ae635190e91e9e58ddf2577c` |
++| Commit subject | `feat(daemon): supervisor-owned rlm spawn ledger as family authority (#1387)` |
++| Author date | `2026-08-14 23:03:09 +0200` |
++| Commit date | `2026-08-14 14:03:09 -0700` |
++| Study branch | `study/trajectory-harness-baseline` |
++| Remotes | None configured (`git remote -v` produced no output) |
++| Upstream tracking | Unknown; `git branch -vv` exposed no tracking branch |
++| Default branch | Unknown; no remote metadata or symbolic remote HEAD exists |
++| Baseline provenance | Unknown beyond the local commit metadata; no upstream relationship is inferable |
++| Initial worktree | Clean (`git status --short --branch` printed only `## work`) |
++
++The substantive study artifacts were created only after switching from `work` to the named study branch. No upstream push was attempted.
++
++## Recording commands
++
++```text
++pwd
++git status --short --branch
++git remote -v
++git rev-parse HEAD
++git branch -vv
++git log -1 --format=fuller
++git switch -c study/trajectory-harness-baseline
++```
+diff --git a/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-after-wait.txt b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-after-wait.txt
+new file mode 100644
+index 0000000..ae35edc
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-after-wait.txt
+@@ -0,0 +1,65 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AUTONOMOUS_DIAG_AFTER_DESCENDANT 10443 false 10443 (node) Z 1 10435 10435 0 -1 4228108 2139 0 0 0 7 4 0 0 20 0 1 0 206499 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AUTONOMOUS_DIAG_AFTER_GATE 10456 false 10456 (node) Z 1 10455 10455 0 -1 4228108 2112 0 0 0 8 4 0 0 20 0 1 0 206729 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9969ms
++     × terminates the autonomous gate process tree when the timeout expires 2429ms
++     × terminates an autonomous gate without mutating retry state when the session is aborted 2242ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:460:29
++    458|    const descendantExited = await waitForProcessExit(descendantPid);
++    459|    console.error("AUTONOMOUS_DIAG_AFTER_DESCENDANT", descendantPid, de…
++    460|    expect(descendantExited).toBe(true);
++       |                             ^
++    461|   } finally {
++    462|    if (descendantPid && isProcessRunning(descendantPid)) {
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:492:23
++    490|    const gateExited = await waitForProcessExit(gatePid);
++    491|    console.error("AUTONOMOUS_DIAG_AFTER_GATE", gatePid, gateExited, re…
++    492|    expect(gateExited).toBe(true);
++       |                       ^
++    493|    expect(harness.session.getAutonomousStatus()).toMatchObject({
++    494|     continuationsUsed: 0,
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  2 failed | 20 passed (22)
++   Start at  08:20:18
++   Duration  18.52s (transform 5.99s, setup 0ms, import 8.16s, tests 9.97s, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-1.txt b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-1.txt
+new file mode 100644
+index 0000000..d751485
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-1.txt
+@@ -0,0 +1,66 @@
++run: 1
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AUTONOMOUS_DIAG_DESCENDANT 9247 9247 (node) Z 1 9239 9239 0 -1 4228108 2134 0 0 0 8 5 0 0 20 0 1 0 198288 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AUTONOMOUS_DIAG_GATE 9260 9260 (node) Z 1 9259 9259 0 -1 4228108 2111 0 0 0 8 2 0 0 20 0 2 0 198520 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 0 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9864ms
++     × terminates the autonomous gate process tree when the timeout expires 2428ms
++     × terminates an autonomous gate without mutating retry state when the session is aborted 2276ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:459:52
++    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
++    458|    console.error("AUTONOMOUS_DIAG_DESCENDANT", descendantPid, readFile…
++    459|    expect(await waitForProcessExit(descendantPid)).toBe(true);
++       |                                                    ^
++    460|   } finally {
++    461|    if (descendantPid && isProcessRunning(descendantPid)) {
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:490:46
++    488|
++    489|    console.error("AUTONOMOUS_DIAG_GATE", gatePid, readFileSync(`/proc/…
++    490|    expect(await waitForProcessExit(gatePid)).toBe(true);
++       |                                              ^
++    491|    expect(harness.session.getAutonomousStatus()).toMatchObject({
++    492|     continuationsUsed: 0,
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  2 failed | 20 passed (22)
++   Start at  08:18:56
++   Duration  18.35s (transform 5.90s, setup 0ms, import 8.13s, tests 9.86s, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-2.txt b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-2.txt
+new file mode 100644
+index 0000000..4ff8270
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-2.txt
+@@ -0,0 +1,66 @@
++run: 2
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AUTONOMOUS_DIAG_DESCENDANT 9512 9512 (node) Z 1 9504 9504 0 -1 4228108 2140 0 0 0 9 4 0 0 20 0 1 0 200457 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 0 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AUTONOMOUS_DIAG_GATE 9525 9525 (node) R 1 9524 9524 0 -1 4195340 2112 0 0 0 10 3 0 0 20 0 1 0 200691 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 0 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9912ms
++     × terminates the autonomous gate process tree when the timeout expires 2417ms
++     × terminates an autonomous gate without mutating retry state when the session is aborted 2290ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:459:52
++    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
++    458|    console.error("AUTONOMOUS_DIAG_DESCENDANT", descendantPid, readFile…
++    459|    expect(await waitForProcessExit(descendantPid)).toBe(true);
++       |                                                    ^
++    460|   } finally {
++    461|    if (descendantPid && isProcessRunning(descendantPid)) {
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:490:46
++    488|
++    489|    console.error("AUTONOMOUS_DIAG_GATE", gatePid, readFileSync(`/proc/…
++    490|    expect(await waitForProcessExit(gatePid)).toBe(true);
++       |                                              ^
++    491|    expect(harness.session.getAutonomousStatus()).toMatchObject({
++    492|     continuationsUsed: 0,
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  2 failed | 20 passed (22)
++   Start at  08:19:18
++   Duration  18.11s (transform 5.68s, setup 0ms, import 7.84s, tests 9.91s, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-3.txt b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-3.txt
+new file mode 100644
+index 0000000..0f9a190
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/autonomous-diagnostic-run-3.txt
+@@ -0,0 +1,66 @@
++run: 3
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AUTONOMOUS_DIAG_DESCENDANT 9774 9774 (node) Z 1 9766 9766 0 -1 4228108 2140 0 0 0 9 3 0 0 20 0 1 0 202614 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AUTONOMOUS_DIAG_GATE 9787 9787 (node) R 1 9786 9786 0 -1 4195340 2112 0 0 0 9 7 0 0 20 0 1 0 202844 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 0 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 9
++
++
++ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9851ms
++     × terminates the autonomous gate process tree when the timeout expires 2417ms
++     × terminates an autonomous gate without mutating retry state when the session is aborted 2287ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:459:52
++    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
++    458|    console.error("AUTONOMOUS_DIAG_DESCENDANT", descendantPid, readFile…
++    459|    expect(await waitForProcessExit(descendantPid)).toBe(true);
++       |                                                    ^
++    460|   } finally {
++    461|    if (descendantPid && isProcessRunning(descendantPid)) {
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:490:46
++    488|
++    489|    console.error("AUTONOMOUS_DIAG_GATE", gatePid, readFileSync(`/proc/…
++    490|    expect(await waitForProcessExit(gatePid)).toBe(true);
++       |                                              ^
++    491|    expect(harness.session.getAutonomousStatus()).toMatchObject({
++    492|     continuationsUsed: 0,
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  2 failed | 20 passed (22)
++   Start at  08:19:39
++   Duration  18.03s (transform 5.74s, setup 0ms, import 7.81s, tests 9.85s, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/ipython-bootstrap.txt b/studies/trajectory-harness/runtime-closure/ipython-bootstrap.txt
+new file mode 100644
+index 0000000..f486c26
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/ipython-bootstrap.txt
+@@ -0,0 +1,14 @@
++PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/ipython-bootstrap.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 passed (1)
++      Tests  6 passed (6)
++   Start at  08:16:06
++   Duration  9.82s (transform 1.49s, setup 0ms, import 3.49s, tests 5.93s, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime-closure/kernel-bootstrap.txt b/studies/trajectory-harness/runtime-closure/kernel-bootstrap.txt
+new file mode 100644
+index 0000000..36bb62d
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/kernel-bootstrap.txt
+@@ -0,0 +1,7 @@
++command: PRIME_AGENT_INSTALL_UV=1 ./scripts/setup-kernel-venv.sh
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++› setting up python kernel (one-time, ~30s)…
++Failed to set up the Python kernel runtime. /root/.local/bin/uv python install 3.11 failed with exit code 1
++First-time setup needs internet to install uv, Python, ipykernel, prime-agent-runtime, and default Python packages; once set up, prime-agent runs offline. Set PRIME_AGENT_KERNEL_PYTHON to a Python with ipykernel, a current prime-agent-runtime, and default Python packages installed to skip auto-bootstrap.
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/kernel-state-roundtrip.txt b/studies/trajectory-harness/runtime-closure/kernel-state-roundtrip.txt
+new file mode 100644
+index 0000000..8bb6b9f
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/kernel-state-roundtrip.txt
+@@ -0,0 +1,14 @@
++PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/kernel-state-roundtrip.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 skipped (1)
++      Tests  6 skipped (6)
++   Start at  08:15:59
++   Duration  3.71s (transform 1.47s, setup 0ms, import 3.34s, tests 0ms, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime-closure/live-kernel-probe.txt b/studies/trajectory-harness/runtime-closure/live-kernel-probe.txt
+new file mode 100644
+index 0000000..9c1d274
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/live-kernel-probe.txt
+@@ -0,0 +1,129 @@
++PRIME_AGENT_KERNEL_PYTHON=/root/.pyenv/shims/python3
++command: npx tsx studies/trajectory-harness/live-kernel-probe.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++{
++  "python": "/root/.pyenv/shims/python3",
++  "separateExecutionValue": 42,
++  "freshKernelHarnessOutput": [
++    "[('memory', 'memory_probe'), ('prompt', 'prompt_probe'), ('skill', 'skill_probe'), ('subagent', 'subagent_probe')]",
++    "[('live kernel probe', 'separate live-kernel execution', 'state file written')]",
++    "[('memory', 'global_probe')]"
++  ],
++  "localState": {
++    "schema": 1,
++    "entries": {
++      "prompt": {
++        "prompt_probe": {
++          "id": "prompt_probe",
++          "kind": "prompt",
++          "title": "Prompt",
++          "content": "Prompt content",
++          "path": "policy",
++          "scope": "local",
++          "reference": {},
++          "arguments": {},
++          "metadata": {},
++          "source": "agent",
++          "created_at": "2026-08-15T08:16:44.729333+00:00",
++          "updated_at": "2026-08-15T08:16:44.729355+00:00",
++          "version": 1
++        }
++      },
++      "memory": {
++        "memory_probe": {
++          "id": "memory_probe",
++          "kind": "memory",
++          "title": "Memory",
++          "content": "Memory content",
++          "path": "general",
++          "scope": "local",
++          "reference": {},
++          "arguments": {},
++          "metadata": {},
++          "source": "agent",
++          "created_at": "2026-08-15T08:16:44.729778+00:00",
++          "updated_at": "2026-08-15T08:16:44.729787+00:00",
++          "version": 1
++        }
++      },
++      "skill": {
++        "skill_probe": {
++          "id": "skill_probe",
++          "kind": "skill",
++          "title": "Skill",
++          "content": "Skill content",
++          "path": "general",
++          "scope": "local",
++          "reference": {
++            "type": "python",
++            "import": "probe",
++            "callable": "run"
++          },
++          "arguments": {},
++          "metadata": {},
++          "source": "agent",
++          "created_at": "2026-08-15T08:16:44.730296+00:00",
++          "updated_at": "2026-08-15T08:16:44.730305+00:00",
++          "version": 1
++        }
++      },
++      "subagent": {
++        "subagent_probe": {
++          "id": "subagent_probe",
++          "kind": "subagent",
++          "title": "Subagent",
++          "content": "Subagent content",
++          "path": "general",
++          "scope": "local",
++          "reference": {},
++          "arguments": {},
++          "metadata": {},
++          "source": "agent",
++          "created_at": "2026-08-15T08:16:44.730751+00:00",
++          "updated_at": "2026-08-15T08:16:44.730760+00:00",
++          "version": 1
++        }
++      }
++    },
++    "refinements": [
++      {
++        "id": "refine_0001",
++        "trigger": "live kernel probe",
++        "changes": [
++          "created four local kinds"
++        ],
++        "evidence": "separate live-kernel execution",
++        "outcome": "state file written",
++        "created_at": "2026-08-15T08:16:44.731206+00:00"
++      }
++    ]
++  },
++  "globalState": {
++    "schema": 1,
++    "entries": {
++      "prompt": {},
++      "memory": {
++        "global_probe": {
++          "id": "global_probe",
++          "kind": "memory",
++          "title": "Global",
++          "content": "Global content",
++          "path": "general",
++          "scope": "global",
++          "reference": {},
++          "arguments": {},
++          "metadata": {},
++          "source": "agent",
++          "created_at": "2026-08-15T08:16:44.731873+00:00",
++          "updated_at": "2026-08-15T08:16:44.731881+00:00",
++          "version": 1
++        }
++      },
++      "skill": {},
++      "subagent": {}
++    },
++    "refinements": []
++  }
++}
++exit: 0
+diff --git a/studies/trajectory-harness/runtime-closure/test-suite-agent-session-serialized-refine.test.ts.txt b/studies/trajectory-harness/runtime-closure/test-suite-agent-session-serialized-refine.test.ts.txt
+new file mode 100644
+index 0000000..8e9ada8
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/test-suite-agent-session-serialized-refine.test.ts.txt
+@@ -0,0 +1,13 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-serialized-refine.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 passed (1)
++      Tests  71 passed (71)
++   Start at  08:17:14
++   Duration  16.71s (transform 6.65s, setup 0ms, import 8.89s, tests 7.42s, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime-closure/test-suite-daemon-serialized-refine-process.test.ts.txt b/studies/trajectory-harness/runtime-closure/test-suite-daemon-serialized-refine-process.test.ts.txt
+new file mode 100644
+index 0000000..d12b146
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/test-suite-daemon-serialized-refine-process.test.ts.txt
+@@ -0,0 +1,41 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/daemon-serialized-refine-process.test.ts
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++ ❯ test/suite/daemon-serialized-refine-process.test.ts (1 test | 1 failed) 853ms
++     × daemon supervisor scrubs inherited worker env, checkpoint applies refine_complete before agent_end 850ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/daemon-serialized-refine-process.test.ts > Real-process serializedRefine — JSON mode > daemon supervisor scrubs inherited worker env, checkpoint applies refine_complete before agent_end
++AssertionError: expected { code: 1, signal: null, …(2) } to match object { code: +0, signal: null }
++(2 matching properties omitted from actual)
++
++- Expected
+++ Received
++
++  {
++-   "code": 0,
+++   "code": 1,
++    "signal": null,
++  }
++
++ ❯ test/suite/daemon-serialized-refine-process.test.ts:208:18
++    206|   // Clean exit — the production env scrub allowed the supervisor
++    207|   // to start correctly despite the inherited worker role env var.
++    208|   expect(result).toMatchObject({ code: 0, signal: null });
++       |                  ^
++    209|   expect(result.stderr).not.toContain("Timed out waiting for daemon");
++    210|
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  1 failed (1)
++   Start at  08:17:35
++   Duration  1.77s (transform 371ms, setup 0ms, import 474ms, tests 853ms, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-closure/uv-python-install.txt b/studies/trajectory-harness/runtime-closure/uv-python-install.txt
+new file mode 100644
+index 0000000..db99754
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-closure/uv-python-install.txt
+@@ -0,0 +1,8 @@
++command: /root/.local/bin/uv python install 3.11
++error: Failed to install cpython-3.11.13-linux-x86_64-gnu
++  Caused by: Failed to download https://github.com/astral-sh/python-build-standalone/releases/download/20250712/cpython-3.11.13%2B20250712-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz
++  Caused by: Request failed after 3 retries
++  Caused by: error sending request for url (https://github.com/astral-sh/python-build-standalone/releases/download/20250712/cpython-3.11.13%2B20250712-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz)
++  Caused by: client error (Connect)
++  Caused by: tunnel error: unsuccessful
++exit: 1
+diff --git a/studies/trajectory-harness/runtime-reproduction.md b/studies/trajectory-harness/runtime-reproduction.md
+new file mode 100644
+index 0000000..2a70fe4
+--- /dev/null
++++ b/studies/trajectory-harness/runtime-reproduction.md
+@@ -0,0 +1,32 @@
++# Baseline Runtime Reproduction
++
++Date: 2026-08-15 UTC. Working directory for commands: `/workspace/prime-agent-playground/packages/coding-agent`. No provider APIs, API keys, paid tokens, or interactive TUI were used.
++
++## Results
++
++| Mechanism | Exact command | Result | Interpretation |
++|---|---|---|---|
++| Harness CRUD, scope merge, evidence records, rollback, conflict checks | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/refinement.test.ts` | PASS: 1 file, 59 tests | Runtime-confirms the pure host-side refinement mechanics covered by this suite. |
++| Kernel snapshot/revival | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/kernel-state-roundtrip.test.ts` | SKIP: 1 file, 6 tests | No candidate from `PRIME_AGENT_KERNEL_PYTHON` or the managed kernel venv could import both `ipykernel` and `dill`. Persistent-kernel revival remains implementation-confirmed only. |
++| Autonomous continuation and gates | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts` | FAIL: 20 passed, 2 failed | Timeout and abort cases did not observe descendant process exit within the test bound. Preserve as negative evidence; do not recast as a pass. |
++| Session tree and branching | `npx tsx ../../node_modules/vitest/dist/cli.js --run test/session-manager/tree-traversal.test.ts` | PASS: 1 file, 31 tests | Runtime-confirms append parent chains, in-file branches, active-path context, and branched-session copying covered by the suite. |
++
++Every invocation also emitted npm warnings that `http-proxy` is an unknown environment config and `min-release-age` is unknown to the installed npm. These warnings did not fail the passing suites but indicate this environment's npm does not enforce the repository's stated minimum-release-age setting.
++
++Raw output is retained in `runtime/`. Exit codes are embedded at the end of each log.
++
++## Not reproduced and why
++
++- **Provider-backed RLM child execution:** would require configured credentials/model service. Source was inspected; no external calls were made.
++- **Live `/refine` proposal generation:** would require a model. The deterministic application/storage path was exercised with faux/mocked completion behavior.
++- **Daemon detach/reattach and restart recovery:** not run in this first baseline because it risks disturbing shared resident services and requires a controlled temporary agent home/process namespace.
++- **Compaction semantic fidelity:** existing mechanics were inspected, but correctness requires task-specific retention checks, not merely a unit-suite pass.
++- **Cross-session global harness influence:** storage/merge behavior was tested; model behavior under injected global entries was not.
++
++## Reproduction limitations
++
++The tests establish behavior of the checked-out code under their fixtures. They do not establish empirical task improvement, provider invariance, adversarial safety, recovery under real crashes, or semantic equivalence between summarized and full trajectories.
++
++## Baseline-closure update
++
++The repository-supported kernel bootstrap was attempted and blocked by the environment's network tunnel. A system interpreter with `ipykernel` enabled narrower real-kernel tests but did not satisfy the full supported environment because `dill` and default runtime packages were absent. Same-kernel namespace persistence and fresh-kernel harness-file reload are now runtime-confirmed; dill snapshot/restore remains unconfirmed. The AgentSession serialized-refinement suite passed 71 tests with faux planning and production apply/persist/prompt-rebuild behavior. See `baseline-closure.md` for bounded conclusions and `exact-commands.md` for commands.
+diff --git a/studies/trajectory-harness/runtime/test-kernel-state-roundtrip.test.ts.txt b/studies/trajectory-harness/runtime/test-kernel-state-roundtrip.test.ts.txt
+new file mode 100644
+index 0000000..8dfebfa
+--- /dev/null
++++ b/studies/trajectory-harness/runtime/test-kernel-state-roundtrip.test.ts.txt
+@@ -0,0 +1,14 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/kernel-state-roundtrip.test.ts
++cwd: /workspace/prime-agent-playground/packages/coding-agent
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 skipped (1)
++      Tests  6 skipped (6)
++   Start at  07:51:02
++   Duration  2.27s (transform 1.25s, setup 0ms, import 1.93s, tests 0ms, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime/test-refinement.test.ts.txt b/studies/trajectory-harness/runtime/test-refinement.test.ts.txt
+new file mode 100644
+index 0000000..28aa00b
+--- /dev/null
++++ b/studies/trajectory-harness/runtime/test-refinement.test.ts.txt
+@@ -0,0 +1,14 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/refinement.test.ts
++cwd: /workspace/prime-agent-playground/packages/coding-agent
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 passed (1)
++      Tests  59 passed (59)
++   Start at  07:50:56
++   Duration  2.52s (transform 1.41s, setup 0ms, import 2.06s, tests 107ms, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime/test-session-manager-tree-traversal.test.ts.txt b/studies/trajectory-harness/runtime/test-session-manager-tree-traversal.test.ts.txt
+new file mode 100644
+index 0000000..ec03297
+--- /dev/null
++++ b/studies/trajectory-harness/runtime/test-session-manager-tree-traversal.test.ts.txt
+@@ -0,0 +1,14 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/session-manager/tree-traversal.test.ts
++cwd: /workspace/prime-agent-playground/packages/coding-agent
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++
++ Test Files  1 passed (1)
++      Tests  31 passed (31)
++   Start at  07:51:30
++   Duration  8.49s (transform 5.76s, setup 0ms, import 7.89s, tests 216ms, environment 0ms)
++
++exit: 0
+diff --git a/studies/trajectory-harness/runtime/test-suite-agent-session-autonomous.test.ts.txt b/studies/trajectory-harness/runtime/test-suite-agent-session-autonomous.test.ts.txt
+new file mode 100644
+index 0000000..b2c8f7c
+--- /dev/null
++++ b/studies/trajectory-harness/runtime/test-suite-agent-session-autonomous.test.ts.txt
+@@ -0,0 +1,58 @@
++command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
++cwd: /workspace/prime-agent-playground/packages/coding-agent
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++
++ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
++
++ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9706ms
++     × terminates the autonomous gate process tree when the timeout expires 2441ms
++     × terminates an autonomous gate without mutating retry state when the session is aborted 2269ms
++
++⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:458:52
++    456|    expect(Date.now() - startedAt).toBeLessThan(3000);
++    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
++    458|    expect(await waitForProcessExit(descendantPid)).toBe(true);
++       |                                                    ^
++    459|   } finally {
++    460|    if (descendantPid && isProcessRunning(descendantPid)) {
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
++
++ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
++AssertionError: expected false to be true // Object.is equality
++
++- Expected
+++ Received
++
++- true
+++ false
++
++ ❯ test/suite/agent-session-autonomous.test.ts:488:46
++    486|    await prompt;
++    487|
++    488|    expect(await waitForProcessExit(gatePid)).toBe(true);
++       |                                              ^
++    489|    expect(harness.session.getAutonomousStatus()).toMatchObject({
++    490|     continuationsUsed: 0,
++
++⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
++
++
++ Test Files  1 failed (1)
++      Tests  2 failed | 20 passed (22)
++   Start at  07:51:08
++   Duration  18.50s (transform 6.06s, setup 0ms, import 8.36s, tests 9.71s, environment 0ms)
++
++exit: 1
+diff --git a/studies/trajectory-harness/unresolved-questions.md b/studies/trajectory-harness/unresolved-questions.md
+new file mode 100644
+index 0000000..d74f873
+--- /dev/null
++++ b/studies/trajectory-harness/unresolved-questions.md
+@@ -0,0 +1,18 @@
++# Unresolved Questions
++
++1. **Kernel restoration:** Which real-world namespace objects survive worker restart, and how often do silently skipped names matter to task completion?
++2. **Daemon continuity:** Does detach, supervisor restart, worker restart, and reattach preserve queued prompts, kernel state, harness state, schedules, and retained children together under controlled failure injection?
++3. **Refinement causality:** Does a refinement improve later performance relative to the identical trajectory with refinement disabled, or merely correlate with a trajectory that was already improving?
++4. **Evidence integrity:** Can a reviewer trace each refinement to exact transcript entries, tool results, failures, and validation outcomes? Current records do not require these links.
++5. **Promotion:** What prevents a persuasive but wrong local lesson from being promoted globally? The inspected flow has immediate scoped application rather than candidate/review/promotion.
++6. **Independent review:** Does using a separate model or fresh-context reviewer reduce self-confirming refinements enough to justify added cost?
++7. **Generalization:** Do gains persist on held-out task variants, new sessions, different repositories, and different model/provider combinations?
++8. **Accumulation:** How do prompt length, conflicts, stale facts, and instruction priority behave as harness entries accumulate? The overview truncates entries/content, which may make stored state present but behaviorally inactive.
++9. **Rollback efficacy:** Can rollback restore behavior after downstream entries were derived from a bad refinement, or only restore the immediate record?
++10. **Skill semantics:** Harness skill entries reference already installed callables. What process turns a learned procedure into reviewed executable code, and how is that code versioned with its evidence?
++11. **Subagent reuse:** Are textual subagent specifications invoked consistently, and does retained child context outperform clean independent children?
++12. **Compaction interaction:** Does refining before versus after compaction change which evidence is retained and the quality of edits?
++13. **Autonomous process cleanup:** Are the two observed process-exit failures container-specific timing artifacts or a reproducible process-tree termination defect?
++14. **Trust:** Which principals can write local/global harness files, session JSONL, skills, and extensions, and are permissions/symlink boundaries consistently enforced?
++15. **Telemetry suitability:** Existing aggregate telemetry mentions tokens, turns, retries, and compactions, but does it preserve experiment assignment, refinement lineage, rollback, and held-out outcomes without leaking sensitive trajectory content?
++16. **Upstream provenance:** No remote or tracking metadata exists in this checkout. Which upstream commit/branch, if any, corresponds to the baseline?

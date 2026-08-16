@@ -1,0 +1,14 @@
+command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/session-manager/tree-traversal.test.ts
+cwd: /workspace/prime-agent-playground/packages/coding-agent
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+
+ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
+
+
+ Test Files  1 passed (1)
+      Tests  31 passed (31)
+   Start at  07:51:30
+   Duration  8.49s (transform 5.76s, setup 0ms, import 7.89s, tests 216ms, environment 0ms)
+
+exit: 0

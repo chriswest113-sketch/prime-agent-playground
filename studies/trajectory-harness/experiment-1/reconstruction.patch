@@ -1,0 +1,611 @@
+diff --git a/studies/trajectory-harness/claim-evidence-ledger.md b/studies/trajectory-harness/claim-evidence-ledger.md
+index 93f657f..4316708 100644
+--- a/studies/trajectory-harness/claim-evidence-ledger.md
++++ b/studies/trajectory-harness/claim-evidence-ledger.md
+@@ -38,3 +38,12 @@ Source anchors use repository-relative paths and baseline line numbers. “Negat
+ | C27 | The production AgentSession refinement application path persists a faux-planned memory, rebuilds its prompt, and emits completion. | RUNTIME-CONFIRMED | serialized-refine suite, 71 passed | Planner output is mocked; not a real model-driven proposal. Other kinds are confirmed at lower host-test level. |
+ | C28 | The two autonomous cleanup failures consistently observe killed but unreaped Node zombies rather than executing descendants after the wait. | RUNTIME-CONFIRMED | four diagnostic logs with `/proc/<pid>/stat` | Container PID 1 behavior is environment-sensitive; no general host claim. |
+ | C29 | Credential-free real-process daemon `/refine` did not complete in this pass. | UNKNOWN | daemon serialized-refine process log | Child stderr was captured but absent from assertion output; cause not inferred. |
++
++## Experiment 1 additions
++
++| ID | Material claim | Classification | Evidence | Bounds / negative evidence |
++|---|---|---|---|---|
++| C30 | Disabled, local, and explicitly global faux-refinement conditions remained isolated across distinct agent homes in the mechanics fixture. | RUNTIME-CONFIRMED | `experiment-1/run.ts`; `experiment-1/artifacts/`; `experiment-1/run-output.txt` | One deterministic fixture; not provider/model generalization. |
++| C31 | Applied local/global prompt state was included by the next system-prompt rebuild and rollback restored empty selected-scope entries. | RUNTIME-CONFIRMED | Experiment 1 assertions, transcripts, and final harness files | Prompt visibility was checked before rollback; behavioral compliance was not evaluated. |
++| C32 | Repeated executions produced identical semantic transcript/harness hashes after declared volatile fields were removed. | RUNTIME-CONFIRMED | Runner's primary/replication hash assertion | Raw files differ in timestamps, generated IDs, paths, and session headers by design. |
++| C33 | Experiment 1 provides no evidence that trajectory-driven refinement improves task performance. | RUNTIME-CONFIRMED negative boundary | No quality task or held-out outcome was run | Experiment 2 has not begun. |
+diff --git a/studies/trajectory-harness/experiment-1/README.md b/studies/trajectory-harness/experiment-1/README.md
+new file mode 100644
+index 0000000..49494c8
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/README.md
+@@ -0,0 +1,54 @@
++# Experiment 1: Mechanics and Contamination Check
++
++Status: **PASS**. This is an instrumentation/mechanics check, not an evaluation of self-improvement.
++
++## Question
++
++Can refinement-disabled, session-local refinement, and explicitly global refinement be executed with deterministic faux-provider trajectories while preserving scope isolation, session lineage, prompt visibility, rollback, reproducible semantic state, and product-worktree isolation?
++
++## Conditions
++
++All conditions received the same two-turn deterministic trajectory: the faux assistant selected the repository-forbidden `npm test` command twice and reported the same policy failure.
++
++- **A-disabled:** no refinement call.
++- **B-local:** faux-generated prompt-note proposal applied to the session-local harness.
++- **C-global:** the same proposal explicitly applied to a dedicated global harness under an isolated agent home.
++
++B and C then rolled back their applied refinement. Every condition used a distinct temporary agent home and persisted session. The production `AgentSession.refine()`, model-facing JSON proposal parser, proposal application, prompt rebuild, session custom-entry recording, save/load, and rollback paths were exercised. The provider was faux; no credentials, external inference, or spend were used.
++
++## Predeclared checks
++
++1. A writes no local or global harness state and its system prompt does not contain the study entry.
++2. B writes only local state; C writes only global state.
++3. B and C include the entry in the rebuilt system prompt.
++4. Every refinement result has a matching `prime-agent.refinement` session entry.
++5. Rollback removes the created entry in the selected scope.
++6. Agent homes are distinct and no product path outside `studies/trajectory-harness/experiment-1` changes during execution.
++7. A second complete run produces identical semantic hashes after removing timestamps, generated IDs, absolute artifact paths, and session-header metadata.
++
++## Result
++
++All checks passed. The runner executed each condition twice and rejected any semantic-hash mismatch. The archived primary run contains:
++
++| Condition | Prompt included before rollback | Refinement records | Rollback | Final harness location | Semantic session hash |
++|---|---:|---:|---:|---|---|
++| A-disabled | No | 0 | Not applicable | None created | `0bf05e5484eaaa1b441bad5a87614bf992e9f22a35cf0cc61e5930978ae21ac9` |
++| B-local | Yes | 2 (apply + rollback) | Passed | Local state, empty after rollback | `7fae2e36f2f0414fe4d6357cc8859107edcab13507d39117622ad3bc8a42e478` |
++| C-global | Yes | 2 (apply + rollback) | Passed | Global state, empty after rollback | `087be955b95b6aab48caa71975b51be0686960b12bb3a4486235141f59bc6a1e` |
++
++The final local/global harness semantic hash for both rolled-back conditions was `8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc`, representing the same empty entry structure after volatile metadata removal.
++
++## Evidence
++
++- `run.ts`: executable assertions and semantic projection.
++- `run-output.txt`: exact successful console result.
++- `artifacts/result.json`: portable run manifest.
++- `artifacts/experiment-1-*/session-runtime/sessions/*.jsonl`: primary session transcripts.
++- B local harness and C global harness files: final post-rollback state.
++- C `refinements.jsonl`: global apply and rollback history.
++
++## Interpretation boundaries
++
++**RUNTIME-CONFIRMED:** credential-free refinement mechanics can maintain the intended local/global isolation, make supplemental prompt state visible on the next prompt build, record lineage, roll back, and reproduce semantic final state in this fixture.
++
++**NOT ESTABLISHED:** task improvement, generalization, evidence quality, model judgment, independent review value, production-daemon behavior, or behavior under accumulating harness state. The prompt entry was deliberately supplied by a deterministic faux response. Experiment 2 has not begun.
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl
+new file mode 100644
+index 0000000..7a1897d
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl
+@@ -0,0 +1,5 @@
++{"type":"session","version":3,"id":"01a00785-476d-779d-b223-e6e915c77df4","timestamp":"2026-08-15T22:22:50.222Z","cwd":"/tmp/pi-suite-1786832570216-cbh5oz1vxpj","rlmDepth":0}
++{"type":"message","id":"904daadf","parentId":null,"timestamp":"2026-08-15T22:22:50.362Z","message":{"role":"user","content":[{"type":"text","text":"Validate the repository using npm test."}],"timestamp":1786832570299}}
++{"type":"message","id":"1a580b63","parentId":"904daadf","timestamp":"2026-08-15T22:22:50.368Z","message":{"role":"assistant","content":[{"type":"text","text":"I used the guessed command `npm test`; it failed because this repository forbids that command."}],"api":"faux:1786832570217:ia498j6rpzm","provider":"faux","model":"faux-1","usage":{"input":2436,"output":24,"cacheRead":0,"cacheWrite":0,"totalTokens":2460,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832570289}}
++{"type":"message","id":"697c6f88","parentId":"1a580b63","timestamp":"2026-08-15T22:22:50.478Z","message":{"role":"user","content":[{"type":"text","text":"Retry the same validation approach."}],"timestamp":1786832570427}}
++{"type":"message","id":"2f6026be","parentId":"697c6f88","timestamp":"2026-08-15T22:22:50.482Z","message":{"role":"assistant","content":[{"type":"text","text":"I repeated `npm test`; the same policy failure occurred again."}],"api":"faux:1786832570217:ia498j6rpzm","provider":"faux","model":"faux-1","usage":{"input":2473,"output":16,"cacheRead":0,"cacheWrite":0,"totalTokens":2489,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832570289}}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json
+new file mode 100644
+index 0000000..d9aa74e
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json
+@@ -0,0 +1,31 @@
++{
++  "schema": 1,
++  "entries": {
++    "prompt": {},
++    "memory": {},
++    "skill": {},
++    "subagent": {}
++  },
++  "refinements": [
++    {
++      "id": "refine_20260815222251179",
++      "trigger": "Record the repeated validation-policy failure in local scope",
++      "changes": [
++        "create prompt:experiment_1_validation_policy"
++      ],
++      "evidence": "Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.",
++      "outcome": "The next turn sees a supplemental prompt note directing it to repository-approved checks.",
++      "created_at": "2026-08-15T22:22:51.184Z"
++    },
++    {
++      "id": "refine_20260815222251186",
++      "trigger": "Rollback refinement refine_20260815222251179",
++      "changes": [
++        "delete prompt:experiment_1_validation_policy"
++      ],
++      "evidence": "Restores continual harness state snapshots from refinement refine_20260815222251179.",
++      "outcome": "Faulty refinement edits are reverted.",
++      "created_at": "2026-08-15T22:22:51.187Z"
++    }
++  ]
++}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl
+new file mode 100644
+index 0000000..08b9424
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl
+@@ -0,0 +1,7 @@
++{"type":"session","version":3,"id":"01a00785-49ed-779f-8392-6d37d38400ac","timestamp":"2026-08-15T22:22:50.861Z","cwd":"/tmp/pi-suite-1786832570860-z1v15a4f12k","rlmDepth":0}
++{"type":"message","id":"5e9e54cf","parentId":null,"timestamp":"2026-08-15T22:22:50.972Z","message":{"role":"user","content":[{"type":"text","text":"Validate the repository using npm test."}],"timestamp":1786832570917}}
++{"type":"message","id":"9c647457","parentId":"5e9e54cf","timestamp":"2026-08-15T22:22:50.975Z","message":{"role":"assistant","content":[{"type":"text","text":"I used the guessed command `npm test`; it failed because this repository forbids that command."}],"api":"faux:1786832570860:4d0pn06lri1","provider":"faux","model":"faux-1","usage":{"input":2436,"output":24,"cacheRead":0,"cacheWrite":0,"totalTokens":2460,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832570916}}
++{"type":"message","id":"f434ad48","parentId":"9c647457","timestamp":"2026-08-15T22:22:51.118Z","message":{"role":"user","content":[{"type":"text","text":"Retry the same validation approach."}],"timestamp":1786832571029}}
++{"type":"message","id":"39513749","parentId":"f434ad48","timestamp":"2026-08-15T22:22:51.119Z","message":{"role":"assistant","content":[{"type":"text","text":"I repeated `npm test`; the same policy failure occurred again."}],"api":"faux:1786832570860:4d0pn06lri1","provider":"faux","model":"faux-1","usage":{"input":2473,"output":16,"cacheRead":0,"cacheWrite":0,"totalTokens":2489,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832570916}}
++{"type":"custom","customType":"prime-agent.refinement","data":{"id":"refine_20260815222251179","summary":"Record the repeated validation-policy failure in local scope","rationale":"Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.","expectedOutcome":"The next turn sees a supplemental prompt note directing it to repository-approved checks.","appliedEdits":[{"action":"create","kind":"prompt","id":"experiment_1_validation_policy","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","metadata":{"scope":"local","trajectoryEvidence":["turn-1","turn-2"]},"reason":"The same incorrect command was selected twice.","after":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"local","reference":{},"arguments":{},"metadata":{"scope":"local","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.183Z","updated_at":"2026-08-15T22:22:51.183Z","version":1},"applied":true}],"harnessStatePath":"/tmp/pi-suite-1786832570860-z1v15a4f12k/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json","scope":"local"},"id":"c45e5d24","parentId":"39513749","timestamp":"2026-08-15T22:22:51.184Z"}
++{"type":"custom","customType":"prime-agent.refinement","data":{"id":"refine_20260815222251186","summary":"Rollback refinement refine_20260815222251179","rationale":"Restores continual harness state snapshots from refinement refine_20260815222251179.","expectedOutcome":"Faulty refinement edits are reverted.","appliedEdits":[{"action":"delete","kind":"prompt","id":"experiment_1_validation_policy","reason":"Rollback refine_20260815222251179","before":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"local","reference":{},"arguments":{},"metadata":{"scope":"local","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.183Z","updated_at":"2026-08-15T22:22:51.183Z","version":1},"applied":true}],"harnessStatePath":"/tmp/pi-suite-1786832570860-z1v15a4f12k/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json","rollbackOf":"refine_20260815222251179","scope":"local"},"id":"3d90d4f7","parentId":"c45e5d24","timestamp":"2026-08-15T22:22:51.187Z"}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/harness_state.json b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/harness_state.json
+new file mode 100644
+index 0000000..8acafe1
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/harness_state.json
+@@ -0,0 +1,31 @@
++{
++  "schema": 1,
++  "entries": {
++    "prompt": {},
++    "memory": {},
++    "skill": {},
++    "subagent": {}
++  },
++  "refinements": [
++    {
++      "id": "refine_20260815222251806",
++      "trigger": "Record the repeated validation-policy failure in global scope",
++      "changes": [
++        "create prompt:experiment_1_validation_policy"
++      ],
++      "evidence": "Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.",
++      "outcome": "The next turn sees a supplemental prompt note directing it to repository-approved checks.",
++      "created_at": "2026-08-15T22:22:51.808Z"
++    },
++    {
++      "id": "refine_20260815222251810",
++      "trigger": "Rollback refinement refine_20260815222251806",
++      "changes": [
++        "delete prompt:experiment_1_validation_policy"
++      ],
++      "evidence": "Restores continual harness state snapshots from refinement refine_20260815222251806.",
++      "outcome": "Faulty refinement edits are reverted.",
++      "created_at": "2026-08-15T22:22:51.811Z"
++    }
++  ]
++}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/refinements.jsonl b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/refinements.jsonl
+new file mode 100644
+index 0000000..b590b02
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/refinements.jsonl
+@@ -0,0 +1,2 @@
++{"id":"refine_20260815222251806","summary":"Record the repeated validation-policy failure in global scope","rationale":"Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.","expectedOutcome":"The next turn sees a supplemental prompt note directing it to repository-approved checks.","appliedEdits":[{"action":"create","kind":"prompt","id":"experiment_1_validation_policy","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"reason":"The same incorrect command was selected twice.","after":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"global","reference":{},"arguments":{},"metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.807Z","updated_at":"2026-08-15T22:22:51.808Z","version":1},"applied":true}],"harnessStatePath":"/tmp/prime-agent-experiment-1-dOE0gy/primary/experiment-1-C-global/agent-home/harness/harness_state.json","scope":"global"}
++{"id":"refine_20260815222251810","summary":"Rollback refinement refine_20260815222251806","rationale":"Restores continual harness state snapshots from refinement refine_20260815222251806.","expectedOutcome":"Faulty refinement edits are reverted.","appliedEdits":[{"action":"delete","kind":"prompt","id":"experiment_1_validation_policy","reason":"Rollback refine_20260815222251806","before":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"global","reference":{},"arguments":{},"metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.807Z","updated_at":"2026-08-15T22:22:51.808Z","version":1},"applied":true}],"harnessStatePath":"/tmp/prime-agent-experiment-1-dOE0gy/primary/experiment-1-C-global/agent-home/harness/harness_state.json","rollbackOf":"refine_20260815222251806","scope":"global"}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl
+new file mode 100644
+index 0000000..48d9bb3
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl
+@@ -0,0 +1,7 @@
++{"type":"session","version":3,"id":"01a00785-4c94-77f1-ab87-591179c19ee7","timestamp":"2026-08-15T22:22:51.540Z","cwd":"/tmp/pi-suite-1786832571539-b21s1pogukc","rlmDepth":0}
++{"type":"message","id":"b247b05a","parentId":null,"timestamp":"2026-08-15T22:22:51.654Z","message":{"role":"user","content":[{"type":"text","text":"Validate the repository using npm test."}],"timestamp":1786832571600}}
++{"type":"message","id":"7188a162","parentId":"b247b05a","timestamp":"2026-08-15T22:22:51.656Z","message":{"role":"assistant","content":[{"type":"text","text":"I used the guessed command `npm test`; it failed because this repository forbids that command."}],"api":"faux:1786832571539:vyuszl898dr","provider":"faux","model":"faux-1","usage":{"input":2436,"output":24,"cacheRead":0,"cacheWrite":0,"totalTokens":2460,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832571599}}
++{"type":"message","id":"661a46f2","parentId":"7188a162","timestamp":"2026-08-15T22:22:51.758Z","message":{"role":"user","content":[{"type":"text","text":"Retry the same validation approach."}],"timestamp":1786832571709}}
++{"type":"message","id":"e0bff44b","parentId":"661a46f2","timestamp":"2026-08-15T22:22:51.759Z","message":{"role":"assistant","content":[{"type":"text","text":"I repeated `npm test`; the same policy failure occurred again."}],"api":"faux:1786832571539:vyuszl898dr","provider":"faux","model":"faux-1","usage":{"input":2473,"output":16,"cacheRead":0,"cacheWrite":0,"totalTokens":2489,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786832571599}}
++{"type":"custom","customType":"prime-agent.refinement","data":{"id":"refine_20260815222251806","summary":"Record the repeated validation-policy failure in global scope","rationale":"Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.","expectedOutcome":"The next turn sees a supplemental prompt note directing it to repository-approved checks.","appliedEdits":[{"action":"create","kind":"prompt","id":"experiment_1_validation_policy","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"reason":"The same incorrect command was selected twice.","after":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"global","reference":{},"arguments":{},"metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.807Z","updated_at":"2026-08-15T22:22:51.808Z","version":1},"applied":true}],"harnessStatePath":"/tmp/prime-agent-experiment-1-dOE0gy/primary/experiment-1-C-global/agent-home/harness/harness_state.json","scope":"global"},"id":"b6fc1274","parentId":"e0bff44b","timestamp":"2026-08-15T22:22:51.809Z"}
++{"type":"custom","customType":"prime-agent.refinement","data":{"id":"refine_20260815222251810","summary":"Rollback refinement refine_20260815222251806","rationale":"Restores continual harness state snapshots from refinement refine_20260815222251806.","expectedOutcome":"Faulty refinement edits are reverted.","appliedEdits":[{"action":"delete","kind":"prompt","id":"experiment_1_validation_policy","reason":"Rollback refine_20260815222251806","before":{"id":"experiment_1_validation_policy","kind":"prompt","title":"Experiment 1 validation policy","content":"For the experiment fixture, do not run npm test; use only the repository-approved targeted check.","path":"study/experiment-1","scope":"global","reference":{},"arguments":{},"metadata":{"scope":"global","trajectoryEvidence":["turn-1","turn-2"]},"source":"refine","created_at":"2026-08-15T22:22:51.807Z","updated_at":"2026-08-15T22:22:51.808Z","version":1},"applied":true}],"harnessStatePath":"/tmp/prime-agent-experiment-1-dOE0gy/primary/experiment-1-C-global/agent-home/harness/harness_state.json","rollbackOf":"refine_20260815222251806","scope":"global"},"id":"c7730a3b","parentId":"b6fc1274","timestamp":"2026-08-15T22:22:51.811Z"}
+diff --git a/studies/trajectory-harness/experiment-1/artifacts/result.json b/studies/trajectory-harness/experiment-1/artifacts/result.json
+new file mode 100644
+index 0000000..cea44e8
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/artifacts/result.json
+@@ -0,0 +1,56 @@
++{
++  "experiment": 1,
++  "baseline": "7b69442ed56d3d72e30ab81fc71d2e79a30807de",
++  "records": [
++    {
++      "runId": "experiment-1-A-disabled",
++      "condition": "A-disabled",
++      "agentDir": "<experiment-root>/experiment-1-A-disabled/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-A-disabled/session-runtime/session-artifacts/01a00785-476d-779d-b223-e6e915c77df4/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-A-disabled/agent-home/harness/harness_state.json",
++      "refinementIds": [],
++      "promptIncluded": false,
++      "rollbackApplied": false,
++      "stateHashes": {
++        "session": "0bf05e5484eaaa1b441bad5a87614bf992e9f22a35cf0cc61e5930978ae21ac9"
++      }
++    },
++    {
++      "runId": "experiment-1-B-local",
++      "condition": "B-local",
++      "agentDir": "<experiment-root>/experiment-1-B-local/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-B-local/agent-home/harness/harness_state.json",
++      "refinementIds": [
++        "refine_20260815222251179",
++        "refine_20260815222251186"
++      ],
++      "promptIncluded": true,
++      "rollbackApplied": true,
++      "stateHashes": {
++        "session": "7fae2e36f2f0414fe4d6357cc8859107edcab13507d39117622ad3bc8a42e478",
++        "localHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
++      }
++    },
++    {
++      "runId": "experiment-1-C-global",
++      "condition": "C-global",
++      "agentDir": "<experiment-root>/experiment-1-C-global/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-C-global/session-runtime/session-artifacts/01a00785-4c94-77f1-ab87-591179c19ee7/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-C-global/agent-home/harness/harness_state.json",
++      "refinementIds": [
++        "refine_20260815222251806",
++        "refine_20260815222251810"
++      ],
++      "promptIncluded": true,
++      "rollbackApplied": true,
++      "stateHashes": {
++        "session": "087be955b95b6aab48caa71975b51be0686960b12bb3a4486235141f59bc6a1e",
++        "globalHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
++      }
++    }
++  ]
++}
+diff --git a/studies/trajectory-harness/experiment-1/manifest.sha256 b/studies/trajectory-harness/experiment-1/manifest.sha256
+new file mode 100644
+index 0000000..1346895
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/manifest.sha256
+@@ -0,0 +1,10 @@
++93daeebec968087721b1c719d3015329649b1aeac62abe0fcf4c92d85a129fd5  studies/trajectory-harness/experiment-1/README.md
++849ada80ef2454b462777b04f29e9e1b595aa07623503a87bfdc54e9b22b48f8  studies/trajectory-harness/experiment-1/artifacts/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl
++8e55e5a36c2aee122280e87c426780a19befa2fc6092dc71a6ce2660932dccdd  studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json
++9c5f52cbafdcc14c89e1780e31f5c31ea9b73e40cc528013c8aaa712b78d3abd  studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl
++e8502bba193a4dcf037b1d8149b021bcee7aa92a95326190d7270f93573b20a6  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/harness_state.json
++3c466cefdf179ed80a4e42856f398f61e5e0be81ec348a9e71ac59c44630e1fb  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/refinements.jsonl
++e05e8e535a2b93332abed2119ba502bc7c3d5a254343b3e653e910387453e6d8  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl
++8e89c4bee5248e254109a716d128ecd002e6b8718f42d4da53ee01c615853a9f  studies/trajectory-harness/experiment-1/artifacts/result.json
++b656264726da45c6670f81f166049f06ec5dd28a587df139d3b48a7eb7991abe  studies/trajectory-harness/experiment-1/run-output.txt
++798fb13984edfee68892d4726e885cf070fbf0331d2fc91298b6f3f51ceba099  studies/trajectory-harness/experiment-1/run.ts
+diff --git a/studies/trajectory-harness/experiment-1/run-output.txt b/studies/trajectory-harness/experiment-1/run-output.txt
+new file mode 100644
+index 0000000..33f39b4
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/run-output.txt
+@@ -0,0 +1,57 @@
++npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
++npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
++{
++  "status": "pass",
++  "records": [
++    {
++      "runId": "experiment-1-A-disabled",
++      "condition": "A-disabled",
++      "agentDir": "<experiment-root>/experiment-1-A-disabled/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-A-disabled/session-runtime/session-artifacts/01a00785-476d-779d-b223-e6e915c77df4/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-A-disabled/agent-home/harness/harness_state.json",
++      "refinementIds": [],
++      "promptIncluded": false,
++      "rollbackApplied": false,
++      "stateHashes": {
++        "session": "0bf05e5484eaaa1b441bad5a87614bf992e9f22a35cf0cc61e5930978ae21ac9"
++      }
++    },
++    {
++      "runId": "experiment-1-B-local",
++      "condition": "B-local",
++      "agentDir": "<experiment-root>/experiment-1-B-local/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-B-local/agent-home/harness/harness_state.json",
++      "refinementIds": [
++        "refine_20260815222251179",
++        "refine_20260815222251186"
++      ],
++      "promptIncluded": true,
++      "rollbackApplied": true,
++      "stateHashes": {
++        "session": "7fae2e36f2f0414fe4d6357cc8859107edcab13507d39117622ad3bc8a42e478",
++        "localHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
++      }
++    },
++    {
++      "runId": "experiment-1-C-global",
++      "condition": "C-global",
++      "agentDir": "<experiment-root>/experiment-1-C-global/agent-home",
++      "sessionFile": "<experiment-root>/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl",
++      "localStatePath": "<experiment-root>/experiment-1-C-global/session-runtime/session-artifacts/01a00785-4c94-77f1-ab87-591179c19ee7/harness/harness_state.json",
++      "globalStatePath": "<experiment-root>/experiment-1-C-global/agent-home/harness/harness_state.json",
++      "refinementIds": [
++        "refine_20260815222251806",
++        "refine_20260815222251810"
++      ],
++      "promptIncluded": true,
++      "rollbackApplied": true,
++      "stateHashes": {
++        "session": "087be955b95b6aab48caa71975b51be0686960b12bb3a4486235141f59bc6a1e",
++        "globalHarness": "8d28cd8e1b13d2fdf3ca210132b6d1dcb5dd239cdc63b06fd511b9530ce94dbc"
++      }
++    }
++  ]
++}
+diff --git a/studies/trajectory-harness/experiment-1/run.ts b/studies/trajectory-harness/experiment-1/run.ts
+new file mode 100644
+index 0000000..05a347d
+--- /dev/null
++++ b/studies/trajectory-harness/experiment-1/run.ts
+@@ -0,0 +1,256 @@
++import { createHash } from "node:crypto";
++import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { execFileSync } from "node:child_process";
++import { fauxAssistantMessage } from "@earendil-works/pi-ai";
++import {
++	getHarnessStatePath,
++	getLocalHarnessStateDir,
++	loadHarnessState,
++	REFINEMENT_CUSTOM_TYPE,
++} from "../../../packages/coding-agent/src/core/refinement/index.js";
++import { createHarness, type Harness } from "../../../packages/coding-agent/test/suite/harness.js";
++
++interface RunRecord {
++	runId: string;
++	condition: "A-disabled" | "B-local" | "C-global";
++	agentDir: string;
++	sessionFile?: string;
++	localStatePath?: string;
++	globalStatePath: string;
++	refinementIds: string[];
++	promptIncluded: boolean;
++	rollbackApplied: boolean;
++	stateHashes: Record<string, string>;
++}
++
++const root = mkdtempSync(join(tmpdir(), "prime-agent-experiment-1-"));
++const outputDir = join(process.cwd(), "studies", "trajectory-harness", "experiment-1", "artifacts");
++const originalAgentDir = process.env.PRIME_AGENT_CODING_AGENT_DIR;
++
++function semanticHashFile(path: string | undefined): string | undefined {
++	if (!path || !existsSync(path)) return undefined;
++	const volatileKeys = new Set(["id", "parentId", "timestamp", "created_at", "updated_at", "harnessStatePath", "rollbackOf"]);
++	const normalize = (value: unknown): unknown => {
++		if (Array.isArray(value)) return value.map(normalize);
++		if (value && typeof value === "object") {
++			return Object.fromEntries(
++				Object.entries(value)
++					.filter(([key]) => !volatileKeys.has(key))
++					.map(([key, item]) => [key, normalize(item)]),
++			);
++		}
++		return value;
++	};
++	const text = readFileSync(path, "utf8");
++	const parsed = path.endsWith(".jsonl")
++		? text
++				.split("\n")
++				.filter(Boolean)
++				.map((line) => JSON.parse(line) as Record<string, unknown>)
++				.filter((entry) => entry.type === "message" || (entry.type === "custom" && entry.customType === REFINEMENT_CUSTOM_TYPE))
++				.map((entry) => {
++					if (entry.type === "message") {
++						const message = entry.message as Record<string, unknown>;
++						return { type: "message", role: message.role, content: message.content, stopReason: message.stopReason };
++					}
++					if (entry.type === "custom" && entry.customType === REFINEMENT_CUSTOM_TYPE) {
++						const data = entry.data as { appliedEdits?: Array<Record<string, unknown>> };
++						return {
++							type: "refinement",
++							appliedEdits: (data.appliedEdits ?? []).map((edit) => ({
++								action: edit.action,
++								kind: edit.kind,
++								applied: edit.applied,
++								error: edit.error,
++								before: normalize(edit.before),
++								after: normalize(edit.after),
++							})),
++						};
++					}
++					return normalize(entry);
++				})
++		: (JSON.parse(text) as unknown);
++	const semantic =
++		!path.endsWith(".jsonl") && parsed && typeof parsed === "object" && "entries" in parsed
++			? { schema: (parsed as { schema?: unknown }).schema, entries: normalize((parsed as { entries: unknown }).entries) }
++			: normalize(parsed);
++	return createHash("sha256").update(JSON.stringify(semantic)).digest("hex");
++}
++
++function gitEvidenceOutsideStudy(): string {
++	return execFileSync(
++		"git",
++		[
++			"status",
++			"--porcelain=v1",
++			"--untracked-files=all",
++			"--",
++			".",
++			":(exclude)studies/trajectory-harness/experiment-1",
++		],
++		{ encoding: "utf8" },
++	);
++}
++
++async function seedTrajectory(harness: Harness): Promise<void> {
++	harness.setResponses([
++		fauxAssistantMessage("I used the guessed command `npm test`; it failed because this repository forbids that command."),
++		fauxAssistantMessage("I repeated `npm test`; the same policy failure occurred again."),
++	]);
++	await harness.session.prompt("Validate the repository using npm test.");
++	await harness.session.prompt("Retry the same validation approach.");
++}
++
++function proposal(scope: "local" | "global") {
++	return fauxAssistantMessage(
++		JSON.stringify({
++			summary: `Record the repeated validation-policy failure in ${scope} scope`,
++			rationale: "Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.",
++			expectedOutcome: "The next turn sees a supplemental prompt note directing it to repository-approved checks.",
++			edits: [
++				{
++					action: "create",
++					kind: "prompt",
++					id: "experiment_1_validation_policy",
++					title: "Experiment 1 validation policy",
++					content: "For the experiment fixture, do not run npm test; use only the repository-approved targeted check.",
++					path: "study/experiment-1",
++					metadata: { scope, trajectoryEvidence: ["turn-1", "turn-2"] },
++					reason: "The same incorrect command was selected twice.",
++				},
++			],
++		}),
++	);
++}
++
++async function runCondition(condition: RunRecord["condition"], batchRoot: string): Promise<RunRecord> {
++	const runId = `experiment-1-${condition}`;
++	const runRoot = join(batchRoot, runId);
++	const agentDir = join(runRoot, "agent-home");
++	mkdirSync(agentDir, { recursive: true });
++	process.env.PRIME_AGENT_CODING_AGENT_DIR = agentDir;
++	const harness = await createHarness({ persistSession: true });
++	try {
++		await seedTrajectory(harness);
++		let refinementIds: string[] = [];
++		let rollbackApplied = false;
++		if (condition !== "A-disabled") {
++			harness.setResponses([proposal(condition === "C-global" ? "global" : "local")]);
++			const result = await harness.session.refine({ global: condition === "C-global" });
++			refinementIds = [result.id];
++			if (!result.appliedEdits.every((edit) => edit.applied)) {
++				throw new Error(`${condition} refinement did not apply cleanly`);
++			}
++		}
++
++		const promptIncluded = harness.session.agent.state.systemPrompt.includes("Experiment 1 validation policy");
++		if (condition === "A-disabled" ? promptIncluded : !promptIncluded) {
++			throw new Error(`${condition} prompt inclusion mismatch`);
++		}
++
++		const localDir = getLocalHarnessStateDir(harness.sessionManager.getSessionArtifactDir());
++		const localStatePath = localDir ? getHarnessStatePath(localDir) : undefined;
++		const globalStatePath = getHarnessStatePath(join(agentDir, "harness"));
++		const refinementEntries = harness.sessionManager
++			.getEntries()
++			.filter((entry) => entry.type === "custom" && entry.customType === REFINEMENT_CUSTOM_TYPE);
++		if (refinementEntries.length !== refinementIds.length) {
++			throw new Error(`${condition} refinement lineage mismatch`);
++		}
++
++		if (condition !== "A-disabled") {
++			const localCount = localDir ? Object.keys(loadHarnessState(localDir, "local").entries.prompt).length : 0;
++			const globalCount = Object.keys(loadHarnessState(join(agentDir, "harness"), "global").entries.prompt).length;
++			if (condition === "B-local" && (localCount !== 1 || globalCount !== 0)) {
++				throw new Error("local condition leaked into global state");
++			}
++			if (condition === "C-global" && (localCount !== 0 || globalCount !== 1)) {
++				throw new Error("global condition leaked into local state");
++			}
++			const rollback = await harness.session.refine({ rollbackId: refinementIds[0] });
++			refinementIds.push(rollback.id);
++			rollbackApplied = rollback.appliedEdits.every((edit) => edit.applied);
++			const selectedDir = condition === "C-global" ? join(agentDir, "harness") : localDir;
++			if (!selectedDir || Object.keys(loadHarnessState(selectedDir, condition === "C-global" ? "global" : "local").entries.prompt).length !== 0) {
++				throw new Error(`${condition} rollback did not restore empty prompt state`);
++			}
++		}
++
++		await harness.session.disposeAsync();
++		const sessionFile = harness.sessionManager.getSessionFile();
++		const archivedRuntime = join(runRoot, "session-runtime");
++		cpSync(harness.tempDir, archivedRuntime, { recursive: true });
++		const archivedSessionFile = sessionFile?.replace(harness.tempDir, archivedRuntime);
++		const archivedLocalStatePath = localStatePath?.replace(harness.tempDir, archivedRuntime);
++		return {
++			runId,
++			condition,
++			agentDir,
++			...(archivedSessionFile ? { sessionFile: archivedSessionFile } : {}),
++			...(archivedLocalStatePath ? { localStatePath: archivedLocalStatePath } : {}),
++			globalStatePath,
++			refinementIds,
++			promptIncluded,
++			rollbackApplied,
++			stateHashes: Object.fromEntries(
++				[
++					["session", semanticHashFile(sessionFile)],
++					["localHarness", semanticHashFile(localStatePath)],
++					["globalHarness", semanticHashFile(globalStatePath)],
++				].filter((item): item is [string, string] => typeof item[1] === "string"),
++			),
++		};
++	} finally {
++		harness.cleanup();
++	}
++}
++
++try {
++	const before = gitEvidenceOutsideStudy();
++	const primaryRoot = join(root, "primary");
++	const replicationRoot = join(root, "replication");
++	const records = [];
++	const replicationRecords = [];
++	for (const condition of ["A-disabled", "B-local", "C-global"] as const) {
++		records.push(await runCondition(condition, primaryRoot));
++		replicationRecords.push(await runCondition(condition, replicationRoot));
++	}
++	for (const record of records) {
++		const replication = replicationRecords.find((item) => item.condition === record.condition)!;
++		if (JSON.stringify(record.stateHashes) !== JSON.stringify(replication.stateHashes)) {
++			throw new Error(`${record.condition} semantic state hashes were not reproducible: ${JSON.stringify({ primary: record.stateHashes, replication: replication.stateHashes })}`);
++		}
++	}
++	const after = gitEvidenceOutsideStudy();
++	if (before !== after) throw new Error("experiment mutated the worktree outside its isolated study path");
++
++	const a = records.find((record) => record.condition === "A-disabled")!;
++	const b = records.find((record) => record.condition === "B-local")!;
++	const c = records.find((record) => record.condition === "C-global")!;
++	if (existsSync(a.globalStatePath) || existsSync(a.localStatePath ?? "")) throw new Error("disabled condition wrote harness state");
++	if (b.agentDir === c.agentDir) throw new Error("local and global conditions shared an agent home");
++
++	rmSync(outputDir, { recursive: true, force: true });
++	mkdirSync(outputDir, { recursive: true });
++	for (const record of records) {
++		cpSync(join(primaryRoot, record.runId), join(outputDir, record.runId), { recursive: true });
++	}
++	const portableRecords = records.map((record) => ({
++		...record,
++		agentDir: record.agentDir.replace(primaryRoot, "<experiment-root>"),
++		sessionFile: record.sessionFile?.replace(primaryRoot, "<experiment-root>"),
++		localStatePath: record.localStatePath?.replace(primaryRoot, "<experiment-root>"),
++		globalStatePath: record.globalStatePath.replace(primaryRoot, "<experiment-root>"),
++	}));
++	writeFileSync(
++		join(outputDir, "result.json"),
++		`${JSON.stringify({ experiment: 1, baseline: "7b69442ed56d3d72e30ab81fc71d2e79a30807de", records: portableRecords }, null, 2)}\n`,
++	);
++	console.log(JSON.stringify({ status: "pass", records: portableRecords }, null, 2));
++} finally {
++	if (originalAgentDir === undefined) delete process.env.PRIME_AGENT_CODING_AGENT_DIR;
++	else process.env.PRIME_AGENT_CODING_AGENT_DIR = originalAgentDir;
++	rmSync(root, { recursive: true, force: true });
++}
+diff --git a/studies/trajectory-harness/experiment-plan.md b/studies/trajectory-harness/experiment-plan.md
+index 02b695e..c935e5d 100644
+--- a/studies/trajectory-harness/experiment-plan.md
++++ b/studies/trajectory-harness/experiment-plan.md
+@@ -89,3 +89,7 @@ Distinguish record restoration from behavioral recovery. A rollback is successfu
+ - Report effect sizes and uncertainty, not only pass counts.
+ - Treat repeated variants from one task family as clustered, not independent samples.
+ - Do not promote global refinements from these experiments without explicit human review.
++
++## Execution status
++
++Experiment 1's mechanics and contamination check has been executed and passed. See [`experiment-1/README.md`](experiment-1/README.md). This result validates the minimal instrumentation and condition isolation only; it is not evidence of durable task improvement. Experiments 2–5 have not begun.

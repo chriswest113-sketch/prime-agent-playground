@@ -1,0 +1,66 @@
+run: 3
+command: npx tsx ../../node_modules/vitest/dist/cli.js --run test/suite/agent-session-autonomous.test.ts
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown project config "min-release-age". This will stop working in the next major version of npm.
+
+ RUN  v4.1.10 /workspace/prime-agent-playground/packages/coding-agent
+
+stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
+AUTONOMOUS_DIAG_DESCENDANT 9774 9774 (node) Z 1 9766 9766 0 -1 4228108 2140 0 0 0 9 3 0 0 20 0 1 0 202614 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 1 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 9
+
+
+stderr | test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
+AUTONOMOUS_DIAG_GATE 9787 9787 (node) R 1 9786 9786 0 -1 4195340 2112 0 0 0 9 7 0 0 20 0 1 0 202844 0 0 18446744073709551615 0 0 0 0 0 0 0 16781312 17922 0 0 0 17 2 0 0 0 0 0 0 0 0 0 0 0 0 9
+
+
+ ❯ test/suite/agent-session-autonomous.test.ts (22 tests | 2 failed) 9851ms
+     × terminates the autonomous gate process tree when the timeout expires 2417ms
+     × terminates an autonomous gate without mutating retry state when the session is aborted 2287ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates the autonomous gate process tree when the timeout expires
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/suite/agent-session-autonomous.test.ts:459:52
+    457|    expect(state.lastGateFailure?.exitText).toBe("timed out");
+    458|    console.error("AUTONOMOUS_DIAG_DESCENDANT", descendantPid, readFile…
+    459|    expect(await waitForProcessExit(descendantPid)).toBe(true);
+       |                                                    ^
+    460|   } finally {
+    461|    if (descendantPid && isProcessRunning(descendantPid)) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/suite/agent-session-autonomous.test.ts > AgentSession autonomous mode > terminates an autonomous gate without mutating retry state when the session is aborted
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/suite/agent-session-autonomous.test.ts:490:46
+    488|
+    489|    console.error("AUTONOMOUS_DIAG_GATE", gatePid, readFileSync(`/proc/…
+    490|    expect(await waitForProcessExit(gatePid)).toBe(true);
+       |                                              ^
+    491|    expect(harness.session.getAutonomousStatus()).toMatchObject({
+    492|     continuationsUsed: 0,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 20 passed (22)
+   Start at  08:19:39
+   Duration  18.03s (transform 5.74s, setup 0ms, import 7.81s, tests 9.85s, environment 0ms)
+
+exit: 1

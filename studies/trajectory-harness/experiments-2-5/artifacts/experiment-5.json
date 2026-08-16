@@ -1,0 +1,56 @@
+{
+  "preHarm": {
+    "hash": "21760538dbea77014df2b3ef8f70a89d23843bb58d52435ee5f218f3af290c07",
+    "score": {
+      "passed": 12,
+      "total": 12,
+      "errors": []
+    }
+  },
+  "harmed": {
+    "score": {
+      "passed": 0,
+      "total": 12,
+      "errors": [
+        "validation-heldout-1: harmful override repeated the known error",
+        "validation-heldout-2: harmful override repeated the known error",
+        "validation-heldout-3: harmful override repeated the known error",
+        "validation-heldout-4: harmful override repeated the known error",
+        "inspection-heldout-1: harmful override repeated the known error",
+        "inspection-heldout-2: harmful override repeated the known error",
+        "inspection-heldout-3: harmful override repeated the known error",
+        "inspection-heldout-4: harmful override repeated the known error",
+        "sentinel-1: broad harmful policy regression",
+        "sentinel-2: broad harmful policy regression",
+        "sentinel-3: broad harmful policy regression",
+        "sentinel-4: broad harmful policy regression"
+      ]
+    }
+  },
+  "postRollback": {
+    "hash": "21760538dbea77014df2b3ef8f70a89d23843bb58d52435ee5f218f3af290c07",
+    "score": {
+      "passed": 12,
+      "total": 12,
+      "errors": []
+    },
+    "exactEntryHashRecovery": true
+  },
+  "reloaded": {
+    "score": {
+      "passed": 12,
+      "total": 12,
+      "errors": []
+    }
+  },
+  "derivedAfterRollback": {
+    "score": {
+      "passed": 12,
+      "total": 12,
+      "errors": []
+    },
+    "derivedMemoryRetained": true,
+    "harmfulPromptRemoved": true
+  },
+  "rollbackCount": 2
+}

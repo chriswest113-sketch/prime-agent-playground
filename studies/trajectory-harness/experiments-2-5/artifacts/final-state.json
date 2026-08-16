@@ -1,0 +1,93 @@
+{
+  "baseline": "d65d4b1",
+  "checkpoints": [
+    {
+      "id": "checkpoint-00-design-freeze",
+      "status": "pass",
+      "stateHash": "db15a2faa1117ce90309e399e0dc3f5b01c5af6d79cd327496c20e16ca43c170",
+      "metrics": {
+        "heldoutTasks": 8,
+        "sentinelTasks": 4,
+        "externalModelCalls": 0
+      },
+      "limitations": [
+        "Deterministic actor behavior is intentionally coupled to explicit prompt markers.",
+        "This validates causal plumbing and evaluation bookkeeping, not natural-language model learning."
+      ]
+    },
+    {
+      "id": "checkpoint-01-experiment-2-complete",
+      "status": "pass",
+      "stateHash": "21760538dbea77014df2b3ef8f70a89d23843bb58d52435ee5f218f3af290c07",
+      "metrics": {
+        "disabledPassRate": 0,
+        "enabledPassRate": 1,
+        "sentinelRegressions": 0
+      },
+      "limitations": [
+        "Synthetic deterministic effect size is not an estimate of real-model performance."
+      ]
+    },
+    {
+      "id": "checkpoint-02-experiment-3-complete",
+      "status": "pass",
+      "stateHash": "7556637fa3cffe52909e162574515c1e16fb4125632c0a6a142545d85b4007d9",
+      "metrics": {
+        "unrestrictedSentinelRegressions": 4,
+        "evidenceRequiredSentinelRegressions": 0,
+        "rejectedCandidates": 2
+      },
+      "limitations": [
+        "Evidence enforcement is external study logic, not built into Prime Agent."
+      ]
+    },
+    {
+      "id": "checkpoint-03-experiment-4-complete",
+      "status": "pass",
+      "stateHash": "7556637fa3cffe52909e162574515c1e16fb4125632c0a6a142545d85b4007d9",
+      "metrics": {
+        "selfPrecision": 0.5,
+        "independentReviewPrecision": 1,
+        "independentProposalPrecision": 1
+      },
+      "limitations": [
+        "Reviewer and ground truth are deterministic study fixtures, not independent language models."
+      ]
+    },
+    {
+      "id": "checkpoint-04-experiment-5-complete",
+      "status": "pass",
+      "stateHash": "5313a5d2554e50ad09e849bca8ac51ccfdb5b6495314edf9c71b18e6aef0697c",
+      "metrics": {
+        "harmedPassRate": 0,
+        "recoveredPassRate": 1,
+        "exactEntryHashRecovery": true,
+        "derivedBehaviorRecovered": true
+      },
+      "limitations": [
+        "Rollback cannot establish that arbitrary downstream refinements are causally uncontaminated; this fixture retains a benign derived memory."
+      ]
+    }
+  ],
+  "conclusion": {
+    "verdict": "GOOD_SCAFFOLD_WITH_LIMITATIONS",
+    "goodFor": [
+      "isolated harness-state experiments",
+      "faux-provider integration tests",
+      "scope and rollback studies",
+      "evidence artifact capture"
+    ],
+    "notYetEvidenceFor": [
+      "real-model self-improvement",
+      "generalization",
+      "safe global promotion",
+      "causal validity of self-authored evidence"
+    ],
+    "blockingBeforeRealClaim": [
+      "credentialed or local real-model study",
+      "independent task/evaluator design",
+      "non-synthetic held-out tasks",
+      "production candidate/review/promotion mechanism or external equivalent"
+    ]
+  }
+}

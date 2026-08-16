@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "entries": {
+    "prompt": {},
+    "memory": {},
+    "skill": {},
+    "subagent": {}
+  },
+  "refinements": [
+    {
+      "id": "refine_20260815222251179",
+      "trigger": "Record the repeated validation-policy failure in local scope",
+      "changes": [
+        "create prompt:experiment_1_validation_policy"
+      ],
+      "evidence": "Two trajectory turns repeated the forbidden npm test command and reported the same policy failure.",
+      "outcome": "The next turn sees a supplemental prompt note directing it to repository-approved checks.",
+      "created_at": "2026-08-15T22:22:51.184Z"
+    },
+    {
+      "id": "refine_20260815222251186",
+      "trigger": "Rollback refinement refine_20260815222251179",
+      "changes": [
+        "delete prompt:experiment_1_validation_policy"
+      ],
+      "evidence": "Restores continual harness state snapshots from refinement refine_20260815222251179.",
+      "outcome": "Faulty refinement edits are reverted.",
+      "created_at": "2026-08-15T22:22:51.187Z"
+    }
+  ]
+}

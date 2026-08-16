@@ -1,0 +1,14 @@
+{
+  "id": "checkpoint-04-experiment-5-complete",
+  "status": "pass",
+  "stateHash": "5313a5d2554e50ad09e849bca8ac51ccfdb5b6495314edf9c71b18e6aef0697c",
+  "metrics": {
+    "harmedPassRate": 0,
+    "recoveredPassRate": 1,
+    "exactEntryHashRecovery": true,
+    "derivedBehaviorRecovered": true
+  },
+  "limitations": [
+    "Rollback cannot establish that arbitrary downstream refinements are causally uncontaminated; this fixture retains a benign derived memory."
+  ]
+}

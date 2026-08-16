@@ -1,0 +1,10 @@
+{
+  "id": "finding-01-forged-evidence",
+  "hypothesis": "Requiring evidence-shaped metadata is sufficient to prevent unsupported harmful refinement.",
+  "falsified": true,
+  "observation": {
+    "gateAccepted": true,
+    "actorPassed": false
+  },
+  "implication": "Evidence references require referential-integrity and validation-result checks; field presence alone is cosmetic."
+}

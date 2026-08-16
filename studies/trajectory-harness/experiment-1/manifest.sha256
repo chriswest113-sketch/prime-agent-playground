@@ -1,0 +1,10 @@
+17ea25ebb8f6891de90623a69f3437a6f5cf24ef8c708aec4ecbabf57816dcb0  studies/trajectory-harness/experiment-1/README.md
+849ada80ef2454b462777b04f29e9e1b595aa07623503a87bfdc54e9b22b48f8  studies/trajectory-harness/experiment-1/artifacts/experiment-1-A-disabled/session-runtime/sessions/01a00785-476d-779d-b223-e6e915c77df4.jsonl
+8e55e5a36c2aee122280e87c426780a19befa2fc6092dc71a6ce2660932dccdd  studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/session-artifacts/01a00785-49ed-779f-8392-6d37d38400ac/harness/harness_state.json
+9c5f52cbafdcc14c89e1780e31f5c31ea9b73e40cc528013c8aaa712b78d3abd  studies/trajectory-harness/experiment-1/artifacts/experiment-1-B-local/session-runtime/sessions/01a00785-49ed-779f-8392-6d37d38400ac.jsonl
+e8502bba193a4dcf037b1d8149b021bcee7aa92a95326190d7270f93573b20a6  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/harness_state.json
+3c466cefdf179ed80a4e42856f398f61e5e0be81ec348a9e71ac59c44630e1fb  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/agent-home/harness/refinements.jsonl
+e05e8e535a2b93332abed2119ba502bc7c3d5a254343b3e653e910387453e6d8  studies/trajectory-harness/experiment-1/artifacts/experiment-1-C-global/session-runtime/sessions/01a00785-4c94-77f1-ab87-591179c19ee7.jsonl
+8e89c4bee5248e254109a716d128ecd002e6b8718f42d4da53ee01c615853a9f  studies/trajectory-harness/experiment-1/artifacts/result.json
+b656264726da45c6670f81f166049f06ec5dd28a587df139d3b48a7eb7991abe  studies/trajectory-harness/experiment-1/run-output.txt
+798fb13984edfee68892d4726e885cf070fbf0331d2fc91298b6f3f51ceba099  studies/trajectory-harness/experiment-1/run.ts

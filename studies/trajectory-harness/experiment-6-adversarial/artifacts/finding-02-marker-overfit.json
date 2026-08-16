@@ -1,0 +1,10 @@
+{
+  "id": "finding-02-marker-overfit",
+  "hypothesis": "The synthetic Experiment 2 outcome demonstrates semantic policy transfer.",
+  "falsified": true,
+  "observation": {
+    "markerPass": true,
+    "paraphrasePass": false
+  },
+  "implication": "Experiment 2 measures exact fixture-marker routing, not natural-language generalization."
+}

@@ -1,0 +1,8 @@
+command: /root/.local/bin/uv python install 3.11
+error: Failed to install cpython-3.11.13-linux-x86_64-gnu
+  Caused by: Failed to download https://github.com/astral-sh/python-build-standalone/releases/download/20250712/cpython-3.11.13%2B20250712-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz
+  Caused by: Request failed after 3 retries
+  Caused by: error sending request for url (https://github.com/astral-sh/python-build-standalone/releases/download/20250712/cpython-3.11.13%2B20250712-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz)
+  Caused by: client error (Connect)
+  Caused by: tunnel error: unsuccessful
+exit: 1

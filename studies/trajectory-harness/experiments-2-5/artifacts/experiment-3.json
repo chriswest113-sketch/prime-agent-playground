@@ -1,0 +1,44 @@
+{
+  "candidateCount": 4,
+  "acceptedWithEvidence": 2,
+  "rejectedWithoutEvidence": 2,
+  "unrestricted": {
+    "heldout": {
+      "passed": 0,
+      "total": 8,
+      "errors": [
+        "validation-heldout-1: harmful override repeated the known error",
+        "validation-heldout-2: harmful override repeated the known error",
+        "validation-heldout-3: harmful override repeated the known error",
+        "validation-heldout-4: harmful override repeated the known error",
+        "inspection-heldout-1: harmful override repeated the known error",
+        "inspection-heldout-2: harmful override repeated the known error",
+        "inspection-heldout-3: harmful override repeated the known error",
+        "inspection-heldout-4: harmful override repeated the known error"
+      ]
+    },
+    "sentinel": {
+      "passed": 0,
+      "total": 4,
+      "errors": [
+        "sentinel-1: broad harmful policy regression",
+        "sentinel-2: broad harmful policy regression",
+        "sentinel-3: broad harmful policy regression",
+        "sentinel-4: broad harmful policy regression"
+      ]
+    }
+  },
+  "evidenceRequired": {
+    "heldout": {
+      "passed": 8,
+      "total": 8,
+      "errors": []
+    },
+    "sentinel": {
+      "passed": 4,
+      "total": 4,
+      "errors": []
+    }
+  },
+  "validationLayer": "study runner; not a production refinement schema constraint"
+}

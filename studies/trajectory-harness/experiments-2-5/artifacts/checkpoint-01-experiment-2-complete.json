@@ -1,0 +1,13 @@
+{
+  "id": "checkpoint-01-experiment-2-complete",
+  "status": "pass",
+  "stateHash": "21760538dbea77014df2b3ef8f70a89d23843bb58d52435ee5f218f3af290c07",
+  "metrics": {
+    "disabledPassRate": 0,
+    "enabledPassRate": 1,
+    "sentinelRegressions": 0
+  },
+  "limitations": [
+    "Synthetic deterministic effect size is not an estimate of real-model performance."
+  ]
+}
