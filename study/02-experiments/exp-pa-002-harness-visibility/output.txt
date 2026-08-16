@@ -1,0 +1,39 @@
+EXP-PA-002 — continual harness prompt visibility under growth
+Real function under test: formatHarnessStateForPrompt (refinement.ts:429)
+Caps: DEFAULT_OVERVIEW_ENTRY_LIMIT=6, CONTENT_LIMIT=180 chars/entry
+
+| naming regime | N entries | visible | coverage | recall@recent10 | mean age of visible (0=oldest,1=newest) |
+|---|---|---|---|---|---|
+| numbered (lesson_1, lesson_2, ...) | 6 | 6 | 100.0% | 100% | 0.500 |
+| numbered (lesson_1, lesson_2, ...) | 10 | 6 | 60.0% | 60% | 0.352 |
+| numbered (lesson_1, lesson_2, ...) | 25 | 6 | 24.0% | 0% | 0.479 |
+| numbered (lesson_1, lesson_2, ...) | 50 | 6 | 12.0% | 0% | 0.235 |
+| numbered (lesson_1, lesson_2, ...) | 100 | 6 | 6.0% | 10% | 0.259 |
+| numbered (lesson_1, lesson_2, ...) | 500 | 6 | 1.2% | 0% | 0.203 |
+| zero-padded (lesson_0001, ...) | 6 | 6 | 100.0% | 100% | 0.500 |
+| zero-padded (lesson_0001, ...) | 10 | 6 | 60.0% | 60% | 0.278 |
+| zero-padded (lesson_0001, ...) | 25 | 6 | 24.0% | 0% | 0.104 |
+| zero-padded (lesson_0001, ...) | 50 | 6 | 12.0% | 0% | 0.051 |
+| zero-padded (lesson_0001, ...) | 100 | 6 | 6.0% | 0% | 0.025 |
+| zero-padded (lesson_0001, ...) | 500 | 6 | 1.2% | 0% | 0.005 |
+| descriptive (topic-led) | 6 | 6 | 100.0% | 100% | 0.500 |
+| descriptive (topic-led) | 10 | 6 | 60.0% | 60% | 0.352 |
+| descriptive (topic-led) | 25 | 6 | 24.0% | 20% | 0.479 |
+| descriptive (topic-led) | 50 | 6 | 12.0% | 10% | 0.493 |
+| descriptive (topic-led) | 100 | 6 | 6.0% | 10% | 0.411 |
+| descriptive (topic-led) | 500 | 6 | 1.2% | 0% | 0.202 |
+
+--- Worked case: 100 numbered lessons written in order lesson_1..lesson_100 ---
+Visible to the model : lesson_100, lesson_10, lesson_11, lesson_12, lesson_13, lesson_14
+Overflow line        : +94 more memory entries
+Most recent lesson (lesson_100) visible? true
+Rendered prompt size : 3188 chars for 100 stored lessons
+
+Mechanism: sort key is [path, title, id].join("\0") localeCompare (refinement.ts:467-469),
+then .slice(0, 6) (refinement.ts:481). Lexical order of "Lesson 10" < "Lesson 2" means
+the visible window is decided by string collation, not by when the lesson was learned.
+
+--- Content truncation ---
+stored content = 1000 chars; rendered entry line = 213 chars
+ends with ellipsis: true (DEFAULT_OVERVIEW_CONTENT_LIMIT=180)
+=> a lesson longer than ~180 chars is never fully visible in the routing view.

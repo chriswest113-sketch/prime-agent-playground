@@ -1,0 +1,47 @@
+
+[H1] An edit targeting the base system prompt is refused by code, not just by instruction
+  VERDICT: SUPPORTED (both explicit id and title-slug route blocked)
+  EVIDENCE: explicit-id edit applied=false error="base system prompt is not editable"; title-slug edit collapsed to same id; control edit applied=true; entries.prompt keys after = ["harmless_note"]
+
+[H2] Rollback restores the exact prior entry state
+  VERDICT: PARTIALLY SUPPORTED — content restored, but version/updated_at are NOT
+  EVIDENCE: before={"id":"m1","kind":"memory","title":"T1","content":"ORIGINAL","path":"p","scope":"local","reference":{},"arguments":{},"metadata":{},"source":"refine","created_at":"2026-08-15T23:55:25.684Z","updated_at":"2026-08-15T23:55:25.684Z","version":1}
+  mutated={"id":"m1","kind":"memory","title":"T2","content":"MUTATED","path":"p","scope":"local","reference":{},"arguments":{},"metadata":{},"source":"refine","created_at":"2026-08-15T23:55:25.684Z","updated_at":"2026-08-15T23:55:25.684Z","version":2}
+  after-rollback={"id":"m1","kind":"memory","title":"T1","content":"ORIGINAL","path":"p","scope":"local","reference":{},"arguments":{},"metadata":{},"source":"refine","created_at":"2026-08-15T23:55:25.684Z","updated_at":"2026-08-15T23:55:25.684Z","version":3}
+  version went 1 -> 2 -> 3 (monotonic, not restored); rollback applied=true
+
+[H3] Some field or artifact records whether a refinement actually helped
+  VERDICT: REFUTED — no measurement field exists anywhere in persisted state
+  EVIDENCE: persisted entry fields = ["id","kind","title","content","path","scope","reference","arguments","metadata","source","created_at","updated_at","version"]
+  persisted refinement-event fields = ["id","trigger","changes","evidence","outcome","created_at"]
+  fields matching /observ|measur|score|verif|valid|metric|eval|actual/ = []
+  the event's `outcome` field holds the model's PREDICTION verbatim: "MEASURABLE CLAIM: after this edit, task X should succeed 100% of the time"
+  the event's `evidence` field holds the model's own RATIONALE, not external evidence: "evidence for claim"
+  result.expectedOutcome === event.outcome: true
+
+[H4] Refinement history and entry count are bounded/trimmed
+  VERDICT: REFUTED — append-only, no trimming at any layer
+  EVIDENCE: after 500 refinements: refinements.length=500, memory entries=500, harness_state.json = 450367 bytes (439.8 KiB). No prune/trim/evict call exists in the module.
+
+[H5] The model sees the harness state it has accumulated
+  VERDICT: REFUTED — the prompt view is a hard-capped sample of the store
+  EVIDENCE: 500 memory entries on disk, 6 rendered into the prompt (mem_0, mem_100, mem_101, mem_102, mem_103, mem_104); 500 refinement events on disk, 5 rendered. Caps are module constants DEFAULT_OVERVIEW_ENTRY_LIMIT=6, DEFAULT_OVERVIEW_REFINEMENT_LIMIT=5, DEFAULT_OVERVIEW_CONTENT_LIMIT=180 (refinement.ts:26-28). Rendered prompt = 4454 chars. Selection is alphabetical by (path,title,id) — refinement.ts:467-469 — NOT by recency, usage, or relevance.
+
+[H6] A refinement planned against stale state is refused rather than silently overwriting
+  VERDICT: SUPPORTED
+  EVIDENCE: applied=false error="entry changed during refinement planning"; surviving content="CONCURRENT_WRITE". NOTE: the guard requires callers to pass baselineState; refineHarness() (refinement.ts:1000-1017) does NOT pass it — only the split planRefinement/applyRefinementProposal path can.
+
+[H3b] RefinementResult carries any channel for a later observed outcome
+  VERDICT: REFUTED
+  EVIDENCE: RefinementResult fields = ["id","summary","rationale","expectedOutcome","appliedEdits","harnessStatePath"]. There is no observed-outcome slot, so a later turn has nowhere to write "this refinement did/did not help".
+
+
+===== EXP-PA-001 SUMMARY =====
+H1   SUPPORTED            An edit targeting the base system prompt is refused by code, not just by instruction
+H2   PARTIALLY            Rollback restores the exact prior entry state
+H3   REFUTED              Some field or artifact records whether a refinement actually helped
+H4   REFUTED              Refinement history and entry count are bounded/trimmed
+H5   REFUTED              The model sees the harness state it has accumulated
+H6   SUPPORTED            A refinement planned against stale state is refused rather than silently overwriting
+H3b  REFUTED              RefinementResult carries any channel for a later observed outcome
+

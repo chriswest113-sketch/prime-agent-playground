@@ -1,0 +1,4 @@
+97b994c3d7c45ca1ae635190e91e9e58ddf2577c
+97b994c3d7c45ca1ae635190e91e9e58ddf2577c
+Fri Aug 14 23:03:09 2026 +0200
+feat(daemon): supervisor-owned rlm spawn ledger as family authority (#1387)
