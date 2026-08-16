@@ -1,5 +1,5 @@
 [PASS] T01.1: the deliberately failing gate actually executed -- gate invocations = 2
-[PASS] T01.2: the gate-failure continuation carrying the sentinel entered the session trajectory as a user message -- continuation length 388
+[PASS] T01.2: the gate-failure continuation carrying the sentinel entered the session trajectory as a user message -- continuation length 387
 [PASS] T01.3: the refiner planning request was captured through the faux provider (no credentials used)
 [PASS] T01.4: the gate sentinel appears inside the <conversation> block supplied to the refiner
 [PASS] T01.5: the sentinel reaches the refiner ONLY through <conversation>, not through a dedicated gate field

@@ -125,6 +125,25 @@ a rollback chain was not tested.
 `/refine` planning window should trigger that path. Untested, and directly
 relevant to how cleanly writers can be separated in a future experiment.
 
+### U18 — Rejected (as opposed to clamped or no-op) configuration requests
+Test 05 separates accepted, clamped and no-op service-tier requests. A path that
+*rejects* a request outright was not found or exercised. Whether one exists, and
+what it records, is untested.
+
+### U19 — Reverse-replay beyond the tested shape
+T02.C1 replays create, update and delete across three refinements on a linear
+branch. Rollback chains (`rollbackProposal`), branch points, forks, and
+global-scope refinements were not replayed. Whether reverse-replay stays exact
+across those is unknown.
+
+### U20 — Detecting a foreign harness writer after the fact
+T02.C3 shows an interleaved CRUD write makes reverse-replay return a complete
+but wrong state with no marker. Whether any signal exists that would let an
+investigator *detect* the contamination — a version counter discontinuity, an
+`updated_at` inconsistency, a `source` mismatch — was not investigated. This
+matters directly for whether a future experiment can rely on writer purity or
+must enforce it.
+
 ### U17 — Sort-order sensitivity of the default summary
 Test 03 placed the hidden fact late by `path` and `title`. Which of the three
 sort keys dominates, and whether an entry can be displaced by `id` alone, was

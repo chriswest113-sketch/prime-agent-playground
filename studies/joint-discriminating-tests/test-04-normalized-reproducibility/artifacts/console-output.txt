@@ -16,7 +16,7 @@
 [PASS] T04.S8: Layer S SEMANTIC: harness semantic state is identical
 [PASS] T04.S9: Layer S SEMANTIC: assertions/outcomes are identical
 [PASS] T04.S10a: Layer S SEMANTIC: OUTPUT token accounting is identical across runs -- output tokens per run: [[7,9,3],[7,9,3],[7,9,3]]
-[PASS] T04.S10b: Layer S (observation, not a pass condition): INPUT token accounting across runs -- input tokens per run: [[677,695,755],[677,696,756],[677,695,755]]; per-turn max delta: [0,1,1]; system prompt lengths: [[2481,2481],[2483,2483],[2481,2481]]
+[PASS] T04.S10b: Layer S (observation, not a pass condition): INPUT token accounting across runs -- input tokens per run: [[676,695,755],[677,695,755],[676,695,755]]; per-turn max delta: [1,0,0]; system prompt lengths: [[2479,2479],[2481,2481],[2479,2479]]
 [PASS] T04.S10c: Layer S: any INPUT token variance is fully explained by volatile prompt-length framing, not by semantic drift (runs with equal system-prompt lengths report equal input tokens) -- inputTokensEqual=false promptLengthsEqual=false
 [PASS] T04.S11: Layer S: whole-trace normalization is NOT claimed to produce equality - residual differences are reported, not normalized away -- normalizedWholeTraceEqual=false (false is expected: chunk-segmentation framing survives the field normalizers)
 
@@ -24,7 +24,7 @@ classification: {
   "BYTE_LEVEL": "NOT REPRODUCIBLE (every raw trace differs at both layers)",
   "IDENTIFIER": "NOT REPRODUCIBLE by default (auto-generated tool-call ids, session UUIDs, faux api ids, refine_<UTC> ids); REPRODUCIBLE when ids are supplied explicitly",
   "EVENT_FRAME": "NOT REPRODUCIBLE at chunk-segmentation level; REPRODUCIBLE once chunk-segmentation framing is collapsed (deltas concatenated, progress runs coalesced)",
-  "SEMANTIC_SCRIPT": "REPRODUCIBLE for terminal content, tool semantics, tool results, harness semantic state, output-token accounting and outcomes. INPUT-token accounting is ENVIRONMENT-DEPENDENT: observed per-turn deltas [0,1,1], fully explained by volatile prompt-length framing (diagnosis confirmed)."
+  "SEMANTIC_SCRIPT": "REPRODUCIBLE for terminal content, tool semantics, tool results, harness semantic state, output-token accounting and outcomes. INPUT-token accounting is ENVIRONMENT-DEPENDENT: observed per-turn deltas [1,0,0], fully explained by volatile prompt-length framing (diagnosis confirmed)."
 }
 
 all assertions passed: true

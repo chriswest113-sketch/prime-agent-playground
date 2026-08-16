@@ -1,9 +1,9 @@
 [PASS] T02.A0: a create edit records NO before key (correct: nothing existed), so before-state reconstruction must be tested with an update
 [PASS] T02.A1: the /refine mutation is recorded in the session JSONL
-[PASS] T02.A2: the refinement entry has a tree position (id + parentId) and a timestamp -- id=4f355aac parentId=c1e7363b ts=2026-08-16T03:13:09.382Z
+[PASS] T02.A2: the refinement entry has a tree position (id + parentId) and a timestamp -- id=e1a78ab9 parentId=b57eb8c0 ts=2026-08-16T04:21:57.565Z
 [PASS] T02.A3: messages before and after the refinement are separable by tree/append order -- before=2 after=2
 [PASS] T02.A4: post-refinement messages descend from the refinement entry in the parent chain
-[PASS] T02.A5: the refinement record carries an explicit before state for the edited entry -- before={"id":"t02_distinctive_edit","kind":"memory","title":"T02 distinctive edit","content":"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.","path":"study/t02","scope":"local","reference":{},"arguments":{},"metadata":{},"source":"refine","created_at":"2026-08-16T03:13:09.274Z","updated_at":"2026-08-16T03:13:09.274Z","version":1}
+[PASS] T02.A5: the refinement record carries an explicit before state for the edited entry -- before={"id":"t02_distinctive_edit","kind":"memory","title":"T02 distinctive edit","content":"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.","path":"study/t02","scope":"local","reference":{},"arguments":{},"metadata":{},"source":"refine","created_at":"2026-08-16T04:21:57.454Z","updated_at":"2026-08-16T04:21:57.454Z","version":1}
 [PASS] T02.A6: the refinement record carries an explicit after state for the edited entry
 [PASS] T02.A7: the refinement record does NOT contain a full harness snapshot (only per-edit before/after) -- RefinementResult keys: ["appliedEdits","expectedOutcome","harnessStatePath","id","rationale","scope","summary"]
 [PASS] T02.A8: no assistant message entry records the effective system prompt or a harness hash -- assistant message keys: ["api","content","model","provider","role","stopReason","timestamp","usage"]
@@ -13,5 +13,8 @@
 [PASS] T02.B4: the CRUD-written entry retains a wall-clock timestamp but no session-tree anchor -- entry keys: ["arguments","content","created_at","id","kind","metadata","path","reference","scope","source","title","updated_at","version"]
 [PASS] T02.B5: the CRUD-written entry carries no before state (prior value is unrecoverable from records)
 [PASS] T02.B6: writer identity survives only as the coarse `source` field, not as an actor/turn id -- source=agent
+[PASS] T02.C1: a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint (complete state IS reconstructible) -- checkpointA exact=true checkpointB exact=true over 3 refinements
+[PASS] T02.C2: one interleaved direct CRUD write breaks reverse reconstruction -- checkpointA exact=false
+[PASS] T02.C3: and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state, with no marker in the records that a foreign write occurred -- reconstructed A had 3 memory entries and looked valid
 
 all assertions passed: true

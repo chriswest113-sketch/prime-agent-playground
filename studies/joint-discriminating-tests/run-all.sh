@@ -23,6 +23,22 @@ PROBES=(
 )
 
 status=0
+
+# Type-check first. `studies/` is outside the repository's own tsconfig include
+# and biome globs, so `npm run check` never looks at these probes; skipping this
+# step once already let an invalid ServiceTier literal through and invalidated a
+# probe's evidence.
+echo "=============================================================="
+echo "TYPECHECK: studies/joint-discriminating-tests"
+echo "=============================================================="
+if npx tsgo --noEmit -p studies/joint-discriminating-tests/tsconfig.json; then
+	echo "-> typecheck: PASS"
+else
+	echo "-> typecheck: FAIL"
+	status=1
+fi
+echo
+
 for probe in "${PROBES[@]}"; do
 	echo "=============================================================="
 	echo "RUN: ${probe}"

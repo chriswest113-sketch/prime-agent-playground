@@ -82,12 +82,16 @@ async function buildSession(): Promise<Harness> {
 
 /** A /refine proposal reply for the faux provider to return verbatim. */
 function proposal(edit: Record<string, unknown>, summary: string) {
+	return multiProposal([edit], summary);
+}
+
+function multiProposal(edits: Array<Record<string, unknown>>, summary: string) {
 	return fauxAssistantMessage(
 		JSON.stringify({
 			summary,
-			rationale: "Probe requires a single distinctive, attributable edit.",
-			expectedOutcome: "The edit is attributable to a point in the session tree.",
-			edits: [edit],
+			rationale: "Probe requires distinctive, attributable edits.",
+			expectedOutcome: "The edits are attributable to a point in the session tree.",
+			edits,
 		}),
 	);
 }
@@ -274,7 +278,7 @@ try {
 // =====================================================================
 // WRITER B - direct Python rlm.harness CRUD
 // =====================================================================
-const harnessB = await buildSession("crud");
+const harnessB = await buildSession();
 let crudRecord: Record<string, unknown> = {};
 try {
 	await harnessB.session.prompt("message A: establish the baseline");
@@ -381,6 +385,181 @@ try {
 }
 
 // =====================================================================
+// WRITER C - can a /refine-ONLY history be reverse-reconstructed?
+//
+// The first version of this study marked "complete effective harness state at
+// a turn" as PARTIAL for /refine on the grounds that no full-state snapshot is
+// persisted. An independent audit pointed out that this was asserted, not
+// tested: ordered appliedEdits carry before AND after for every touched entry,
+// so replaying them backwards from the final state may reconstruct any earlier
+// checkpoint exactly. This section tests that directly, and then tests what
+// happens when a direct CRUD write is interleaved.
+// =====================================================================
+type Entries = Record<string, Record<string, Record<string, unknown>>>;
+
+/**
+ * Reverse-replay `refinements` (oldest-first) off `finalEntries` to recover the
+ * state as of the checkpoint immediately before the first replayed refinement.
+ */
+function reverseReplay(finalEntries: Entries, refinements: Array<{ appliedEdits: Array<Record<string, unknown>> }>): Entries {
+	const state = JSON.parse(JSON.stringify(finalEntries)) as Entries;
+	for (const refinement of [...refinements].reverse()) {
+		for (const edit of [...refinement.appliedEdits].reverse()) {
+			if (!edit.applied) continue;
+			const kind = String(edit.kind);
+			const id = String(edit.id);
+			state[kind] ??= {};
+			if (edit.before) {
+				state[kind][id] = edit.before as Record<string, unknown>;
+			} else {
+				delete state[kind][id];
+			}
+		}
+	}
+	return state;
+}
+
+function readEntries(harnessStatePath: string): Entries {
+	return (JSON.parse(readFileSync(harnessStatePath, "utf8")) as { entries: Entries }).entries;
+}
+
+async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
+	checkpoints: Entries[];
+	reconstructed: Entries[];
+	exactMatches: boolean[];
+	refinementCount: number;
+}> {
+	const harness = await buildSession();
+	try {
+		// One real turn first: the session JSONL is created lazily on first append,
+		// and a refinement history with no surrounding conversation is not the
+		// shape being studied anyway.
+		harness.appendResponses([fauxAssistantMessage("starting work")]);
+		await harness.session.prompt("begin");
+		await settle(30);
+
+		const harnessDir = join(harness.sessionManager.getSessionArtifactDir()!, "harness");
+		const statePath = join(harnessDir, "harness_state.json");
+
+		// refine 1: create X and Y
+		harness.appendResponses([
+			multiProposal(
+				[
+					{ action: "create", kind: "memory", id: "rc_x", title: "X", content: "x-v1", path: "study/rc" },
+					{ action: "create", kind: "memory", id: "rc_y", title: "Y", content: "y-v1", path: "study/rc" },
+				],
+				"seed X and Y",
+			),
+		]);
+		await harness.session.refine({});
+		await settle(25);
+		const checkpointA = readEntries(statePath);
+
+		// refine 2: update X, delete Y
+		harness.appendResponses([
+			multiProposal(
+				[
+					{ action: "update", kind: "memory", id: "rc_x", title: "X", content: "x-v2", path: "study/rc" },
+					{ action: "delete", kind: "memory", id: "rc_y" },
+				],
+				"advance X, drop Y",
+			),
+		]);
+		await harness.session.refine({});
+		await settle(25);
+		const checkpointB = readEntries(statePath);
+
+		// Optionally interleave a direct Python CRUD write that the session
+		// records know nothing about.
+		if (interleaveCrudWrite) {
+			execFileSync(
+				"python3",
+				[
+					"-c",
+					[
+						"import rlm",
+						"rlm.harness.upsert('memory', 'X', 'x-CRUD-OVERWRITE', id='rc_x', path='study/rc')",
+						"rlm.harness.create_memory(title='Hidden', content='crud-only', id='rc_hidden', path='study/rc')",
+					].join("\n"),
+				],
+				{ env: { ...process.env, PYTHONPATH: RUNTIME_SRC, RLM_HARNESS_STATE_DIR: harnessDir }, encoding: "utf8" },
+			);
+		}
+
+		// refine 3: create Z, update X
+		harness.appendResponses([
+			multiProposal(
+				[
+					{ action: "create", kind: "memory", id: "rc_z", title: "Z", content: "z-v1", path: "study/rc" },
+					{ action: "update", kind: "memory", id: "rc_x", title: "X", content: "x-v3", path: "study/rc" },
+				],
+				"add Z, advance X",
+			),
+		]);
+		await harness.session.refine({});
+		await settle(25);
+		const finalEntries = readEntries(statePath);
+
+		// Rebuild history from the SESSION RECORD only, in append order.
+		const refinements = readJsonl(harness.sessionManager.getSessionFile()!)
+			.filter((entry) => entry.type === "custom" && entry.customType === "prime-agent.refinement")
+			.map((entry) => entry.data as { appliedEdits: Array<Record<string, unknown>> });
+
+		const reconstructedB = reverseReplay(finalEntries, refinements.slice(2));
+		const reconstructedA = reverseReplay(finalEntries, refinements.slice(1));
+
+		const exact = (a: Entries, b: Entries) => JSON.stringify(a) === JSON.stringify(b);
+		return {
+			checkpoints: [checkpointA, checkpointB, finalEntries],
+			reconstructed: [reconstructedA, reconstructedB, finalEntries],
+			exactMatches: [exact(reconstructedA, checkpointA), exact(reconstructedB, checkpointB), true],
+			refinementCount: refinements.length,
+		};
+	} finally {
+		harness.cleanup();
+	}
+}
+
+const cleanReplay = await runReconstructionProbe(false);
+const contaminatedReplay = await runReconstructionProbe(true);
+
+raw.reverseReconstruction = {
+	refineOnly: {
+		refinementCount: cleanReplay.refinementCount,
+		checkpointAExact: cleanReplay.exactMatches[0],
+		checkpointBExact: cleanReplay.exactMatches[1],
+		checkpointA: cleanReplay.checkpoints[0],
+		reconstructedA: cleanReplay.reconstructed[0],
+	},
+	withInterleavedCrud: {
+		checkpointAExact: contaminatedReplay.exactMatches[0],
+		checkpointBExact: contaminatedReplay.exactMatches[1],
+		checkpointA: contaminatedReplay.checkpoints[0],
+		reconstructedA: contaminatedReplay.reconstructed[0],
+	},
+};
+
+log.record(
+	"T02.C1",
+	"a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint (complete state IS reconstructible)",
+	cleanReplay.exactMatches[0] && cleanReplay.exactMatches[1],
+	`checkpointA exact=${cleanReplay.exactMatches[0]} checkpointB exact=${cleanReplay.exactMatches[1]} over ${cleanReplay.refinementCount} refinements`,
+);
+log.record(
+	"T02.C2",
+	"one interleaved direct CRUD write breaks reverse reconstruction",
+	!contaminatedReplay.exactMatches[0],
+	`checkpointA exact=${contaminatedReplay.exactMatches[0]}`,
+);
+log.record(
+	"T02.C3",
+	"and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state, with no marker in the records that a foreign write occurred",
+	!contaminatedReplay.exactMatches[0] &&
+		Object.keys(contaminatedReplay.reconstructed[0].memory ?? {}).length > 0,
+	`reconstructed A had ${Object.keys(contaminatedReplay.reconstructed[0].memory ?? {}).length} memory entries and looked valid`,
+);
+
+// =====================================================================
 // Reconstruction matrix
 // =====================================================================
 type Verdict = "RECONSTRUCTIBLE" | "PARTIAL" | "NOT RECONSTRUCTIBLE";
@@ -450,12 +629,20 @@ const matrix: Row[] = [
 		crudEvidence: "only if no later writer touched the same entry",
 	},
 	{
-		dimension: "COMPLETE effective harness state at message A / message B",
-		refine: "PARTIAL",
+		dimension: "COMPLETE harness state at an earlier checkpoint, /refine as the ONLY writer",
+		refine: "RECONSTRUCTIBLE",
 		refineEvidence:
-			"per-edit before/after only; no full-state snapshot or hash is persisted per turn, and a concurrent CRUD writer is invisible",
+			"T02.C1: reverse-replaying ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot being persisted",
 		crud: "NOT RECONSTRUCTIBLE",
-		crudEvidence: "no snapshot, no event, no anchor",
+		crudEvidence: "no ordered edit record exists to replay",
+	},
+	{
+		dimension: "COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present",
+		refine: "NOT RECONSTRUCTIBLE",
+		refineEvidence:
+			"T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong SILENTLY - it still yields a complete, well-formed state with no marker that a foreign write occurred",
+		crud: "NOT RECONSTRUCTIBLE",
+		crudEvidence: "same, and the foreign writer is the CRUD writer itself",
 	},
 	{
 		dimension: "effective system prompt actually sent with each request",

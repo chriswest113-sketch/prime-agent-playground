@@ -78,8 +78,8 @@ const echoTool: AgentTool = {
 	label: "Echo",
 	description: "Echo a value back deterministically.",
 	parameters: Type.Object({ value: Type.String() }),
-	execute: async (_toolCallId: string, args: { value: string }) => ({
-		content: [{ type: "text" as const, text: `echoed:${args.value}` }],
+	execute: async (_toolCallId: string, params: unknown) => ({
+		content: [{ type: "text" as const, text: `echoed:${(params as { value: string }).value}` }],
 		details: {},
 	}),
 };
@@ -186,9 +186,7 @@ async function layerP(): Promise<Array<Record<string, unknown>>> {
 		}
 		const final = await eventStream.result();
 		const toolCalls = final.content
-			.filter((block): block is { type: "toolCall"; id: string; name: string; arguments: unknown } => {
-				return block.type === "toolCall";
-			})
+			.filter((block) => block.type === "toolCall")
 			.map((block) => ({ id: block.id, name: block.name, arguments: block.arguments }));
 		return {
 			events,

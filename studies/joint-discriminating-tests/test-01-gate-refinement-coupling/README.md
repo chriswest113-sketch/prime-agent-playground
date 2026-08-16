@@ -93,7 +93,12 @@ exactly five blocks: `<current_harness_state>`, `<refinement_history>`,
 
 ## Result
 
-**H1 — UNTYPED TRANSCRIPT-MEDIATED CONNECTION.** RUNTIME-CONFIRMED.
+**H1 — UNTYPED TRANSCRIPT-MEDIATED CONNECTION**, in the specific sense of
+**transcript transport**, not of gate-triggered refinement. RUNTIME-CONFIRMED.
+
+The probe invokes `refine()` itself. Nothing here shows a gate failure *causes*
+or *schedules* a refinement — only that if a refinement is subsequently
+invoked, the gate-failure text is carried into its request.
 
 - **A: the path exists.** The sentinel, emitted only by the failing gate's
   stdout, is present verbatim in the `<conversation>` block of the refiner
@@ -106,17 +111,24 @@ exactly five blocks: `<current_harness_state>`, `<refinement_history>`,
 - **C: no mechanical validation.** The gate invocation counter is unchanged
   across the refine call (2 → 2). Refinement neither re-runs the gate nor checks
   its outcome.
-- **D: probabilistic only.** The applied edit is exactly the one the refiner
-  reply proposed. Gate text is one input among five to a free-form model call.
+- **D: the transport is deterministic; only the refiner's *response* to it is
+  not.** These are worth separating, and an independent audit was right to press
+  on it. Given (a) a refinement is invoked and (b) the continuation is still
+  inside the 80 000-character trajectory window, serialization deterministically
+  includes the gate text — there is no sampling in that step. What is
+  model-mediated is whether refinement is invoked at all, and whether the refiner
+  conditions its proposal on the text. The applied edit here is exactly the one
+  the probe's refiner reply proposed.
 
 ## What this result DOES establish
 
 - Gate-failure output physically reaches the refiner's request bytes, on this
-  code path, in this configuration.
+  code path, in this configuration, whenever a refinement is invoked while the
+  continuation is still in the trajectory window.
 - No typed field, shared identifier, or import connects the two subsystems.
 - Refinement does not validate the gate outcome it may have been influenced by.
-- The only channel is conversation text, so any influence is mediated by a model
-  and is therefore non-deterministic.
+- The only channel is conversation text. Transport along it is deterministic;
+  what a refiner does with the text is not.
 
 ## What this result DOES NOT establish
 
@@ -128,5 +140,7 @@ exactly five blocks: `<current_harness_state>`, `<refinement_history>`,
   (`_queueAutonomousContinuationForThresholdCompaction`, agent-session.ts:2735),
   which was not the route exercised here.
 - Anything about auto-`/refine` (`reviewAutoRefine`), which was not exercised.
-- That "gate failure caused the refinement" in any causal sense — only that the
-  information was available to the refiner.
+- That "gate failure caused the refinement" in any causal sense. The probe
+  called `refine()` explicitly; no automatic gate-triggered refinement exists on
+  this path, and none was looked for outside it.
+- That there is no linkage anywhere outside the explicit-refinement path tested.

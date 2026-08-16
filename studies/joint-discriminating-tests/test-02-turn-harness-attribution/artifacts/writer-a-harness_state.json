@@ -14,8 +14,8 @@
         "arguments": {},
         "metadata": {},
         "source": "refine",
-        "created_at": "2026-08-16T03:13:09.274Z",
-        "updated_at": "2026-08-16T03:13:09.382Z",
+        "created_at": "2026-08-16T04:21:57.454Z",
+        "updated_at": "2026-08-16T04:21:57.565Z",
         "version": 2
       }
     },
@@ -24,24 +24,24 @@
   },
   "refinements": [
     {
-      "id": "refine_20260816031309272",
+      "id": "refine_20260816042157451",
       "trigger": "Seed the T02 entry before message A",
       "changes": [
         "create memory:t02_distinctive_edit"
       ],
-      "evidence": "Probe requires a single distinctive, attributable edit.",
-      "outcome": "The edit is attributable to a point in the session tree.",
-      "created_at": "2026-08-16T03:13:09.274Z"
+      "evidence": "Probe requires distinctive, attributable edits.",
+      "outcome": "The edits are attributable to a point in the session tree.",
+      "created_at": "2026-08-16T04:21:57.454Z"
     },
     {
-      "id": "refine_20260816031309381",
+      "id": "refine_20260816042157564",
       "trigger": "Record the distinctive T02 harness edit",
       "changes": [
         "update memory:t02_distinctive_edit"
       ],
-      "evidence": "Probe requires a single distinctive, attributable edit.",
-      "outcome": "The edit is attributable to a point in the session tree.",
-      "created_at": "2026-08-16T03:13:09.382Z"
+      "evidence": "Probe requires distinctive, attributable edits.",
+      "outcome": "The edits are attributable to a point in the session tree.",
+      "created_at": "2026-08-16T04:21:57.565Z"
     }
   ]
 }

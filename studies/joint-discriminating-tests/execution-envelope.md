@@ -89,10 +89,25 @@ network call to any model provider occurs.
   `packages/coding-agent/test/suite/harness.ts` as a library; they do not add to
   or alter the suite.)
 
+## Type-checking the probes
+
+`studies/` is outside the repository's `tsconfig` `include` and biome
+`files.includes`, so `npm run check` does **not** examine the probes. That gap
+hid a real defect in the first round (an invalid `ServiceTier` literal in Test
+05, which invalidated that probe's service-tier evidence). A local
+`studies/joint-discriminating-tests/tsconfig.json` now covers them:
+
+```bash
+npx tsgo --noEmit -p studies/joint-discriminating-tests/tsconfig.json
+```
+
+Clean as of the current commit.
+
 ## Reproducing
 
 ```bash
 npm install --no-audit --no-fund      # then: git checkout -- package-lock.json
+npx tsgo --noEmit -p studies/joint-discriminating-tests/tsconfig.json
 bash studies/joint-discriminating-tests/run-all.sh
 ```
 

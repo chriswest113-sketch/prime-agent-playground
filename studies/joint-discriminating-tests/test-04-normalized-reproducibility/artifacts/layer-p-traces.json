@@ -11,87 +11,87 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "A reasonably long de"
+        "delta": "A reasonably lon"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "terministic repl"
+        "delta": "g determinis"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "y so the chunker"
+        "delta": "tic reply so the"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " has work to do."
+        "delta": " chunker has work to"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " A reasonably long d"
+        "delta": " do. A reasonabl"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "eterministic"
+        "delta": "y long deter"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " reply so the chunke"
+        "delta": "ministic reply so th"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "r has work t"
+        "delta": "e chunker has wo"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "o do. A reas"
+        "delta": "rk to do. A reas"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "onably long dete"
+        "delta": "onably long "
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "rministic reply so t"
+        "delta": "deterministic re"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "he chunker has work "
+        "delta": "ply so the chunker h"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "to do. A reasona"
+        "delta": "as work to do. A"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "bly long determinist"
+        "delta": " reasonably long"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ic reply so the "
+        "delta": " deterministic reply"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "chunker has work"
+        "delta": " so the chunker has "
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " to do. "
+        "delta": "work to do. "
       },
       {
         "type": "text_end",
@@ -218,23 +218,23 @@
       "done"
     ],
     "deltaSegmentation": [
-      20,
       16,
-      16,
-      16,
-      20,
-      12,
-      20,
-      12,
       12,
       16,
       20,
+      16,
+      12,
       20,
       16,
+      16,
+      12,
+      16,
       20,
       16,
       16,
-      8,
+      20,
+      20,
+      12,
       12,
       10,
       20,
@@ -243,7 +243,7 @@
     "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
     "toolCalls": [
       {
-        "id": "tool:1786849993537:77ri9au7gbu",
+        "id": "tool:1786854122088:k71bxnwh2n",
         "name": "echo",
         "arguments": {
           "value": "T04_MARKER"
@@ -257,7 +257,7 @@
         }
       }
     ],
-    "autoToolId": "tool:1786849993537:77ri9au7gbu",
+    "autoToolId": "tool:1786854122088:k71bxnwh2n",
     "explicitToolId": "t04-fixed-tool-id",
     "toolSemantics": [
       {
@@ -310,12 +310,12 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "terministic reply so"
+        "delta": "terministic repl"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " the chunker has"
+        "delta": "y so the chunker has"
       },
       {
         "type": "text_delta",
@@ -325,22 +325,615 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "easonably lo"
+        "delta": "easonably long deter"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ng deterministic"
+        "delta": "ministic reply so th"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " reply so the chunke"
+        "delta": "e chunker has wo"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "r has work t"
+        "delta": "rk to do. A reasonab"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "ly long determin"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "istic reply so the c"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "hunker has work "
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "to do. A rea"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "sonably long determi"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "nistic reply"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": " so the chunker "
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "has work to do. "
+      },
+      {
+        "type": "text_end",
+        "contentIndex": 0
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "{\"value\":\"T04_MA"
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "RKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 2
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "{\"value\":\"T04_MARKER"
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 2
+      },
+      {
+        "type": "done",
+        "reason": "toolUse"
+      }
+    ],
+    "coalesced": [
+      {
+        "type": "start"
+      },
+      {
+        "type": "text_start",
+        "contentIndex": 0
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. "
+      },
+      {
+        "type": "text_end",
+        "contentIndex": 0
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "{\"value\":\"T04_MARKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 2
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "{\"value\":\"T04_MARKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 2
+      },
+      {
+        "type": "done",
+        "reason": "toolUse"
+      }
+    ],
+    "rawEventTypes": [
+      "start",
+      "text_start",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_end",
+      "toolcall_start",
+      "toolcall_delta",
+      "toolcall_delta",
+      "toolcall_end",
+      "toolcall_start",
+      "toolcall_delta",
+      "toolcall_delta",
+      "toolcall_end",
+      "done"
+    ],
+    "deltaSegmentation": [
+      20,
+      16,
+      20,
+      16,
+      20,
+      20,
+      16,
+      20,
+      16,
+      20,
+      16,
+      12,
+      20,
+      12,
+      16,
+      16,
+      16,
+      6,
+      20,
+      2
+    ],
+    "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
+    "toolCalls": [
+      {
+        "id": "tool:1786854122090:p2t7qnpkz9r",
+        "name": "echo",
+        "arguments": {
+          "value": "T04_MARKER"
+        }
+      },
+      {
+        "id": "t04-fixed-tool-id",
+        "name": "echo",
+        "arguments": {
+          "value": "T04_MARKER"
+        }
+      }
+    ],
+    "autoToolId": "tool:1786854122090:p2t7qnpkz9r",
+    "explicitToolId": "t04-fixed-tool-id",
+    "toolSemantics": [
+      {
+        "name": "echo",
+        "args": {
+          "value": "T04_MARKER"
+        }
+      },
+      {
+        "name": "echo",
+        "args": {
+          "value": "T04_MARKER"
+        }
+      }
+    ],
+    "usage": {
+      "input": 19,
+      "output": 83,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 102,
+      "cost": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0
+      }
+    },
+    "stopReason": "toolUse",
+    "model": "faux-1",
+    "provider": "faux",
+    "responseId": null,
+    "responseModel": null
+  },
+  {
+    "events": [
+      {
+        "type": "start"
+      },
+      {
+        "type": "text_start",
+        "contentIndex": 0
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "A reasonably lon"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "g determinis"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "tic reply so"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": " the chunker has wor"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "k to do. A reasonabl"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "y long determini"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "stic reply so th"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "e chunker ha"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "s work to do"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": ". A reasonably long "
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "deterministi"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "c reply so the chunk"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "er has work to d"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "o. A reasona"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "bly long det"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "erministic r"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "eply so the chun"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "ker has work to do. "
+      },
+      {
+        "type": "text_end",
+        "contentIndex": 0
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "{\"value\":\"T04_MARKER"
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 2
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "{\"value\":\"T04_MA"
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "RKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 2
+      },
+      {
+        "type": "done",
+        "reason": "toolUse"
+      }
+    ],
+    "coalesced": [
+      {
+        "type": "start"
+      },
+      {
+        "type": "text_start",
+        "contentIndex": 0
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. "
+      },
+      {
+        "type": "text_end",
+        "contentIndex": 0
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 1,
+        "delta": "{\"value\":\"T04_MARKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 1
+      },
+      {
+        "type": "toolcall_start",
+        "contentIndex": 2
+      },
+      {
+        "type": "toolcall_delta",
+        "contentIndex": 2,
+        "delta": "{\"value\":\"T04_MARKER\"}"
+      },
+      {
+        "type": "toolcall_end",
+        "contentIndex": 2
+      },
+      {
+        "type": "done",
+        "reason": "toolUse"
+      }
+    ],
+    "rawEventTypes": [
+      "start",
+      "text_start",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_delta",
+      "text_end",
+      "toolcall_start",
+      "toolcall_delta",
+      "toolcall_delta",
+      "toolcall_end",
+      "toolcall_start",
+      "toolcall_delta",
+      "toolcall_delta",
+      "toolcall_end",
+      "done"
+    ],
+    "deltaSegmentation": [
+      16,
+      12,
+      12,
+      20,
+      20,
+      16,
+      16,
+      12,
+      12,
+      20,
+      12,
+      20,
+      16,
+      12,
+      12,
+      12,
+      16,
+      20,
+      20,
+      2,
+      16,
+      6
+    ],
+    "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
+    "toolCalls": [
+      {
+        "id": "tool:1786854122091:6pi15jsqske",
+        "name": "echo",
+        "arguments": {
+          "value": "T04_MARKER"
+        }
+      },
+      {
+        "id": "t04-fixed-tool-id",
+        "name": "echo",
+        "arguments": {
+          "value": "T04_MARKER"
+        }
+      }
+    ],
+    "autoToolId": "tool:1786854122091:6pi15jsqske",
+    "explicitToolId": "t04-fixed-tool-id",
+    "toolSemantics": [
+      {
+        "name": "echo",
+        "args": {
+          "value": "T04_MARKER"
+        }
+      },
+      {
+        "name": "echo",
+        "args": {
+          "value": "T04_MARKER"
+        }
+      }
+    ],
+    "usage": {
+      "input": 19,
+      "output": 83,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 102,
+      "cost": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0
+      }
+    },
+    "stopReason": "toolUse",
+    "model": "faux-1",
+    "provider": "faux",
+    "responseId": null,
+    "responseModel": null
+  },
+  {
+    "events": [
+      {
+        "type": "start"
+      },
+      {
+        "type": "text_start",
+        "contentIndex": 0
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "A reasonably long de"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "terministic "
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "reply so the chu"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "nker has work to do."
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": " A reasonabl"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "y long deter"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "ministic rep"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "ly so the ch"
+      },
+      {
+        "type": "text_delta",
+        "contentIndex": 0,
+        "delta": "unker has work t"
       },
       {
         "type": "text_delta",
@@ -350,42 +943,32 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ly long deterministi"
+        "delta": "ly long determin"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "c reply so t"
+        "delta": "istic reply so the c"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "he chunker h"
+        "delta": "hunker has work to d"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "as work to do. A rea"
+        "delta": "o. A reasonably long"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "sonably long"
+        "delta": " deterministic reply"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " determinist"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ic reply so "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "the chunker has "
+        "delta": " so the chunker has "
       },
       {
         "type": "text_delta",
@@ -403,313 +986,12 @@
       {
         "type": "toolcall_delta",
         "contentIndex": 1,
-        "delta": "{\"value\":\"T04_MA"
+        "delta": "{\"value\":\"T0"
       },
       {
         "type": "toolcall_delta",
         "contentIndex": 1,
-        "delta": "RKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 2
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "{\"value\":\"T04_MA"
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "RKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 2
-      },
-      {
-        "type": "done",
-        "reason": "toolUse"
-      }
-    ],
-    "coalesced": [
-      {
-        "type": "start"
-      },
-      {
-        "type": "text_start",
-        "contentIndex": 0
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. "
-      },
-      {
-        "type": "text_end",
-        "contentIndex": 0
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "{\"value\":\"T04_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 2
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "{\"value\":\"T04_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 2
-      },
-      {
-        "type": "done",
-        "reason": "toolUse"
-      }
-    ],
-    "rawEventTypes": [
-      "start",
-      "text_start",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_end",
-      "toolcall_start",
-      "toolcall_delta",
-      "toolcall_delta",
-      "toolcall_end",
-      "toolcall_start",
-      "toolcall_delta",
-      "toolcall_delta",
-      "toolcall_end",
-      "done"
-    ],
-    "deltaSegmentation": [
-      20,
-      20,
-      16,
-      16,
-      12,
-      16,
-      20,
-      12,
-      16,
-      20,
-      12,
-      12,
-      20,
-      12,
-      12,
-      12,
-      16,
-      12,
-      16,
-      6,
-      16,
-      6
-    ],
-    "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
-    "toolCalls": [
-      {
-        "id": "tool:1786849993539:940nx8fqwrk",
-        "name": "echo",
-        "arguments": {
-          "value": "T04_MARKER"
-        }
-      },
-      {
-        "id": "t04-fixed-tool-id",
-        "name": "echo",
-        "arguments": {
-          "value": "T04_MARKER"
-        }
-      }
-    ],
-    "autoToolId": "tool:1786849993539:940nx8fqwrk",
-    "explicitToolId": "t04-fixed-tool-id",
-    "toolSemantics": [
-      {
-        "name": "echo",
-        "args": {
-          "value": "T04_MARKER"
-        }
-      },
-      {
-        "name": "echo",
-        "args": {
-          "value": "T04_MARKER"
-        }
-      }
-    ],
-    "usage": {
-      "input": 19,
-      "output": 83,
-      "cacheRead": 0,
-      "cacheWrite": 0,
-      "totalTokens": 102,
-      "cost": {
-        "input": 0,
-        "output": 0,
-        "cacheRead": 0,
-        "cacheWrite": 0,
-        "total": 0
-      }
-    },
-    "stopReason": "toolUse",
-    "model": "faux-1",
-    "provider": "faux",
-    "responseId": null,
-    "responseModel": null
-  },
-  {
-    "events": [
-      {
-        "type": "start"
-      },
-      {
-        "type": "text_start",
-        "contentIndex": 0
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "A reasonably"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " long determ"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "inistic repl"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "y so the chunker"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " has work to do. A r"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "easonably lo"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ng deterministic"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " reply so the chunke"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "r has work to do. A "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "reasonably l"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ong determin"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "istic reply so the c"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "hunker has work to d"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "o. A reasonably "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "long determinist"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ic reply so the "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "chunker has work to "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "do. "
-      },
-      {
-        "type": "text_end",
-        "contentIndex": 0
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "{\"value\":\"T04_MA"
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "RKER\"}"
+        "delta": "4_MARKER\"}"
       },
       {
         "type": "toolcall_end",
@@ -806,7 +1088,6 @@
       "text_delta",
       "text_delta",
       "text_delta",
-      "text_delta",
       "text_end",
       "toolcall_start",
       "toolcall_delta",
@@ -819,33 +1100,32 @@
       "done"
     ],
     "deltaSegmentation": [
-      12,
-      12,
-      12,
-      16,
       20,
       12,
       16,
       20,
+      12,
+      12,
+      12,
+      12,
+      16,
+      16,
+      16,
+      20,
+      20,
+      20,
+      20,
       20,
       12,
       12,
-      20,
-      20,
-      16,
-      16,
-      16,
-      20,
-      4,
-      16,
-      6,
+      10,
       16,
       6
     ],
     "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
     "toolCalls": [
       {
-        "id": "tool:1786849993540:6h8vvf4tz94",
+        "id": "tool:1786854122091:toy721wzgxb",
         "name": "echo",
         "arguments": {
           "value": "T04_MARKER"
@@ -859,7 +1139,7 @@
         }
       }
     ],
-    "autoToolId": "tool:1786849993540:6h8vvf4tz94",
+    "autoToolId": "tool:1786854122091:toy721wzgxb",
     "explicitToolId": "t04-fixed-tool-id",
     "toolSemantics": [
       {
@@ -907,12 +1187,12 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "A reasonably"
+        "delta": "A reasonably lon"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": " long deterministic "
+        "delta": "g deterministic "
       },
       {
         "type": "text_delta",
@@ -937,12 +1217,12 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ministic reply s"
+        "delta": "ministic rep"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "o the chunker ha"
+        "delta": "ly so the chunker ha"
       },
       {
         "type": "text_delta",
@@ -952,341 +1232,47 @@
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "reasonably long dete"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "rministic reply so t"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "he chunker has work "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "to do. A reasona"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "bly long determinist"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ic reply so the chun"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "ker has work to "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "do. "
-      },
-      {
-        "type": "text_end",
-        "contentIndex": 0
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "{\"value\":\"T0"
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "4_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 2
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "{\"value\":\"T0"
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "4_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 2
-      },
-      {
-        "type": "done",
-        "reason": "toolUse"
-      }
-    ],
-    "coalesced": [
-      {
-        "type": "start"
-      },
-      {
-        "type": "text_start",
-        "contentIndex": 0
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. "
-      },
-      {
-        "type": "text_end",
-        "contentIndex": 0
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 1,
-        "delta": "{\"value\":\"T04_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 1
-      },
-      {
-        "type": "toolcall_start",
-        "contentIndex": 2
-      },
-      {
-        "type": "toolcall_delta",
-        "contentIndex": 2,
-        "delta": "{\"value\":\"T04_MARKER\"}"
-      },
-      {
-        "type": "toolcall_end",
-        "contentIndex": 2
-      },
-      {
-        "type": "done",
-        "reason": "toolUse"
-      }
-    ],
-    "rawEventTypes": [
-      "start",
-      "text_start",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_delta",
-      "text_end",
-      "toolcall_start",
-      "toolcall_delta",
-      "toolcall_delta",
-      "toolcall_end",
-      "toolcall_start",
-      "toolcall_delta",
-      "toolcall_delta",
-      "toolcall_end",
-      "done"
-    ],
-    "deltaSegmentation": [
-      12,
-      20,
-      12,
-      20,
-      12,
-      16,
-      16,
-      16,
-      16,
-      20,
-      20,
-      20,
-      16,
-      20,
-      20,
-      16,
-      4,
-      12,
-      10,
-      12,
-      10
-    ],
-    "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
-    "toolCalls": [
-      {
-        "id": "tool:1786849993540:nak32xprncp",
-        "name": "echo",
-        "arguments": {
-          "value": "T04_MARKER"
-        }
-      },
-      {
-        "id": "t04-fixed-tool-id",
-        "name": "echo",
-        "arguments": {
-          "value": "T04_MARKER"
-        }
-      }
-    ],
-    "autoToolId": "tool:1786849993540:nak32xprncp",
-    "explicitToolId": "t04-fixed-tool-id",
-    "toolSemantics": [
-      {
-        "name": "echo",
-        "args": {
-          "value": "T04_MARKER"
-        }
-      },
-      {
-        "name": "echo",
-        "args": {
-          "value": "T04_MARKER"
-        }
-      }
-    ],
-    "usage": {
-      "input": 19,
-      "output": 83,
-      "cacheRead": 0,
-      "cacheWrite": 0,
-      "totalTokens": 102,
-      "cost": {
-        "input": 0,
-        "output": 0,
-        "cacheRead": 0,
-        "cacheWrite": 0,
-        "total": 0
-      }
-    },
-    "stopReason": "toolUse",
-    "model": "faux-1",
-    "provider": "faux",
-    "responseId": null,
-    "responseModel": null
-  },
-  {
-    "events": [
-      {
-        "type": "start"
-      },
-      {
-        "type": "text_start",
-        "contentIndex": 0
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "A reasonably"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " long determinis"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "tic reply so the"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " chunker has"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " work to do."
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " A reasonably long d"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "eterministic"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": " reply so the chunke"
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
-        "delta": "r has work to do. A "
-      },
-      {
-        "type": "text_delta",
-        "contentIndex": 0,
         "delta": "reasonably l"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ong determin"
+        "delta": "ong deterministi"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "istic reply so t"
+        "delta": "c reply so the chunk"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "he chunker has w"
+        "delta": "er has work to d"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "ork to do. A rea"
+        "delta": "o. A reasonably "
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "sonably long determi"
+        "delta": "long determi"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "nistic reply so the "
+        "delta": "nistic reply so "
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "chunker has work to "
+        "delta": "the chunker has work"
       },
       {
         "type": "text_delta",
         "contentIndex": 0,
-        "delta": "do. "
+        "delta": " to do. "
       },
       {
         "type": "text_end",
@@ -1317,12 +1303,12 @@
       {
         "type": "toolcall_delta",
         "contentIndex": 2,
-        "delta": "{\"value\":\"T0"
+        "delta": "{\"value\":\"T04_MARKER"
       },
       {
         "type": "toolcall_delta",
         "contentIndex": 2,
-        "delta": "4_MARKER\"}"
+        "delta": "\"}"
       },
       {
         "type": "toolcall_end",
@@ -1414,33 +1400,33 @@
       "done"
     ],
     "deltaSegmentation": [
-      12,
       16,
       16,
       12,
-      12,
       20,
-      12,
-      20,
-      20,
-      12,
       12,
       16,
+      12,
+      20,
+      16,
+      12,
+      16,
+      20,
       16,
       16,
+      12,
+      16,
       20,
-      20,
-      20,
-      4,
+      8,
       16,
       6,
-      12,
-      10
+      20,
+      2
     ],
     "finalText": "A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. A reasonably long deterministic reply so the chunker has work to do. ",
     "toolCalls": [
       {
-        "id": "tool:1786849993540:jmy5gbmyob",
+        "id": "tool:1786854122091:2ct2abg08xj",
         "name": "echo",
         "arguments": {
           "value": "T04_MARKER"
@@ -1454,7 +1440,7 @@
         }
       }
     ],
-    "autoToolId": "tool:1786849993540:jmy5gbmyob",
+    "autoToolId": "tool:1786854122091:2ct2abg08xj",
     "explicitToolId": "t04-fixed-tool-id",
     "toolSemantics": [
       {

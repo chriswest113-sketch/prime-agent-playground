@@ -91,7 +91,7 @@ Per-claim scoring:
 | --- | --- | --- | --- |
 | 1 | stored | **YES** | RUNTIME-CONFIRMED (T03.1) |
 | 2 | included in the default routing summary | **NO** | RUNTIME-CONFIRMED (T03.2–T03.4) |
-| 3 | programmatically retrievable | **YES**, by six independent paths | RUNTIME-CONFIRMED (T03.5–T03.13) |
+| 3 | programmatically retrievable | **YES**, through six API surfaces | RUNTIME-CONFIRMED (T03.5–T03.13) |
 | 4 | spontaneously retrieved by an agent | **NOT TESTED** | — requires a real model |
 | 5 | successfully used during a task | **NOT TESTED** | — requires a real model and a held-out task |
 
@@ -113,6 +113,11 @@ Two further observations that sharpen the finding:
   retrievable by `loadHarnessState()`, the same renderer at a raised limit,
   `rlm.harness.list/get/snapshot`, `rlm.get_harness_state`, and (end-to-end) a
   tool call inside a live agent loop.
+- **These are six API surfaces, not six independent mechanisms.** An audit
+  correctly flagged the earlier "six independent paths" wording as overstated:
+  every one of them reads the same `harness_state.json`. They establish breadth
+  of access, not independent corroboration — a single store-level failure would
+  take all six out together.
 - Bounded rendering — not storage or accessibility — is the mechanism.
 - "Invisible" is too strong as an unqualified claim.
 
@@ -124,6 +129,8 @@ Two further observations that sharpen the finding:
   whether a real model would choose to use it. The probe records
   `scriptedDecision: true` for exactly this reason.
 - **Claim 5.** Nothing here measures task outcome.
+- That accessibility is redundant or fault-tolerant. All six surfaces share one
+  backing store.
 - That the default bound is adequate or inadequate in practice. Degraded
   salience is demonstrated; its *cost* is unmeasured and is a real-model
   question.

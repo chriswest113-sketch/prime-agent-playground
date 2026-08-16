@@ -282,15 +282,13 @@ try {
 	// can produce any proposal. Demonstrate that the applied edit is whatever the
 	// (faux) refiner said, not something derived from the gate result.
 	const applied = refineResult.appliedEdits.filter((edit) => edit.applied);
-	raw.phase5 = {
-		appliedEditIds: applied.map((edit) => `${edit.action} ${edit.kind}:${edit.id}`),
-		refinerProposalDrivenByModelReply: true,
-	};
+	const appliedEditIds = applied.map((edit) => `${edit.action} ${edit.kind}:${edit.id}`);
+	raw.phase5 = { appliedEditIds, refinerProposalDrivenByModelReply: true };
 	log.record(
 		"T01.10",
 		"D: the applied edits come from the refiner reply, so gate text can only influence refinement probabilistically",
 		applied.length === 1 && applied[0].id === "t01_probe_memory",
-		`applied: ${JSON.stringify(raw.phase5.appliedEditIds)}`,
+		`applied: ${JSON.stringify(appliedEditIds)}`,
 	);
 
 	if (refinerRequest) {

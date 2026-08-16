@@ -64,7 +64,22 @@ try {
 
 	await harness.session.setModel(modelA);
 	harness.session.setThinkingLevel("medium");
+
+	// Service-tier transitions, using only values in the ServiceTier union
+	// ("auto" | "default" | "flex" | "scale" | "priority" | null). Three cases are
+	// exercised so "clamped" and "no-op" are not conflated:
+	//   1. accepted   - "flex" is supported, recorded verbatim
+	//   2. clamped    - "priority" is unsupported on a faux model, so
+	//                   _getEffectiveServiceTier maps it to "default"; the event
+	//                   records "default" and the REQUESTED value is lost
+	//   3. no-op      - requesting "priority" again resolves to the already-current
+	//                   "default", so no event is written at all
+	harness.session.setServiceTier("flex");
+	const tierAfterAccepted = harness.session.serviceTier;
 	harness.session.setServiceTier("priority");
+	const tierAfterClamped = harness.session.serviceTier;
+	harness.session.setServiceTier("priority");
+	const tierAfterNoOp = harness.session.serviceTier;
 	await settle(20);
 
 	harness.setResponses([routedResponse("first response under model A")]);
@@ -74,8 +89,12 @@ try {
 	// Configuration transitions between turns.
 	await harness.session.setModel(modelB);
 	harness.session.setThinkingLevel("high");
-	harness.session.setServiceTier("standard");
 	await settle(20);
+
+	raw.serviceTierProbe = {
+		requestedSequence: ["flex", "priority", "priority"],
+		effectiveAfterEach: [tierAfterAccepted, tierAfterClamped, tierAfterNoOp],
+	};
 
 	harness.appendResponses([fauxAssistantMessage("second response under model B")]);
 	await harness.session.prompt("turn two");
@@ -136,17 +155,24 @@ log.record(
 	tierChanges.length > 0,
 	JSON.stringify(tierChanges.map((entry) => (entry as never)["serviceTier"])),
 );
+const recordedTiers = tierChanges.map((entry) => (entry as never)["serviceTier"] as string);
 log.record(
 	"T05.4b",
-	"only the EFFECTIVE (clamped) service tier is recorded: the requested `priority` tier left no trace",
-	!tierChanges.some((entry) => (entry as never)["serviceTier"] === "priority"),
-	`recorded tiers: ${JSON.stringify(tierChanges.map((entry) => (entry as never)["serviceTier"]))}; "priority" was requested`,
+	"CLAMPED request: `priority` was requested but only the effective `default` is recorded - the requested value is lost, though an event IS written",
+	recordedTiers.includes("default") && !recordedTiers.includes("priority"),
+	`recorded tiers: ${JSON.stringify(recordedTiers)}; requested sequence was ["flex","priority","priority"]`,
 );
 log.record(
 	"T05.4c",
-	"change events are emitted only on an effective change, so a no-op request is unrecorded",
-	tierChanges.length === 1,
-	`two setServiceTier calls produced ${tierChanges.length} change event(s)`,
+	"NO-OP request: a second `priority` request resolving to the already-current `default` writes no event at all",
+	tierChanges.length === 2,
+	`three setServiceTier calls produced ${tierChanges.length} change event(s): ${JSON.stringify(recordedTiers)}`,
+);
+log.record(
+	"T05.4d",
+	"an ACCEPTED tier is recorded verbatim, so the loss is specific to clamping rather than general",
+	recordedTiers[0] === "flex",
+	`first recorded tier: ${String(recordedTiers[0])}`,
 );
 log.record(
 	"T05.5",

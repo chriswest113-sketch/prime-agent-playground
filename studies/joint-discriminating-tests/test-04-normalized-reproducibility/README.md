@@ -53,6 +53,14 @@ stop reasons, applied-edit outcomes, and usage numbers. Usage in particular is
 compared as observed — it is never coerced to equality. Where usage *does* vary
 (see below), the probe diagnoses the variance rather than normalizing it away.
 
+**The normalizers are lexical, not schema-aware.** They rewrite anything
+matching a UUID, epoch-millisecond, or hex-id shape anywhere in the serialized
+trace, including inside model text or tool arguments. In this fixed script no
+such value occurs in substantive content, so nothing meaningful is erased — but
+the same normalizer set applied to a fixture whose content legitimately contains
+a UUID or timestamp *would* erase it and could mask a real difference. An audit
+raised this; it is a real limitation of the approach, not of this run.
+
 The segmentation normalizer needs justification, since it is the only one that
 touches event structure. `message_update` fires once per emitted chunk and
 carries no content of its own in this trace; its *count* is a direct function of
@@ -155,9 +163,13 @@ Equality appears only when segmentation is coalesced as well.
 - The prior "nondeterministic evaluation surface" claim needs narrowing: the
   nondeterminism is real but confined to byte, identifier and chunk-segmentation
   framing.
-- The semantic layer an evaluator would actually score — assistant content, tool
-  behaviour, tool results, harness state, output tokens, outcomes — was
-  identical across every run measured.
+- For **one fixed faux-response script**, the pipeline around the provider —
+  tool execution, tool-result capture, harness application, session persistence,
+  output-token accounting, outcome recording — preserved the scripted semantics
+  across every run measured, despite randomized framing. This is the load-bearing
+  finding: model *content* equality is largely a restatement of fixture
+  construction, since the responses are authored by the probe. What is not
+  trivial is that nothing in the surrounding machinery perturbed them.
 - Input-token accounting is **not** reproducible across processes, and the cause
   is identified: volatile temp-path length crossing the token quantisation
   boundary. It is framing, not drift.
@@ -173,6 +185,13 @@ Equality appears only when segmentation is coalesced as well.
   script was measured, with 5 provider-layer and 3 session-layer repetitions.
   Flows involving timing races, concurrency, or wall-clock-dependent branching
   were not exercised.
+- General faux-provider behavioural reproducibility. The provider returns
+  authored fixtures; it makes no decisions that could vary.
+- That the equality contract was pre-registered. It was not: this probe was
+  revised twice after observing failures (segmentation coincidence, then
+  input-token variance). Both revisions and their triggering failures are
+  documented, but a reader should treat the final contract as
+  post-hoc-refined rather than fixed in advance.
 - That input-token accounting is reproducible. It demonstrably is not, across
   processes, in this environment. The claim established is narrower: the
   variance is fully attributable to prompt-length framing.

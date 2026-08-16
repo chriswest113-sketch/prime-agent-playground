@@ -1,6 +1,6 @@
 # Synthesis
 
-Six probes, 89 assertions, all passing on the final run. Every result below is
+Six probes, 93 assertions, all passing on the final run. Every result below is
 traceable to a raw artifact under `<probe>/artifacts/`.
 
 ---
@@ -18,7 +18,11 @@ accepted, revised, or rejected **solely on the experiments**.
 > and refinement, although gate failures can reach refinement through shared
 > transcript state."
 
-**ACCEPTED.** RUNTIME-CONFIRMED.
+**ACCEPTED WITH NARROWER WORDING.** RUNTIME-CONFIRMED. Revised form:
+
+> No typed gate identity and no automatic gate-validation linkage was found.
+> Gate-failure continuation text can enter a **subsequently invoked** refinement
+> request through the shared trajectory.
 
 Every clause is independently demonstrated by `test-01`:
 
@@ -34,10 +38,19 @@ Every clause is independently demonstrated by `test-01`:
   stdout, appears verbatim inside the `<conversation>` block of the captured
   refiner request, and in no other block.
 
-One qualification worth carrying forward: "can reach" is scoped to the
-trajectory window. `planRefinement` takes `slice(-80_000)` of the serialized
-conversation, so a gate failure far enough back is excluded. That boundary was
-not probed.
+Two qualifications, both raised by an independent audit and both correct:
+
+- **This is transport, not causation.** The probe calls `refine()` itself.
+  Nothing shows a gate failure *causes* or *schedules* a refinement.
+- **The transport itself is deterministic.** Calling the whole coupling
+  "probabilistic" was loose. Given a refinement is invoked and the continuation
+  is still in the trajectory window, serialization deterministically includes the
+  gate text. What is model-mediated is whether refinement runs at all, and
+  whether the refiner conditions its proposal on the text.
+
+"Can reach" is also scoped to that window: `planRefinement` takes
+`slice(-80_000)` of the serialized conversation, so a gate failure far enough
+back is excluded. That boundary was not probed.
 
 ---
 
@@ -53,10 +66,11 @@ correct statement about what remains unmeasured.
 `test-03` seeded 15 global memory entries and placed
 `HIDDEN_HARNESS_FACT_83D2` outside the default rendered subset. The system
 prompt *actually sent to the provider* rendered 6 entries and the line
-`+9 more memory entries`; the fact was absent. It was then recovered by six
-independent paths: `loadHarnessState()`, the same renderer at a raised limit,
+`+9 more memory entries`; the fact was absent. It was then recovered through six
+API surfaces: `loadHarnessState()`, the same renderer at a raised limit,
 `rlm.harness.list()`, `.get()`, `.snapshot()`, `rlm.get_harness_state()`, and
-end-to-end through a tool call inside a live agent loop.
+end-to-end through a tool call inside a live agent loop — six interfaces over
+one store.
 
 Two refinements to the wording are earned by the evidence:
 
@@ -68,6 +82,9 @@ Two refinements to the wording are earned by the evidence:
   same accumulation is displaced at one boundary and visible at another —
   confirmed causally by T03.12, where the *same* Python renderer at limit 6 also
   omits the fact.
+- **"Six independent paths" was overstated and is corrected to "six API
+  surfaces".** All six read the same `harness_state.json`. They demonstrate
+  breadth of access, not independent corroboration.
 
 "Practical autonomous retrieval remains separately measurable" is exactly right
 and is the reason claims 4 and 5 are marked NOT TESTED rather than answered.
@@ -80,22 +97,36 @@ and is the reason claims 4 and 5 are marked NOT TESTED rather than answered.
 > provenance, while direct Python CRUD and absent complete prompt snapshots
 > prevent full effective-harness reconstruction."
 
-**ACCEPTED, with one clarification.** TEST-CONFIRMED + RUNTIME-CONFIRMED.
+**FIRST CLAUSE ACCEPTED; SECOND CLAUSE REJECTED AS STATED.**
+TEST-CONFIRMED + RUNTIME-CONFIRMED.
 
-`test-02`'s matrix supports every clause. `/refine` writes a `custom` session
-entry with `id`, `parentId` on the message spine, and a timestamp; post-mutation
-messages descend from it; `appliedEdits[].before` and `.after` are full entry
-snapshots. Direct CRUD writes no session entry, no refinement event, and no
-before value; writer identity survives only as `source: "agent"`.
+The first clause holds: `/refine` writes a `custom` session entry with `id`,
+`parentId` on the message spine, and a timestamp; post-mutation messages descend
+from it; `appliedEdits[].before` and `.after` are full entry snapshots. Direct
+CRUD writes no session entry, no refinement event, and no before value; writer
+identity survives only as `source: "agent"`.
 
-The clarification: **the two named causes are independent, and either alone is
-sufficient.** Absent complete prompt/harness snapshots block full
-effective-harness reconstruction *even in a session with no CRUD writer at all* —
-`/refine` scores only PARTIAL on that dimension, because per-edit before/after
-is not a full-state snapshot and no per-turn harness hash exists. Direct CRUD
-adds a second, independent blocker: it is invisible to the records, so its
-presence cannot even be detected. Reading the statement as "CRUD is what
-prevents reconstruction" would understate the problem.
+The second clause is where this study was wrong, and an independent audit caught
+it. The original matrix marked complete harness-state reconstruction as PARTIAL
+for `/refine`, reasoning from the absence of a full-state snapshot. That was an
+assertion, not a result — and it is false. A `/refine`-only history
+**reverse-replays to the exact earlier state** (T02.C1): `appliedEdits` carries
+`before` *and* `after` for every touched entry, so the ordered edit log is
+itself a complete differential record and the snapshot is unnecessary.
+
+Revised form:
+
+> `/refine` mutations have session-tree ordering and before/after provenance,
+> and a `/refine`-only history reconstructs complete harness state at any earlier
+> checkpoint by reverse-replaying its ordered edit log. What prevents
+> reconstruction is a **foreign writer** — direct Python CRUD — not the absence
+> of snapshots. Absent prompt snapshots separately prevent recovering the
+> effective system prompt, which is a different quantity.
+
+And the failure mode is worse than the original claim implied: one interleaved
+CRUD write does not produce an error or a gap. It produces a complete,
+well-formed, **wrong** state, with nothing in the records marking that a foreign
+write occurred (T02.C2, T02.C3). An investigator gets a confident wrong answer.
 
 ---
 
@@ -122,12 +153,27 @@ catalog hash/version, the system prompt bytes, any prompt hash, any per-request
 harness snapshot or hash, per-response thinking level or service tier, tool
 versions, skill versions.
 
-One finding strengthens the statement beyond what it claims: **change events
-record only the effective value after clamping, and only when it changes.**
-Requesting `priority` service tier on a model without fast-mode support left no
-trace whatsoever (T05.4b, T05.4c). A rejected request is therefore
-indistinguishable from a request never made — a reconstruction gap in the
-*nominal* record, not just the effective one.
+One finding strengthens the statement beyond what it claims, though the first
+version of this study overstated it and an audit was right to press. **Change
+events record only the effective value after clamping, and only when it
+changes.** Three cases, now separated with valid `ServiceTier` values
+(T05.4b–T05.4d):
+
+- `flex` is supported → recorded verbatim;
+- `priority` on a model without fast-mode support → clamped to `default`; an
+  event **is** written, but it records `default`, so the request is
+  indistinguishable from a direct `default` request;
+- `priority` again, now a no-op → **no event at all**.
+
+So the accurate claim is not "clamped or rejected requests leave no record".
+Clamping loses the *requested value*; only a no-op loses the whole event. No
+rejection path was exercised at all. This is still a reconstruction gap in the
+*nominal* record rather than merely the effective one — but a narrower one.
+
+Two scope corrections also apply: the absence findings are scoped to the
+**persisted session artifact**, not to every artifact the repository writes; and
+`responseModel` was fixture-injected to test the persistence path, so nothing
+here shows a real provider populating it.
 
 ---
 
@@ -190,9 +236,9 @@ boundaries, and inaccurate as a statement about the layer an evaluator scores.
 | 3 | "Refinement validates gate outcome" | **SETTLED** — rejected | Gate invocation count unchanged across refine (T01.6) |
 | 4 | "`/refine` mutations carry provenance" | **SETTLED** | Tree position, ordering, before, after all reconstructible (T02.A1–A6) |
 | 5 | "Harness mutations have no provenance" | **SETTLED WITH NARROWER WORDING** | True for direct Python CRUD; false for `/refine` (T02.B1–B6 vs T02.A1–A6) |
-| 6 | "Complete effective harness state at a turn is reconstructible" | **SETTLED** — rejected | PARTIAL for `/refine`, NOT RECONSTRUCTIBLE for CRUD; no per-turn snapshot or hash exists (T02.A7, T02.A8) |
+| 6 | "Complete effective harness state at a turn is reconstructible" | **SETTLED WITH NARROWER WORDING** — the study's own original verdict is corrected | TRUE for a `/refine`-only history via reverse-replay (T02.C1); FALSE once any foreign writer is present, and it fails silently (T02.C2/C3). Recovering the effective *system prompt* remains impossible either way (T02.A8) |
 | 7 | "Accumulated harness state becomes invisible" | **SETTLED WITH NARROWER WORDING** | Absent from the default routing summary; retrievable by six paths (T03.3, T03.5–T03.13) |
-| 8 | "Full harness state remains programmatically accessible" | **SETTLED** | RUNTIME-CONFIRMED (T03.5–T03.10) |
+| 8 | "Full harness state remains programmatically accessible" | **SETTLED** | RUNTIME-CONFIRMED through six API surfaces over one store (T03.5–T03.10) |
 | 9 | "An agent will retrieve displaced harness state when it matters" | **STILL UNRESOLVED** | Claim 4 NOT TESTED — requires a real model |
 | 10 | "Displaced harness state costs task performance" | **STILL UNRESOLVED** | Claim 5 NOT TESTED — requires a real model and held-out tasks |
 | 11 | "The faux evaluation surface is nondeterministic" | **SETTLED WITH NARROWER WORDING** | True at byte/identifier/segmentation level; false at the semantic level (T04) |
@@ -201,8 +247,8 @@ boundaries, and inaccurate as a statement about the layer an evaluator scores.
 | 14 | "Prime Agent records model configuration" | **SETTLED WITH NARROWER WORDING** | Nominal configuration yes; effective configuration no (T05) |
 | 15 | "Prime Agent records no per-response model identity" | **SETTLED** — rejected | `responseModel` and `responseId` persist when the provider supplies them (T05.6, T05.7) |
 | 16 | "Records establish controlled run equivalence" | **SETTLED** — rejected | Seed, temperature, snapshot, prompt bytes, harness hash all absent (T05 absence checks) |
-| 17 | "Requested configuration is recoverable from the record" | **SETTLED** — rejected | Only effective post-clamp values are recorded, and only on change (T05.4b, T05.4c) |
-| 18 | "Verifiers/prime-rl closes a score → refinement loop" | **SETTLED for this repository; DEFERRED for the external side** | No adapter, no reward/score concept, untyped free-text inbound only (EXT.1–EXT.4) |
+| 17 | "Requested configuration is recoverable from the record" | **SETTLED** — rejected | Only effective post-clamp values are recorded, and only on change. Clamped requests lose the requested value; no-ops lose the event entirely; accepted values survive verbatim (T05.4b–T05.4d) |
+| 18 | "Verifiers/prime-rl closes a score → refinement loop" | **SETTLED for this repository; DEFERRED for the external side** | No adapter and no reward/score concept exists here; the examined typed refinement input channel carries untyped free text (EXT.1–EXT.4). "Only inbound channel" was wrong — Test 01 itself shows the trajectory is another route |
 
 ---
 
@@ -213,19 +259,27 @@ is false — the transcript path is real and was observed. "Prime Agent records 
 per-response model identity" is false — `responseModel` and `responseId` persist
 when supplied.
 
+**One of this study's own claims was rejected on audit.** The first version
+marked complete harness-state reconstruction as PARTIAL for `/refine` on the
+strength of an argument rather than a test. Reverse-replay of the ordered edit
+log reconstructs it exactly. See `audit-response.md`.
+
 **Four were narrowed rather than overturned.** Gate/refinement independence is
 true of *typing and determinism*, not of *information flow*. Provenance absence
 is true of *direct CRUD*, not of `/refine`. Invisibility is *bounded default
 rendering*, not inaccessibility. Nondeterminism is *framing-level*, not
 semantic.
 
-**Two new gaps surfaced that neither prior study had named.** First, clamped or
-rejected configuration requests leave no record at all — not a gap in effective
-configuration, but a gap in the *nominal* record, which had been treated as the
-part that *was* reliable. Second, faux input-token accounting is not reproducible
-across processes: it moves with the incidental length of the temp session path
-embedded in the system prompt. Both prior studies had treated usage as a stable
-quantity under the faux provider.
+**Three new gaps surfaced that neither prior study had named.** First, a clamped
+configuration request records the post-clamp value and silently loses the
+requested one, and a no-op request records nothing — a gap in the *nominal*
+record, which had been treated as the part that *was* reliable. Second, faux
+input-token accounting is not reproducible across processes: it moves with the
+incidental length of the temp session path embedded in the system prompt; both
+prior studies had treated usage as stable under the faux provider. Third, and
+most consequential for the next phase: a foreign writer does not merely create a
+reconstruction gap, it makes reverse-replay return a confident wrong answer with
+no marker that anything is missing.
 
 **Two remain genuinely open and are not answerable without a real model:**
 whether an agent spontaneously retrieves displaced harness state, and whether
@@ -249,10 +303,14 @@ Three findings here constrain that design and should be carried into it:
    temperature, model snapshot, prompt bytes, or a per-request harness hash in
    the record, two runs cannot be shown equivalent from artifacts alone. Any
    controlled comparison must add its own provenance capture.
-2. **Q2's matrix determines what a refinement-condition arm can prove.** If the
-   experiment permits direct `rlm.harness` CRUD alongside `/refine`, harness
-   mutations become partly unattributable and the arms stop being cleanly
-   separable. Either restrict writers to `/refine`, or add snapshotting.
+2. **Q2's matrix determines what a refinement-condition arm can prove, and the
+   requirement is writer purity.** A `/refine`-only history is fully
+   reconstructible with no extra instrumentation — that is a stronger position
+   than the first draft of this study believed. But allowing direct
+   `rlm.harness` CRUD alongside `/refine` does not merely degrade attribution:
+   it makes reverse-replay produce a plausible wrong state silently. Either
+   restrict writers to `/refine`, or add per-turn snapshotting, or at minimum
+   add a tamper marker so a foreign write is detectable after the fact.
 3. **Q4 sets the achievable reproducibility target.** Semantic-script
    reproducibility is attainable and is the right equality relation for
    assertions; byte or event-frame equality is not, and should not be built into

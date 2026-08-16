@@ -12,6 +12,10 @@ reconstruct from the persisted session and harness records?
 | **H0** | Full provenance: the complete effective harness state at any turn is recoverable. |
 | **H1** | Partial, writer-dependent provenance: `/refine` is attributable, direct CRUD is not, and complete effective state is recoverable under neither. |
 | **H2** | No provenance: harness mutations are unattributable regardless of writer. |
+| **H3** | Writer-purity-dependent: a `/refine`-only history is fully reconstructible from its ordered edit log; any foreign writer destroys that. |
+
+H3 was added after an independent audit; the first version of this study did not
+consider it and asserted the second half of H1 without testing it.
 
 The brief explicitly forbids reducing this to a binary, so the deliverable is a
 matrix, not a verdict.
@@ -31,6 +35,15 @@ message A  ->  ONE distinctive harness edit  ->  message B
 - **Writer B** — direct Python `rlm.harness.create_memory(...)` in a subprocess,
   addressed through `RLM_HARNESS_STATE_DIR` — the same env var
   `agent-session.ts:8913` sets for the RLM kernel.
+
+A third section, **Writer C**, was added after an independent audit observed
+that the first version of this study *asserted* complete-state
+unreconstructibility rather than testing it. It builds a three-refinement
+history (create ×2 → update + delete → create + update), records ground-truth
+harness state at each checkpoint, then reconstructs earlier checkpoints purely
+by reverse-replaying the ordered `appliedEdits` read from the session JSONL off
+the final state. It runs twice: once `/refine`-only, once with a direct CRUD
+write interleaved.
 
 ## Source anchors
 
@@ -68,6 +81,9 @@ npx tsx studies/joint-discriminating-tests/test-02-turn-harness-attribution/run.
 [PASS] T02.B4: the CRUD-written entry retains a wall-clock timestamp but no session-tree anchor -- entry keys: ["arguments","content","created_at","id","kind","metadata","path","reference","scope","source","title","updated_at","version"]
 [PASS] T02.B5: the CRUD-written entry carries no before state (prior value is unrecoverable from records)
 [PASS] T02.B6: writer identity survives only as the coarse `source` field, not as an actor/turn id -- source=agent
+[PASS] T02.C1: a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint -- checkpointA exact=true checkpointB exact=true over 3 refinements
+[PASS] T02.C2: one interleaved direct CRUD write breaks reverse reconstruction -- checkpointA exact=false
+[PASS] T02.C3: and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state -- reconstructed A had 3 memory entries and looked valid
 ```
 
 Session entry types written by the `/refine` run: `session`, `custom`,
@@ -85,17 +101,31 @@ Session entry types written by the `/refine` run: `session`, `custom`,
 | which messages followed the mutation | **RECONSTRUCTIBLE** | message entries descending from the refinement entry | **NOT RECONSTRUCTIBLE** | same — no anchor |
 | harness state applying to message A (edited entry only) | **RECONSTRUCTIBLE** | `appliedEdits[].before` gives the pre-mutation value of every touched entry | **NOT RECONSTRUCTIBLE** | no before value is recorded |
 | harness state applying to message B (edited entry only) | **RECONSTRUCTIBLE** | `appliedEdits[].after` plus `harness_state.json` | **PARTIAL** | only if no later writer touched the same entry |
-| COMPLETE effective harness state at message A / message B | **PARTIAL** | per-edit before/after only; no full-state snapshot or hash is persisted per turn, and a concurrent CRUD writer is invisible | **NOT RECONSTRUCTIBLE** | no snapshot, no event, no anchor |
+| COMPLETE harness state at an earlier checkpoint, `/refine` as the ONLY writer | **RECONSTRUCTIBLE** | T02.C1: reverse-replaying ordered `appliedEdits` off the final state reproduces the checkpoint **exactly**, despite no full-state snapshot being persisted | **NOT RECONSTRUCTIBLE** | no ordered edit record exists to replay |
+| COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present | **NOT RECONSTRUCTIBLE** | T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong **silently** | **NOT RECONSTRUCTIBLE** | same, and the foreign writer is the CRUD writer itself |
 | effective system prompt actually sent with each request | **NOT RECONSTRUCTIBLE** | assistant message entries record no `systemPrompt` and no prompt hash | **NOT RECONSTRUCTIBLE** | same |
 
 ## Result
 
-**H1.** TEST-CONFIRMED / RUNTIME-CONFIRMED.
+**H3.** TEST-CONFIRMED / RUNTIME-CONFIRMED. (H1 is rejected in its second half.)
 
 `/refine` produces genuine, tree-positioned, before/after provenance. Direct
 Python CRUD produces none of it: no session entry, no refinement event, no
 before value, and writer identity degrades to the single coarse string
 `source: "agent"`.
+
+**Correction from the audit.** The first version of this study marked complete
+effective harness state as PARTIAL for `/refine`, reasoning that no full-state
+snapshot is persisted. That reasoning was wrong. Writer C shows a `/refine`-only
+history reverse-replays to the **exact** earlier state: `appliedEdits` carries
+both `before` and `after` for every touched entry, so the ordered edit log is
+itself a complete differential record. The snapshot is unnecessary.
+
+What actually breaks reconstruction is a **foreign writer**, and the failure
+mode is worse than a gap: one interleaved CRUD write makes the replay produce a
+complete, well-formed, *wrong* state, with nothing in the records marking that a
+foreign write occurred. An investigator would get a confident wrong answer
+rather than an error.
 
 **What disappears specifically under direct CRUD:** the session-tree anchor
 (hence the before/after message split), the ordering guarantee relative to
@@ -126,5 +156,8 @@ That is a writer *class* label, not an identity.
 - That direct CRUD is *unobservable in principle* — an external observer
   watching file mtimes could order it. The claim is only that the **records**
   do not carry it.
+- That reverse-replay is robust beyond the tested shape. Writer C exercised
+  create, update and delete across three refinements on a linear branch. Rollback
+  chains, branching, and global-scope refinements were not replayed.
 - Whether the RLM kernel, in a real IPython session, adds any provenance the
   bare Python API does not. No kernel was available in this environment.

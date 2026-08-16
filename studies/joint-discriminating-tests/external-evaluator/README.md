@@ -60,11 +60,18 @@ to Test 01:
   at the external boundary, gate outcome and refinement are not typed together.
 - Both are **outbound**. Nothing in this repository reads a score back in.
 
-The only inbound channel is `refine({instructions})`
+The only **typed refinement input channel** is `refine({instructions})`
 (`rpc-types.ts:55` → `AgentSession.refine`). The runtime test fed it
 `"evaluator reward=0.25 on task ext_probe_task"` and confirmed it arrives as
 free text inside `<user_refine_instructions>`. The refiner request has exactly
 five blocks and none of them is typed for a score.
+
+An earlier version of this write-up called it "the only inbound path", which was
+wrong — and wrong in a way Test 01 already disproves. Evaluator-produced
+information can also reach the refiner through the conversation (exactly the
+transport Test 01 demonstrates with gate text), through tool output, through
+files, or by writing harness state directly. What is absent is a **typed,
+internally closed score → refinement protocol**, not every inbound route.
 
 ## Result
 
@@ -74,7 +81,8 @@ IMPLEMENTATION-CONFIRMED (inventory) + RUNTIME-CONFIRMED (inbound channel).
 - In-repo adapter: **ABSENT**.
 - Outbound: ACP `_meta`, with gate state and refinement completion as separate
   unlinked payloads.
-- Inbound: untyped free text only.
+- Inbound: the examined typed refinement input channel carries untyped free text
+  only. Other, untyped routes into the trajectory exist and were not enumerated.
 
 **`DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED`** for whether the external
 Verifiers / prime-rl side constructs such a loop. That cannot be determined from
@@ -90,3 +98,5 @@ this phase's scope.
 - Architectural intent. The `acp-meta.ts` comment naming "the verifiers harness"
   is recorded as evidence that an outbound surface exists for such a consumer;
   it is deliberately not read as evidence of what that consumer does.
+- That `refine({instructions})` is the only way evaluator information could
+  reach refinement. It is the only *typed* one examined.

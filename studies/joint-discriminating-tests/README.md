@@ -31,6 +31,8 @@ studies/joint-discriminating-tests/
 ├── results-matrix.md                the master matrix + preserved negative results
 ├── synthesis.md                     adjudication of the five candidate statements; SETTLED/… classification
 ├── unresolved.md                    everything still open, and why
+├── audit-response.md                independent Codex audit of 91ce174 + adjudication
+├── tsconfig.json                    so the probes are actually type-checked
 ├── run-all.sh                       re-run every probe
 ├── _lib/probe.ts                    shared helpers (isolation, artifacts, assertion log)
 ├── test-01-gate-refinement-coupling/    README.md · run.ts · artifacts/
@@ -57,18 +59,33 @@ Probes are standalone `tsx` scripts, not vitest tests, so the repository's own
 test boundary is untouched. Each exits non-zero if any assertion fails; console
 output is captured to `<probe>/artifacts/console-output.txt`.
 
+Type-check them with:
+
+```bash
+npx tsgo --noEmit -p studies/joint-discriminating-tests/tsconfig.json
+```
+
+This is **not** covered by the repository's `npm run check`: `studies/` sits
+outside its `tsconfig` include and biome globs. Skipping it the first time hid a
+real defect — see `audit-response.md`.
+
 ## Headline results
 
 | # | Question | Result |
 | --- | --- | --- |
-| 1 | Gate → refinement coupling | **UNTYPED TRANSCRIPT-MEDIATED CONNECTION** — the path exists, no typed linkage, no post-refinement gate validation |
-| 2 | Turn-level harness attribution | Writer- and dimension-dependent. `/refine` is fully attributable; direct Python CRUD is not; **neither** supports complete effective-harness reconstruction |
-| 3 | Routing visibility vs retrieval | **DEGRADED DEFAULT SALIENCE**, not absolute invisibility — displaced state is signalled and retrievable by six paths |
+| 1 | Gate → refinement coupling | **UNTYPED TRANSCRIPT-MEDIATED TRANSPORT** — gate text reaches a subsequently invoked refinement; no typed linkage, no post-refinement gate validation. Transport, not causation |
+| 2 | Turn-level harness attribution | Writer-purity-dependent. A `/refine`-only history reconstructs complete state exactly by reverse-replay; one foreign CRUD write breaks it **silently** |
+| 3 | Routing visibility vs retrieval | **DEGRADED DEFAULT SALIENCE**, not absolute invisibility — displaced state is signalled and retrievable through six API surfaces over one store |
 | 4 | Faux reproducibility | Non-canonical at byte/identifier/segmentation level; **semantically reproducible** after principled normalization, with input-token accounting a diagnosed environment-dependent exception |
-| 5 | Model / configuration record | Nominal configuration recorded; effective configuration not. Clamped requests leave no trace at all |
-| — | External evaluator loop | Not closed in this repository. `DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED` for the external side |
+| 5 | Model / configuration record | Nominal configuration recorded; effective configuration not. A clamped request records the post-clamp value and loses the request; a no-op records nothing |
+| — | External evaluator loop | No typed, internally closed score → refinement protocol here. `DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED` for the external side |
 
-Latest full run: **6/6 probes PASS**, 89 assertions.
+Latest full run: **6/6 probes PASS**, 93 assertions.
+
+An independent Codex audit reproduced the suite in a different environment and
+raised six scope corrections, all accepted — two of which required new tests
+because this study had asserted claims it never tested. See
+`audit-response.md`.
 
 ## Guarantees
 
@@ -80,8 +97,9 @@ Latest full run: **6/6 probes PASS**, 89 assertions.
   throwaway temp directory before any production module resolves it, so the
   operator's real `~/.prime/agent` is never touched.
 - **Negative results preserved.** Failed initial designs, environment limits,
-  and untestable claims are recorded in `results-matrix.md` and
-  `unresolved.md` rather than removed.
+  untestable claims, and one claim this study got wrong are recorded in
+  `results-matrix.md`, `unresolved.md` and `audit-response.md` rather than
+  removed.
 
 ## Boundary
 

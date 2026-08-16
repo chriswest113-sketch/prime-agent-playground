@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-t02-14625",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t02-9963",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,
@@ -19,9 +19,183 @@
       "PRIME_API_KEY": false
     }
   },
+  "reverseReconstruction": {
+    "refineOnly": {
+      "refinementCount": 3,
+      "checkpointAExact": true,
+      "checkpointBExact": true,
+      "checkpointA": {
+        "prompt": {},
+        "memory": {
+          "rc_x": {
+            "id": "rc_x",
+            "kind": "memory",
+            "title": "X",
+            "content": "x-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:57.983Z",
+            "updated_at": "2026-08-16T04:21:57.983Z",
+            "version": 1
+          },
+          "rc_y": {
+            "id": "rc_y",
+            "kind": "memory",
+            "title": "Y",
+            "content": "y-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:57.983Z",
+            "updated_at": "2026-08-16T04:21:57.983Z",
+            "version": 1
+          }
+        },
+        "skill": {},
+        "subagent": {}
+      },
+      "reconstructedA": {
+        "prompt": {},
+        "memory": {
+          "rc_x": {
+            "id": "rc_x",
+            "kind": "memory",
+            "title": "X",
+            "content": "x-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:57.983Z",
+            "updated_at": "2026-08-16T04:21:57.983Z",
+            "version": 1
+          },
+          "rc_y": {
+            "id": "rc_y",
+            "kind": "memory",
+            "title": "Y",
+            "content": "y-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:57.983Z",
+            "updated_at": "2026-08-16T04:21:57.983Z",
+            "version": 1
+          }
+        },
+        "skill": {},
+        "subagent": {}
+      }
+    },
+    "withInterleavedCrud": {
+      "checkpointAExact": false,
+      "checkpointBExact": false,
+      "checkpointA": {
+        "prompt": {},
+        "memory": {
+          "rc_x": {
+            "id": "rc_x",
+            "kind": "memory",
+            "title": "X",
+            "content": "x-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:58.129Z",
+            "updated_at": "2026-08-16T04:21:58.129Z",
+            "version": 1
+          },
+          "rc_y": {
+            "id": "rc_y",
+            "kind": "memory",
+            "title": "Y",
+            "content": "y-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:58.129Z",
+            "updated_at": "2026-08-16T04:21:58.129Z",
+            "version": 1
+          }
+        },
+        "skill": {},
+        "subagent": {}
+      },
+      "reconstructedA": {
+        "prompt": {},
+        "memory": {
+          "rc_x": {
+            "id": "rc_x",
+            "kind": "memory",
+            "title": "X",
+            "content": "x-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:58.129Z",
+            "updated_at": "2026-08-16T04:21:58.129Z",
+            "version": 1
+          },
+          "rc_hidden": {
+            "id": "rc_hidden",
+            "kind": "memory",
+            "title": "Hidden",
+            "content": "crud-only",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "agent",
+            "created_at": "2026-08-16T04:21:58.243873+00:00",
+            "updated_at": "2026-08-16T04:21:58.243879+00:00",
+            "version": 1
+          },
+          "rc_y": {
+            "id": "rc_y",
+            "kind": "memory",
+            "title": "Y",
+            "content": "y-v1",
+            "path": "study/rc",
+            "scope": "local",
+            "reference": {},
+            "arguments": {},
+            "metadata": {},
+            "source": "refine",
+            "created_at": "2026-08-16T04:21:58.129Z",
+            "updated_at": "2026-08-16T04:21:58.129Z",
+            "version": 1
+          }
+        },
+        "skill": {},
+        "subagent": {}
+      }
+    }
+  },
   "writerA_refine": {
-    "sessionFile": "/tmp/pi-suite-1786849989250-on984wwdbno/sessions/01a0088f-1283-7638-ad66-0e397531f392.jsonl",
-    "harnessStatePath": "/tmp/pi-suite-1786849989250-on984wwdbno/session-artifacts/01a0088f-1283-7638-ad66-0e397531f392/harness/harness_state.json",
+    "sessionFile": "/tmp/pi-suite-1786854117427-ir58lpw2wt/sessions/01a008ce-1035-70ee-b88d-9c92fd94218b.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786854117427-ir58lpw2wt/session-artifacts/01a008ce-1035-70ee-b88d-9c92fd94218b/harness/harness_state.json",
     "jsonlEntryTypes": [
       "session",
       "custom",
@@ -31,59 +205,59 @@
       {
         "index": 0,
         "type": "session",
-        "id": "01a0088f-1283-7638-ad66-0e397531f392",
+        "id": "01a008ce-1035-70ee-b88d-9c92fd94218b",
         "parentId": null,
-        "timestamp": "2026-08-16T03:13:09.252Z"
+        "timestamp": "2026-08-16T04:21:57.429Z"
       },
       {
         "index": 1,
         "type": "custom",
-        "id": "28d9a35d",
+        "id": "dca7223b",
         "parentId": null,
-        "timestamp": "2026-08-16T03:13:09.275Z",
+        "timestamp": "2026-08-16T04:21:57.454Z",
         "customType": "prime-agent.refinement"
       },
       {
         "index": 2,
         "type": "message",
-        "id": "e53c9962",
-        "parentId": "28d9a35d",
-        "timestamp": "2026-08-16T03:13:09.324Z",
+        "id": "1ebe531c",
+        "parentId": "dca7223b",
+        "timestamp": "2026-08-16T04:21:57.509Z",
         "role": "user",
         "text": "message A: establish the baseline"
       },
       {
         "index": 3,
         "type": "message",
-        "id": "c1e7363b",
-        "parentId": "e53c9962",
-        "timestamp": "2026-08-16T03:13:09.326Z",
+        "id": "b57eb8c0",
+        "parentId": "1ebe531c",
+        "timestamp": "2026-08-16T04:21:57.510Z",
         "role": "assistant",
         "text": "assistant reply to message A (refine)"
       },
       {
         "index": 4,
         "type": "custom",
-        "id": "4f355aac",
-        "parentId": "c1e7363b",
-        "timestamp": "2026-08-16T03:13:09.382Z",
+        "id": "e1a78ab9",
+        "parentId": "b57eb8c0",
+        "timestamp": "2026-08-16T04:21:57.565Z",
         "customType": "prime-agent.refinement"
       },
       {
         "index": 5,
         "type": "message",
-        "id": "6a1900a3",
-        "parentId": "4f355aac",
-        "timestamp": "2026-08-16T03:13:09.428Z",
+        "id": "7e32f006",
+        "parentId": "e1a78ab9",
+        "timestamp": "2026-08-16T04:21:57.607Z",
         "role": "user",
         "text": "message B: after the refinement"
       },
       {
         "index": 6,
         "type": "message",
-        "id": "cf757bbc",
-        "parentId": "6a1900a3",
-        "timestamp": "2026-08-16T03:13:09.428Z",
+        "id": "d8649e72",
+        "parentId": "7e32f006",
+        "timestamp": "2026-08-16T04:21:57.608Z",
         "role": "assistant",
         "text": "assistant reply to message B (refine)"
       }
@@ -92,10 +266,10 @@
       "type": "custom",
       "customType": "prime-agent.refinement",
       "data": {
-        "id": "refine_20260816031309381",
+        "id": "refine_20260816042157564",
         "summary": "Record the distinctive T02 harness edit",
-        "rationale": "Probe requires a single distinctive, attributable edit.",
-        "expectedOutcome": "The edit is attributable to a point in the session tree.",
+        "rationale": "Probe requires distinctive, attributable edits.",
+        "expectedOutcome": "The edits are attributable to a point in the session tree.",
         "appliedEdits": [
           {
             "action": "update",
@@ -116,8 +290,8 @@
               "arguments": {},
               "metadata": {},
               "source": "refine",
-              "created_at": "2026-08-16T03:13:09.274Z",
-              "updated_at": "2026-08-16T03:13:09.274Z",
+              "created_at": "2026-08-16T04:21:57.454Z",
+              "updated_at": "2026-08-16T04:21:57.454Z",
               "version": 1
             },
             "after": {
@@ -131,19 +305,19 @@
               "arguments": {},
               "metadata": {},
               "source": "refine",
-              "created_at": "2026-08-16T03:13:09.274Z",
-              "updated_at": "2026-08-16T03:13:09.382Z",
+              "created_at": "2026-08-16T04:21:57.454Z",
+              "updated_at": "2026-08-16T04:21:57.565Z",
               "version": 2
             },
             "applied": true
           }
         ],
-        "harnessStatePath": "/tmp/pi-suite-1786849989250-on984wwdbno/session-artifacts/01a0088f-1283-7638-ad66-0e397531f392/harness/harness_state.json",
+        "harnessStatePath": "/tmp/pi-suite-1786854117427-ir58lpw2wt/session-artifacts/01a008ce-1035-70ee-b88d-9c92fd94218b/harness/harness_state.json",
         "scope": "local"
       },
-      "id": "4f355aac",
-      "parentId": "c1e7363b",
-      "timestamp": "2026-08-16T03:13:09.382Z"
+      "id": "e1a78ab9",
+      "parentId": "b57eb8c0",
+      "timestamp": "2026-08-16T04:21:57.565Z"
     },
     "refinementEntryIndex": 4,
     "messagesBeforeRefinement": [
@@ -166,8 +340,8 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T03:13:09.274Z",
-      "updated_at": "2026-08-16T03:13:09.274Z",
+      "created_at": "2026-08-16T04:21:57.454Z",
+      "updated_at": "2026-08-16T04:21:57.454Z",
       "version": 1
     },
     "persistedAfterState": {
@@ -181,8 +355,8 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T03:13:09.274Z",
-      "updated_at": "2026-08-16T03:13:09.382Z",
+      "created_at": "2026-08-16T04:21:57.454Z",
+      "updated_at": "2026-08-16T04:21:57.565Z",
       "version": 2
     },
     "harnessStateEntry": {
@@ -196,34 +370,34 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T03:13:09.274Z",
-      "updated_at": "2026-08-16T03:13:09.382Z",
+      "created_at": "2026-08-16T04:21:57.454Z",
+      "updated_at": "2026-08-16T04:21:57.565Z",
       "version": 2
     },
     "harnessStateRefinements": [
       {
-        "id": "refine_20260816031309272",
+        "id": "refine_20260816042157451",
         "trigger": "Seed the T02 entry before message A",
         "changes": [
           "create memory:t02_distinctive_edit"
         ],
-        "evidence": "Probe requires a single distinctive, attributable edit.",
-        "outcome": "The edit is attributable to a point in the session tree.",
-        "created_at": "2026-08-16T03:13:09.274Z"
+        "evidence": "Probe requires distinctive, attributable edits.",
+        "outcome": "The edits are attributable to a point in the session tree.",
+        "created_at": "2026-08-16T04:21:57.454Z"
       },
       {
-        "id": "refine_20260816031309381",
+        "id": "refine_20260816042157564",
         "trigger": "Record the distinctive T02 harness edit",
         "changes": [
           "update memory:t02_distinctive_edit"
         ],
-        "evidence": "Probe requires a single distinctive, attributable edit.",
-        "outcome": "The edit is attributable to a point in the session tree.",
-        "created_at": "2026-08-16T03:13:09.382Z"
+        "evidence": "Probe requires distinctive, attributable edits.",
+        "outcome": "The edits are attributable to a point in the session tree.",
+        "created_at": "2026-08-16T04:21:57.565Z"
       }
     ],
-    "refineResultId": "refine_20260816031309381",
-    "setupRefineResultId": "refine_20260816031309272",
+    "refineResultId": "refine_20260816042157564",
+    "setupRefineResultId": "refine_20260816042157451",
     "refinementEntryCount": 2,
     "setupCreateEditHadBeforeKey": true,
     "assistantMessageKeys": [
@@ -238,57 +412,57 @@
     ]
   },
   "writerB_crud": {
-    "sessionFile": "/tmp/pi-suite-1786849989504-mjz15oq5gz/sessions/01a0088f-1380-734a-ba72-1f45c73344d0.jsonl",
-    "harnessStatePath": "/tmp/pi-suite-1786849989504-mjz15oq5gz/session-artifacts/01a0088f-1380-734a-ba72-1f45c73344d0/harness/harness_state.json",
+    "sessionFile": "/tmp/pi-suite-1786854117681-i7ibta657mi/sessions/01a008ce-1131-7552-b8af-32f24f2ddf50.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786854117681-i7ibta657mi/session-artifacts/01a008ce-1131-7552-b8af-32f24f2ddf50/harness/harness_state.json",
     "pythonStdout": {
       "id": "t02_distinctive_edit",
       "source": "agent",
       "version": 1,
-      "created_at": "2026-08-16T03:13:09.650557+00:00",
-      "updated_at": "2026-08-16T03:13:09.650592+00:00",
+      "created_at": "2026-08-16T04:21:57.822015+00:00",
+      "updated_at": "2026-08-16T04:21:57.822073+00:00",
       "scope": "local"
     },
     "jsonlSummary": [
       {
         "index": 0,
         "type": "session",
-        "id": "01a0088f-1380-734a-ba72-1f45c73344d0",
+        "id": "01a008ce-1131-7552-b8af-32f24f2ddf50",
         "parentId": null,
-        "timestamp": "2026-08-16T03:13:09.504Z"
+        "timestamp": "2026-08-16T04:21:57.681Z"
       },
       {
         "index": 1,
         "type": "message",
-        "id": "be054396",
+        "id": "55952ea9",
         "parentId": null,
-        "timestamp": "2026-08-16T03:13:09.531Z",
+        "timestamp": "2026-08-16T04:21:57.704Z",
         "role": "user",
         "text": "message A: establish the baseline"
       },
       {
         "index": 2,
         "type": "message",
-        "id": "25194aeb",
-        "parentId": "be054396",
-        "timestamp": "2026-08-16T03:13:09.532Z",
+        "id": "11ac0ae7",
+        "parentId": "55952ea9",
+        "timestamp": "2026-08-16T04:21:57.704Z",
         "role": "assistant",
         "text": ""
       },
       {
         "index": 3,
         "type": "message",
-        "id": "c0a2bcde",
-        "parentId": "25194aeb",
-        "timestamp": "2026-08-16T03:13:09.679Z",
+        "id": "2bd0ac94",
+        "parentId": "11ac0ae7",
+        "timestamp": "2026-08-16T04:21:57.845Z",
         "role": "user",
         "text": "message B: after the CRUD mutation"
       },
       {
         "index": 4,
         "type": "message",
-        "id": "53d41fe0",
-        "parentId": "c0a2bcde",
-        "timestamp": "2026-08-16T03:13:09.680Z",
+        "id": "6412d946",
+        "parentId": "2bd0ac94",
+        "timestamp": "2026-08-16T04:21:57.846Z",
         "role": "assistant",
         "text": "assistant reply to message B (crud)"
       }
@@ -308,8 +482,8 @@
       "arguments": {},
       "metadata": {},
       "source": "agent",
-      "created_at": "2026-08-16T03:13:09.650557+00:00",
-      "updated_at": "2026-08-16T03:13:09.650592+00:00",
+      "created_at": "2026-08-16T04:21:57.822015+00:00",
+      "updated_at": "2026-08-16T04:21:57.822073+00:00",
       "version": 1
     },
     "harnessStateRefinements": []
@@ -372,11 +546,18 @@
       "crudEvidence": "only if no later writer touched the same entry"
     },
     {
-      "dimension": "COMPLETE effective harness state at message A / message B",
-      "refine": "PARTIAL",
-      "refineEvidence": "per-edit before/after only; no full-state snapshot or hash is persisted per turn, and a concurrent CRUD writer is invisible",
+      "dimension": "COMPLETE harness state at an earlier checkpoint, /refine as the ONLY writer",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "T02.C1: reverse-replaying ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot being persisted",
       "crud": "NOT RECONSTRUCTIBLE",
-      "crudEvidence": "no snapshot, no event, no anchor"
+      "crudEvidence": "no ordered edit record exists to replay"
+    },
+    {
+      "dimension": "COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present",
+      "refine": "NOT RECONSTRUCTIBLE",
+      "refineEvidence": "T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong SILENTLY - it still yields a complete, well-formed state with no marker that a foreign write occurred",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "same, and the foreign writer is the CRUD writer itself"
     },
     {
       "dimension": "effective system prompt actually sent with each request",
@@ -401,7 +582,7 @@
       "id": "T02.A2",
       "claim": "the refinement entry has a tree position (id + parentId) and a timestamp",
       "pass": true,
-      "detail": "id=4f355aac parentId=c1e7363b ts=2026-08-16T03:13:09.382Z"
+      "detail": "id=e1a78ab9 parentId=b57eb8c0 ts=2026-08-16T04:21:57.565Z"
     },
     {
       "id": "T02.A3",
@@ -418,7 +599,7 @@
       "id": "T02.A5",
       "claim": "the refinement record carries an explicit before state for the edited entry",
       "pass": true,
-      "detail": "before={\"id\":\"t02_distinctive_edit\",\"kind\":\"memory\",\"title\":\"T02 distinctive edit\",\"content\":\"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.\",\"path\":\"study/t02\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T03:13:09.274Z\",\"updated_at\":\"2026-08-16T03:13:09.274Z\",\"version\":1}"
+      "detail": "before={\"id\":\"t02_distinctive_edit\",\"kind\":\"memory\",\"title\":\"T02 distinctive edit\",\"content\":\"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.\",\"path\":\"study/t02\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T04:21:57.454Z\",\"updated_at\":\"2026-08-16T04:21:57.454Z\",\"version\":1}"
     },
     {
       "id": "T02.A6",
@@ -470,6 +651,24 @@
       "claim": "writer identity survives only as the coarse `source` field, not as an actor/turn id",
       "pass": true,
       "detail": "source=agent"
+    },
+    {
+      "id": "T02.C1",
+      "claim": "a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint (complete state IS reconstructible)",
+      "pass": true,
+      "detail": "checkpointA exact=true checkpointB exact=true over 3 refinements"
+    },
+    {
+      "id": "T02.C2",
+      "claim": "one interleaved direct CRUD write breaks reverse reconstruction",
+      "pass": true,
+      "detail": "checkpointA exact=false"
+    },
+    {
+      "id": "T02.C3",
+      "claim": "and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state, with no marker in the records that a foreign write occurred",
+      "pass": true,
+      "detail": "reconstructed A had 3 memory entries and looked valid"
     }
   ]
 }

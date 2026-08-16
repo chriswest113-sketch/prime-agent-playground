@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-t05-14957",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t05-10314",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,
@@ -19,13 +19,25 @@
       "PRIME_API_KEY": false
     }
   },
+  "serviceTierProbe": {
+    "requestedSequence": [
+      "flex",
+      "priority",
+      "priority"
+    ],
+    "effectiveAfterEach": [
+      "flex",
+      "default",
+      "default"
+    ]
+  },
   "liveSessionState": {
     "model": {
       "provider": "faux",
       "id": "faux-second"
     },
     "thinkingLevel": "high",
-    "serviceTier": "standard"
+    "serviceTier": "default"
   },
   "absenceChecks": {
     "temperature": true,
@@ -73,7 +85,7 @@
         "fields": [
           "serviceTier"
         ],
-        "count": 1
+        "count": 2
       },
       "note": "Change events are append-only and tree-positioned, so the configuration in force at any entry is reconstructible by walking the branch. They record the EFFECTIVE value after clamping, and only when it actually changes - a rejected or no-op request leaves no record."
     },
@@ -146,15 +158,15 @@
           "text": "first response under model A"
         }
       ],
-      "api": "faux:1786850000153:un5gm0wpwt",
+      "api": "faux:1786854128845:ppcjnyzabib",
       "provider": "faux",
       "model": "faux-requested",
       "usage": {
-        "input": 2429,
+        "input": 2428,
         "output": 7,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "totalTokens": 2436,
+        "totalTokens": 2435,
         "cost": {
           "input": 0,
           "output": 0,
@@ -165,7 +177,7 @@
       },
       "stopReason": "stop",
       "responseId": "resp_T05_FIXED_0001",
-      "timestamp": 1786850000212,
+      "timestamp": 1786854128889,
       "responseModel": "faux-concrete-routed-0925"
     },
     {
@@ -176,7 +188,7 @@
           "text": "second response under model B"
         }
       ],
-      "api": "faux:1786850000153:un5gm0wpwt",
+      "api": "faux:1786854128845:ppcjnyzabib",
       "provider": "faux",
       "model": "faux-second",
       "usage": {
@@ -194,7 +206,7 @@
         }
       },
       "stopReason": "stop",
-      "timestamp": 1786850000319
+      "timestamp": 1786854128993
     }
   ],
   "headerKeys": [
@@ -209,17 +221,17 @@
     "modelChanges": [
       {
         "type": "model_change",
-        "id": "30410f33",
+        "id": "2393d2be",
         "parentId": null,
-        "timestamp": "2026-08-16T03:13:20.176Z",
+        "timestamp": "2026-08-16T04:22:08.867Z",
         "provider": "faux",
         "modelId": "faux-requested"
       },
       {
         "type": "model_change",
-        "id": "72ede92d",
-        "parentId": "69773f25",
-        "timestamp": "2026-08-16T03:13:20.298Z",
+        "id": "7cf5b5e6",
+        "parentId": "94bbb39a",
+        "timestamp": "2026-08-16T04:22:08.972Z",
         "provider": "faux",
         "modelId": "faux-second"
       }
@@ -227,26 +239,33 @@
     "thinkingChanges": [
       {
         "type": "thinking_level_change",
-        "id": "b2f1f4b4",
-        "parentId": "30410f33",
-        "timestamp": "2026-08-16T03:13:20.177Z",
+        "id": "f4b9034d",
+        "parentId": "2393d2be",
+        "timestamp": "2026-08-16T04:22:08.869Z",
         "thinkingLevel": "medium"
       },
       {
         "type": "thinking_level_change",
-        "id": "7c36986f",
-        "parentId": "72ede92d",
-        "timestamp": "2026-08-16T03:13:20.299Z",
+        "id": "68e941bc",
+        "parentId": "7cf5b5e6",
+        "timestamp": "2026-08-16T04:22:08.972Z",
         "thinkingLevel": "high"
       }
     ],
     "tierChanges": [
       {
         "type": "service_tier_change",
-        "id": "919b38dd",
-        "parentId": "7c36986f",
-        "timestamp": "2026-08-16T03:13:20.299Z",
-        "serviceTier": "standard"
+        "id": "c6322871",
+        "parentId": "f4b9034d",
+        "timestamp": "2026-08-16T04:22:08.869Z",
+        "serviceTier": "flex"
+      },
+      {
+        "type": "service_tier_change",
+        "id": "73a631bc",
+        "parentId": "c6322871",
+        "timestamp": "2026-08-16T04:22:08.869Z",
+        "serviceTier": "default"
       }
     ]
   },
@@ -255,7 +274,7 @@
       "id": "T05.1",
       "claim": "the session reloads from disk",
       "pass": true,
-      "detail": "entries=9"
+      "detail": "entries=10"
     },
     {
       "id": "T05.2",
@@ -273,25 +292,31 @@
       "id": "T05.4",
       "claim": "service-tier changes are persisted as typed change events",
       "pass": true,
-      "detail": "[\"standard\"]"
+      "detail": "[\"flex\",\"default\"]"
     },
     {
       "id": "T05.4b",
-      "claim": "only the EFFECTIVE (clamped) service tier is recorded: the requested `priority` tier left no trace",
+      "claim": "CLAMPED request: `priority` was requested but only the effective `default` is recorded - the requested value is lost, though an event IS written",
       "pass": true,
-      "detail": "recorded tiers: [\"standard\"]; \"priority\" was requested"
+      "detail": "recorded tiers: [\"flex\",\"default\"]; requested sequence was [\"flex\",\"priority\",\"priority\"]"
     },
     {
       "id": "T05.4c",
-      "claim": "change events are emitted only on an effective change, so a no-op request is unrecorded",
+      "claim": "NO-OP request: a second `priority` request resolving to the already-current `default` writes no event at all",
       "pass": true,
-      "detail": "two setServiceTier calls produced 1 change event(s)"
+      "detail": "three setServiceTier calls produced 2 change event(s): [\"flex\",\"default\"]"
+    },
+    {
+      "id": "T05.4d",
+      "claim": "an ACCEPTED tier is recorded verbatim, so the loss is specific to clamping rather than general",
+      "pass": true,
+      "detail": "first recorded tier: flex"
     },
     {
       "id": "T05.5",
       "claim": "each assistant response records provider, api and the requested model id",
       "pass": true,
-      "detail": "[{\"provider\":\"faux\",\"api\":\"faux:1786850000153:un5gm0wpwt\",\"model\":\"faux-requested\"},{\"provider\":\"faux\",\"api\":\"faux:1786850000153:un5gm0wpwt\",\"model\":\"faux-second\"}]"
+      "detail": "[{\"provider\":\"faux\",\"api\":\"faux:1786854128845:ppcjnyzabib\",\"model\":\"faux-requested\"},{\"provider\":\"faux\",\"api\":\"faux:1786854128845:ppcjnyzabib\",\"model\":\"faux-second\"}]"
     },
     {
       "id": "T05.6",
