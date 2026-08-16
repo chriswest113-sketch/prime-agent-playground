@@ -1,0 +1,152 @@
+{
+  "environment": {
+    "node": "v22.22.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cwd": "/home/user/prime-agent-playground",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t03-14696",
+    "providerCredentialsPresent": {
+      "ANTHROPIC_API_KEY": false,
+      "ANTHROPIC_OAUTH_TOKEN": false,
+      "OPENAI_API_KEY": false,
+      "GEMINI_API_KEY": false,
+      "GROQ_API_KEY": false,
+      "XAI_API_KEY": false,
+      "OPENROUTER_API_KEY": false,
+      "MISTRAL_API_KEY": false,
+      "KIMI_API_KEY": false,
+      "ZAI_API_KEY": false,
+      "PRIME_API_KEY": false
+    }
+  },
+  "defaultSummary": {
+    "systemPromptLength": 9598,
+    "harnessSectionLength": 3200,
+    "defaultEntryLimit": 6,
+    "memoryEntriesStored": 15,
+    "memoryEntriesRendered": 6,
+    "renderedMemoryIds": [
+      "aa_filler_00",
+      "aa_filler_01",
+      "aa_filler_02",
+      "aa_filler_03",
+      "aa_filler_04",
+      "aa_filler_05"
+    ],
+    "overflowLine": "- +9 more memory entries",
+    "hiddenFactInSystemPrompt": false,
+    "hiddenIdInSystemPrompt": false
+  },
+  "retrieval": {
+    "tsLoadHarnessState": true,
+    "tsAdjustableOverview": true,
+    "pythonList": {
+      "count": 15,
+      "hit": true
+    },
+    "pythonGet": {
+      "found": true,
+      "hit": true
+    },
+    "pythonSnapshot": {
+      "hit": true
+    },
+    "pythonOverviewDefault20": {
+      "hit": true,
+      "len": 2710
+    },
+    "pythonOverviewBounded6": {
+      "hit": false,
+      "len": 1595
+    },
+    "pythonGetHarnessState": {
+      "hit": true
+    }
+  },
+  "agentLoopRecovery": {
+    "scriptedDecision": true,
+    "toolCallExecuted": true,
+    "hiddenFactInToolResult": true,
+    "hiddenFactInToolTurnSystemPrompt": false,
+    "note": "The faux provider supplies the tool call, so this measures the retrieval path through the agent loop, not model behaviour."
+  },
+  "untestedClaims": {
+    "claim4_spontaneouslyRetrievedByAgent": "NOT TESTED - requires a real model; the faux provider's decisions are authored by the probe.",
+    "claim5_successfullyUsedDuringTask": "NOT TESTED - requires a real model and a held-out task."
+  },
+  "assertions": [
+    {
+      "id": "T03.1",
+      "claim": "claim 1 STORED: the hidden fact is persisted in harness state",
+      "pass": true,
+      "detail": "id=zz_late_sorting_fact"
+    },
+    {
+      "id": "T03.2",
+      "claim": "the default summary renders only 6 of 15 stored memory entries",
+      "pass": true,
+      "detail": "rendered=6 stored=15"
+    },
+    {
+      "id": "T03.3",
+      "claim": "claim 2 NOT IN DEFAULT ROUTING SUMMARY: the hidden fact is absent from the system prompt actually sent",
+      "pass": true
+    },
+    {
+      "id": "T03.4",
+      "claim": "the omission is signalled, not silent: an explicit overflow count is rendered",
+      "pass": true,
+      "detail": "- +9 more memory entries"
+    },
+    {
+      "id": "T03.5",
+      "claim": "claim 3 RETRIEVABLE via TypeScript loadHarnessState()",
+      "pass": true
+    },
+    {
+      "id": "T03.6",
+      "claim": "claim 3 RETRIEVABLE via the same renderer with a raised entry limit (adjustable overview)",
+      "pass": true
+    },
+    {
+      "id": "T03.7",
+      "claim": "claim 3 RETRIEVABLE via Python rlm.harness.list()",
+      "pass": true
+    },
+    {
+      "id": "T03.8",
+      "claim": "claim 3 RETRIEVABLE via Python rlm.harness.get()",
+      "pass": true
+    },
+    {
+      "id": "T03.9",
+      "claim": "claim 3 RETRIEVABLE via Python rlm.harness.snapshot()",
+      "pass": true
+    },
+    {
+      "id": "T03.10",
+      "claim": "claim 3 RETRIEVABLE via Python rlm.get_harness_state()",
+      "pass": true
+    },
+    {
+      "id": "T03.11",
+      "claim": "the Python overview() default (20/kind) DOES surface the fact - the bound differs from the TS prompt renderer's 6/kind",
+      "pass": true
+    },
+    {
+      "id": "T03.12",
+      "claim": "bounding, not storage, is what hides the fact: the same Python overview at limit 6 also omits it",
+      "pass": true
+    },
+    {
+      "id": "T03.13",
+      "claim": "claim 3 (end-to-end): a tool call inside the agent loop recovers the hidden fact into the conversation",
+      "pass": true
+    },
+    {
+      "id": "T03.14",
+      "claim": "the tool turn's own system prompt still omitted the fact (recovery came from the tool, not the prompt)",
+      "pass": true
+    }
+  ]
+}

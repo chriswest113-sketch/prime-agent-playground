@@ -1,0 +1,232 @@
+{
+  "environment": {
+    "node": "v22.22.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cwd": "/home/user/prime-agent-playground",
+    "agentDirEnv": "/tmp/joint-study-agentdir-ext-15015",
+    "providerCredentialsPresent": {
+      "ANTHROPIC_API_KEY": false,
+      "ANTHROPIC_OAUTH_TOKEN": false,
+      "OPENAI_API_KEY": false,
+      "GEMINI_API_KEY": false,
+      "GROQ_API_KEY": false,
+      "XAI_API_KEY": false,
+      "OPENROUTER_API_KEY": false,
+      "MISTRAL_API_KEY": false,
+      "KIMI_API_KEY": false,
+      "ZAI_API_KEY": false,
+      "PRIME_API_KEY": false
+    }
+  },
+  "inRepoInventory": {
+    "totalReferences": 37,
+    "kinds": [
+      "CO-DEPLOYMENT ARTIFACT (git pathspec excluding a verifiers working directory from gate snapshots)",
+      "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)",
+      "OUTBOUND TELEMETRY SURFACE (ACP `_meta` payload a verifiers-aware client may read)",
+      "PROJECT PROSE",
+      "TEST REFERENCE"
+    ],
+    "unclassifiedKinds": [],
+    "classified": [
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/references/environments.md:3:verifiers is Prime Intellect's Python library for LLM environments: packages that expose `load_environment` and bundle datasets, rollout logic, and reward rubrics. Environments power evaluations (local and hosted) and RL training (Hosted Training or self-managed prime-rl).",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/references/environments.md:5:Live docs: `verifiers/overview.md`, `tutorials-environments/getting-started.md`, `hosted-training/getting-started.md`, `prime-rl/overview.md` under https://docs.primeintellect.ai/ (append `.md` for raw markdown). Source: https://github.com/PrimeIntellect-ai/verifiers and https://github.com/PrimeIntellect-ai/prime-rl",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/references/environments.md:20:When picking candidates, prefer: `primeintellect`-owned, passing latest actions, updated within ~2 months, recent verifiers versions. Compare task type (single-turn, multi-turn, tool, sandbox, agent), reward type (binary, continuous, judge-based), and dependency/secret requirements.",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/references/environments.md:66:- Self-managed path: `prime lab setup --prime-rl`, then follow prime-rl's own configs and launch commands. Treat prime-rl as a power-user path requiring local GPU access; see https://docs.primeintellect.ai/prime-rl/overview.md.",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/SKILL.md:3:description: Work with Prime Intellect products via the prime CLI and Python SDKs - verifiers environments and the Environments Hub, evaluations (local and hosted), Hosted Training and prime-rl, code sandboxes, Prime Inference, GPU compute (pods and clusters), storage, and tunnels. Use when a task involves Prime Intellect, the prime CLI, verifiers, RL environments, evals, training, sandboxes, renting GPUs, Prime Inference models, or when the user asks what Prime Intellect is or what it offers.",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/SKILL.md:14:| verifiers | Python library for building LLM environments and evaluations | [environments.md](references/environments.md) |",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/SKILL.md:18:| prime-rl | Large-scale async RL framework for self-managed training | [environments.md](references/environments.md) |",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/skills/prime-intellect/SKILL.md:86:- Hosted Training launches from a CPU machine; self-managed `prime-rl` requires local GPU access and is a power-user path.",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "packages/coding-agent/src/modes/acp/acp-meta.ts:8: * clients ignore these keys; a prime-agent-aware client (or the verifiers",
+        "kind": "OUTBOUND TELEMETRY SURFACE (ACP `_meta` payload a verifiers-aware client may read)"
+      },
+      {
+        "line": "packages/coding-agent/src/core/autonomous.ts:387:\t\t\":(exclude).vf-prime-agent\",",
+        "kind": "CO-DEPLOYMENT ARTIFACT (git pathspec excluding a verifiers working directory from gate snapshots)"
+      },
+      {
+        "line": "packages/coding-agent/test/suite/acp-features.test.ts:632:\t\t// A provider failure is the shape verifiers hit in a container: the turn",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:74:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:108:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-dup-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:129:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-malformed-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:154:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-torn-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:191:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-utf8-torn-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:223:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-forward-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:254:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-bounds-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:277:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-family-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:334:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-depth-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:366:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-fork-root-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:388:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-orphan-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:419:\t\tconst root = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-nested-root-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:535:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-wiring-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:601:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-offline-rename-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:632:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seed-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:745:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seed-crash-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:789:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seed-race-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:840:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seed-bounds-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:879:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seed-nolink-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:927:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-seedfail-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:966:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-supervisor-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/test/rlm-ledger.test.ts:1014:\t\tconst tempDir = mkdtempSync(join(tmpdir(), \"prime-rlm-ledger-supervisor-rename-\"));",
+        "kind": "TEST REFERENCE"
+      },
+      {
+        "line": "packages/coding-agent/CHANGELOG.md:542:- Added built-in skills shipped with prime-agent, starting with `prime-intellect`: ecosystem knowledge and prime CLI workflows for verifiers environments, evaluations, Hosted Training, sandboxes, inference, and compute. Built-in skills have the lowest precedence (user, project, and package skills with the same name win) and can be disabled with the `enableBuiltinSkills` setting or `--no-skills`.",
+        "kind": "PROJECT PROSE"
+      },
+      {
+        "line": "packages/coding-agent/docs/skills.md:51:- `prime-intellect` - Prime Intellect products and workflows via the prime CLI: verifiers environments and the Environments Hub, evaluations (local and hosted), Hosted Training and prime-rl, sandboxes, tunnels, Prime Inference, GPU compute, and storage. Reference docs for each area load on demand from the skill's `references/` directory.",
+        "kind": "DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)"
+      },
+      {
+        "line": "README.md:17:  <a href=\"https://github.com/PrimeIntellect-ai/verifiers\">Verifiers</a> &bull;",
+        "kind": "PROJECT PROSE"
+      },
+      {
+        "line": "README.md:18:  <a href=\"https://github.com/PrimeIntellect-ai/prime-rl\">PRIME-RL</a> &bull;",
+        "kind": "PROJECT PROSE"
+      }
+    ],
+    "pythonAdapterFiles": [],
+    "rewardOrScoreSymbolsInCodingAgentSource": []
+  },
+  "inboundChannel": {
+    "refinerRequestBlocks": [
+      "current_harness_state",
+      "refinement_history",
+      "conversation",
+      "scope_policy",
+      "user_refine_instructions"
+    ],
+    "instructionsBlock": "evaluator reward=0.25 on task ext_probe_task",
+    "scoreCarriedAsFreeText": true,
+    "typedScoreFieldPresent": false
+  },
+  "verdict": {
+    "inRepoAdapter": "ABSENT",
+    "scoreToRefinementClosure": "NOT CLOSED IN THIS REPOSITORY. The only inbound path is untyped free text via refine({instructions}); the only outbound path is ACP `_meta`, which reports autonomous gate state and refinement completion as two SEPARATE, unlinked payloads.",
+    "deferred": "DEFERRED - EXTERNAL REFERENCE STUDY REQUIRED: whether the external Verifiers / prime-rl side constructs such a loop cannot be determined from this repository. Establishing it requires reading version-matched PrimeIntellect-ai/verifiers and PrimeIntellect-ai/prime-rl, which is out of scope for this phase.",
+    "whatThisDoesNotEstablish": [
+      "that no such loop exists anywhere - only that no part of it is implemented or consumed here",
+      "anything about the external harness's own behaviour",
+      "architectural intent (deliberately not inferred from comments)"
+    ]
+  },
+  "assertions": [
+    {
+      "id": "EXT.1",
+      "claim": "no version-matched Verifiers/prime-rl adapter, environment module, or consumer exists in this repository",
+      "pass": true,
+      "detail": "python adapter files: []; every one of the 37 references falls into a known non-integration kind: [\"CO-DEPLOYMENT ARTIFACT (git pathspec excluding a verifiers working directory from gate snapshots)\",\"DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)\",\"OUTBOUND TELEMETRY SURFACE (ACP `_meta` payload a verifiers-aware client may read)\",\"PROJECT PROSE\",\"TEST REFERENCE\"]"
+    },
+    {
+      "id": "EXT.2",
+      "claim": "the coding-agent source contains no reward/score concept at all",
+      "pass": true,
+      "detail": "hits: []"
+    },
+    {
+      "id": "EXT.3",
+      "claim": "an evaluator signal can only enter refinement as untyped free text inside <user_refine_instructions>",
+      "pass": true,
+      "detail": "blocks: [\"current_harness_state\",\"refinement_history\",\"conversation\",\"scope_policy\",\"user_refine_instructions\"]"
+    },
+    {
+      "id": "EXT.4",
+      "claim": "the refiner request has no typed score/reward field",
+      "pass": true
+    }
+  ]
+}

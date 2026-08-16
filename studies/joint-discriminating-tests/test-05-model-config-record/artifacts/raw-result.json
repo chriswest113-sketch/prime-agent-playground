@@ -1,0 +1,389 @@
+{
+  "environment": {
+    "node": "v22.22.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cwd": "/home/user/prime-agent-playground",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t05-14957",
+    "providerCredentialsPresent": {
+      "ANTHROPIC_API_KEY": false,
+      "ANTHROPIC_OAUTH_TOKEN": false,
+      "OPENAI_API_KEY": false,
+      "GEMINI_API_KEY": false,
+      "GROQ_API_KEY": false,
+      "XAI_API_KEY": false,
+      "OPENROUTER_API_KEY": false,
+      "MISTRAL_API_KEY": false,
+      "KIMI_API_KEY": false,
+      "ZAI_API_KEY": false,
+      "PRIME_API_KEY": false
+    }
+  },
+  "liveSessionState": {
+    "model": {
+      "provider": "faux",
+      "id": "faux-second"
+    },
+    "thinkingLevel": "high",
+    "serviceTier": "standard"
+  },
+  "absenceChecks": {
+    "temperature": true,
+    "seed": true,
+    "topP / topK sampling params": true,
+    "model revision / snapshot": true,
+    "model catalog hash/version": true,
+    "full effective system prompt": true,
+    "system prompt hash": true,
+    "harness snapshot per request": true,
+    "harness hash per request": true,
+    "per-response thinking level": true,
+    "per-response service tier": true,
+    "tool versions": true,
+    "skill versions": true,
+    "provider baseUrl per response": true
+  },
+  "inventory": {
+    "RECORDED_PER_SESSION": {
+      "fields": [
+        "cwd",
+        "id",
+        "rlmDepth",
+        "timestamp",
+        "type",
+        "version"
+      ],
+      "note": "session header: id, timestamp, cwd, optional parentSession/rlmDepth/git. No provider, model, or sampling configuration."
+    },
+    "RECORDED_AS_CHANGE_EVENT": {
+      "model_change": {
+        "fields": [
+          "provider",
+          "modelId"
+        ],
+        "count": 2
+      },
+      "thinking_level_change": {
+        "fields": [
+          "thinkingLevel"
+        ],
+        "count": 2
+      },
+      "service_tier_change": {
+        "fields": [
+          "serviceTier"
+        ],
+        "count": 1
+      },
+      "note": "Change events are append-only and tree-positioned, so the configuration in force at any entry is reconstructible by walking the branch. They record the EFFECTIVE value after clamping, and only when it actually changes - a rejected or no-op request leaves no record."
+    },
+    "RECORDED_PER_ASSISTANT_RESPONSE": {
+      "alwaysPresent": [
+        "api",
+        "content",
+        "model",
+        "provider",
+        "role",
+        "stopReason",
+        "timestamp",
+        "usage"
+      ],
+      "sometimesPresent": [
+        "responseId",
+        "responseModel"
+      ],
+      "note": "responseModel and responseId are recorded only when the provider supplies them."
+    },
+    "NOT_RECORDED": [
+      "temperature",
+      "seed",
+      "topP / topK sampling params",
+      "model revision / snapshot",
+      "model catalog hash/version",
+      "full effective system prompt",
+      "system prompt hash",
+      "harness snapshot per request",
+      "harness hash per request",
+      "per-response thinking level",
+      "per-response service tier",
+      "tool versions",
+      "skill versions",
+      "provider baseUrl per response"
+    ],
+    "LATENT_PROVIDER_HIDDEN": [
+      "the provider's own default sampling parameters (temperature/top_p/penalties) applied server-side",
+      "the concrete weight snapshot behind an alias model id when the provider does not echo one",
+      "routing decisions inside a gateway that does not populate chunk.model",
+      "server-side prompt-cache state that changes cacheRead/cacheWrite between otherwise identical runs",
+      "provider-side safety/system injections not visible in the request payload"
+    ]
+  },
+  "reproducibilityBoundary": {
+    "reconstructibleFromRecords": [
+      "which provider and which requested model id was in force at each point in the session tree",
+      "which thinking level and service tier were in force at each point",
+      "the concrete routed model for a response, WHEN the provider echoed one",
+      "the provider response id, WHEN the provider supplied one",
+      "per-response token usage and stop reason"
+    ],
+    "notReconstructibleFromRecords": [
+      "a configuration value that was REQUESTED but clamped or rejected (only the effective value is recorded)",
+      "the exact bytes of the system prompt sent with any request",
+      "the harness state in force at any specific request (no snapshot or hash)",
+      "sampling configuration: temperature, top_p, seed",
+      "the model weight revision/snapshot behind the model id",
+      "the model catalog version the id was resolved against",
+      "tool and skill versions active during the run"
+    ],
+    "consequence": "Records are sufficient to say WHICH NOMINAL CONFIGURATION a turn ran under, and insufficient to establish that two runs were CONTROLLED-EQUIVALENT."
+  },
+  "assistantMessages": [
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "first response under model A"
+        }
+      ],
+      "api": "faux:1786850000153:un5gm0wpwt",
+      "provider": "faux",
+      "model": "faux-requested",
+      "usage": {
+        "input": 2429,
+        "output": 7,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 2436,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stopReason": "stop",
+      "responseId": "resp_T05_FIXED_0001",
+      "timestamp": 1786850000212,
+      "responseModel": "faux-concrete-routed-0925"
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "second response under model B"
+        }
+      ],
+      "api": "faux:1786850000153:un5gm0wpwt",
+      "provider": "faux",
+      "model": "faux-second",
+      "usage": {
+        "input": 2442,
+        "output": 8,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 2450,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stopReason": "stop",
+      "timestamp": 1786850000319
+    }
+  ],
+  "headerKeys": [
+    "cwd",
+    "id",
+    "rlmDepth",
+    "timestamp",
+    "type",
+    "version"
+  ],
+  "changeEvents": {
+    "modelChanges": [
+      {
+        "type": "model_change",
+        "id": "30410f33",
+        "parentId": null,
+        "timestamp": "2026-08-16T03:13:20.176Z",
+        "provider": "faux",
+        "modelId": "faux-requested"
+      },
+      {
+        "type": "model_change",
+        "id": "72ede92d",
+        "parentId": "69773f25",
+        "timestamp": "2026-08-16T03:13:20.298Z",
+        "provider": "faux",
+        "modelId": "faux-second"
+      }
+    ],
+    "thinkingChanges": [
+      {
+        "type": "thinking_level_change",
+        "id": "b2f1f4b4",
+        "parentId": "30410f33",
+        "timestamp": "2026-08-16T03:13:20.177Z",
+        "thinkingLevel": "medium"
+      },
+      {
+        "type": "thinking_level_change",
+        "id": "7c36986f",
+        "parentId": "72ede92d",
+        "timestamp": "2026-08-16T03:13:20.299Z",
+        "thinkingLevel": "high"
+      }
+    ],
+    "tierChanges": [
+      {
+        "type": "service_tier_change",
+        "id": "919b38dd",
+        "parentId": "7c36986f",
+        "timestamp": "2026-08-16T03:13:20.299Z",
+        "serviceTier": "standard"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "id": "T05.1",
+      "claim": "the session reloads from disk",
+      "pass": true,
+      "detail": "entries=9"
+    },
+    {
+      "id": "T05.2",
+      "claim": "model changes are persisted as typed change events carrying provider + modelId",
+      "pass": true,
+      "detail": "[{\"provider\":\"faux\",\"modelId\":\"faux-requested\"},{\"provider\":\"faux\",\"modelId\":\"faux-second\"}]"
+    },
+    {
+      "id": "T05.3",
+      "claim": "thinking-level changes are persisted as typed change events",
+      "pass": true,
+      "detail": "[\"medium\",\"high\"]"
+    },
+    {
+      "id": "T05.4",
+      "claim": "service-tier changes are persisted as typed change events",
+      "pass": true,
+      "detail": "[\"standard\"]"
+    },
+    {
+      "id": "T05.4b",
+      "claim": "only the EFFECTIVE (clamped) service tier is recorded: the requested `priority` tier left no trace",
+      "pass": true,
+      "detail": "recorded tiers: [\"standard\"]; \"priority\" was requested"
+    },
+    {
+      "id": "T05.4c",
+      "claim": "change events are emitted only on an effective change, so a no-op request is unrecorded",
+      "pass": true,
+      "detail": "two setServiceTier calls produced 1 change event(s)"
+    },
+    {
+      "id": "T05.5",
+      "claim": "each assistant response records provider, api and the requested model id",
+      "pass": true,
+      "detail": "[{\"provider\":\"faux\",\"api\":\"faux:1786850000153:un5gm0wpwt\",\"model\":\"faux-requested\"},{\"provider\":\"faux\",\"api\":\"faux:1786850000153:un5gm0wpwt\",\"model\":\"faux-second\"}]"
+    },
+    {
+      "id": "T05.6",
+      "claim": "a routed/concrete responseModel that differs from the requested model IS persisted per response when the provider supplies it",
+      "pass": true,
+      "detail": "[{\"model\":\"faux-requested\",\"responseModel\":\"faux-concrete-routed-0925\"},{\"model\":\"faux-second\",\"responseModel\":null}]"
+    },
+    {
+      "id": "T05.7",
+      "claim": "a provider response id IS persisted per response when the provider supplies one",
+      "pass": true,
+      "detail": "[\"resp_T05_FIXED_0001\",null]"
+    },
+    {
+      "id": "T05.8",
+      "claim": "responseModel / responseId are OPTIONAL: the response that did not supply them records neither",
+      "pass": true
+    },
+    {
+      "id": "T05.9",
+      "claim": "usage and stopReason are persisted per response",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.temperature",
+      "claim": "NOT RECORDED: temperature",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.seed",
+      "claim": "NOT RECORDED: seed",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.topP_topK_sampling_params",
+      "claim": "NOT RECORDED: topP / topK sampling params",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.model_revision_snapshot",
+      "claim": "NOT RECORDED: model revision / snapshot",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.model_catalog_hash_version",
+      "claim": "NOT RECORDED: model catalog hash/version",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.full_effective_system_prompt",
+      "claim": "NOT RECORDED: full effective system prompt",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.system_prompt_hash",
+      "claim": "NOT RECORDED: system prompt hash",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.harness_snapshot_per_request",
+      "claim": "NOT RECORDED: harness snapshot per request",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.harness_hash_per_request",
+      "claim": "NOT RECORDED: harness hash per request",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.per_response_thinking_level",
+      "claim": "NOT RECORDED: per-response thinking level",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.per_response_service_tier",
+      "claim": "NOT RECORDED: per-response service tier",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.tool_versions",
+      "claim": "NOT RECORDED: tool versions",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.skill_versions",
+      "claim": "NOT RECORDED: skill versions",
+      "pass": true
+    },
+    {
+      "id": "T05.abs.provider_baseUrl_per_response",
+      "claim": "NOT RECORDED: provider baseUrl per response",
+      "pass": true
+    }
+  ]
+}

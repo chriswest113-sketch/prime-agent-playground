@@ -1,0 +1,324 @@
+{
+ "events": [
+  {
+   "type": "agent_start"
+  },
+  {
+   "type": "turn_start"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "tool_execution_start"
+  },
+  {
+   "type": "tool_execution_end"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "turn_end"
+  },
+  {
+   "type": "turn_start"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "turn_end"
+  },
+  {
+   "type": "agent_end"
+  },
+  {
+   "type": "refine_complete"
+  },
+  {
+   "type": "agent_start"
+  },
+  {
+   "type": "turn_start"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "message_start"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_update"
+  },
+  {
+   "type": "message_end"
+  },
+  {
+   "type": "turn_end"
+  },
+  {
+   "type": "agent_end"
+  }
+ ],
+ "messages": [
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "text",
+     "text": "step one: echo the marker"
+    }
+   ],
+   "timestamp": <EPOCH_MS>
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "toolCall",
+     "id": "<FAUX_ID>",
+     "name": "echo",
+     "arguments": {
+      "value": "T04_MARKER"
+     }
+    }
+   ],
+   "api": "<FAUX_ID>",
+   "provider": "faux",
+   "model": "faux-1",
+   "usage": {
+    "input": 677,
+    "output": 7,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokens": 684,
+    "cost": {
+     "input": 0,
+     "output": 0,
+     "cacheRead": 0,
+     "cacheWrite": 0,
+     "total": 0
+    }
+   },
+   "stopReason": "toolUse",
+   "timestamp": <EPOCH_MS>
+  },
+  {
+   "role": "toolResult",
+   "toolCallId": "<FAUX_ID>",
+   "toolName": "echo",
+   "content": [
+    {
+     "type": "text",
+     "text": "echoed:T04_MARKER"
+    }
+   ],
+   "details": {},
+   "isError": false,
+   "timestamp": <EPOCH_MS>
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "text",
+     "text": "Summary: the marker was echoed once."
+    }
+   ],
+   "api": "<FAUX_ID>",
+   "provider": "faux",
+   "model": "faux-1",
+   "usage": {
+    "input": 695,
+    "output": 9,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokens": 704,
+    "cost": {
+     "input": 0,
+     "output": 0,
+     "cacheRead": 0,
+     "cacheWrite": 0,
+     "total": 0
+    }
+   },
+   "stopReason": "stop",
+   "timestamp": <EPOCH_MS>
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "text",
+     "text": "step two: summarise"
+    }
+   ],
+   "timestamp": <EPOCH_MS>
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "text",
+     "text": "acknowledged"
+    }
+   ],
+   "api": "<FAUX_ID>",
+   "provider": "faux",
+   "model": "faux-1",
+   "usage": {
+    "input": 755,
+    "output": 3,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokens": 758,
+    "cost": {
+     "input": 0,
+     "output": 0,
+     "cacheRead": 0,
+     "cacheWrite": 0,
+     "total": 0
+    }
+   },
+   "stopReason": "stop",
+   "timestamp": <EPOCH_MS>
+  }
+ ],
+ "sessionJsonl": "{\"type\":\"session\",\"version\":3,\"id\":\"<UUID>\",\"timestamp\":\"<ISO_TS>\",\"cwd\":\"/tmp/<TMP_SESSION_DIR>\",\"rlmDepth\":0}\n{\"type\":\"message\",\"id\":\"ba45fa53\",\"parentId\":null,\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step one: echo the marker\"}],\"timestamp\":<EPOCH_MS>}}\n{\"type\":\"message\",\"id\":\"d240907a\",\"parentId\":\"ba45fa53\",\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"toolCall\",\"id\":\"<FAUX_ID>\",\"name\":\"echo\",\"arguments\":{\"value\":\"T04_MARKER\"}}],\"api\":\"<FAUX_ID>\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":677,\"output\":7,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":684,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"toolUse\",\"timestamp\":<EPOCH_MS>}}\n{\"type\":\"message\",\"id\":\"09bf7ab5\",\"parentId\":\"d240907a\",\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"toolResult\",\"toolCallId\":\"<FAUX_ID>\",\"toolName\":\"echo\",\"content\":[{\"type\":\"text\",\"text\":\"echoed:T04_MARKER\"}],\"details\":{},\"isError\":false,\"timestamp\":<EPOCH_MS>}}\n{\"type\":\"message\",\"id\":\"697b924d\",\"parentId\":\"09bf7ab5\",\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Summary: the marker was echoed once.\"}],\"api\":\"<FAUX_ID>\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":695,\"output\":9,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":704,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":<EPOCH_MS>}}\n{\"type\":\"custom\",\"customType\":\"prime-agent.refinement\",\"data\":{\"id\":\"refine_<TS_ID>\",\"summary\":\"Record the T04 marker lesson\",\"rationale\":\"Deterministic probe proposal.\",\"expectedOutcome\":\"Marker recorded.\",\"appliedEdits\":[{\"action\":\"create\",\"kind\":\"memory\",\"id\":\"t04_marker\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"reason\":\"probe\",\"after\":{\"id\":\"t04_marker\",\"kind\":\"memory\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"<ISO_TS>\",\"updated_at\":\"<ISO_TS>\",\"version\":1},\"applied\":true}],\"harnessStatePath\":\"/tmp/<TMP_SESSION_DIR>/session-artifacts/<UUID>/harness/harness_state.json\",\"scope\":\"local\"},\"id\":\"1e8ae18c\",\"parentId\":\"697b924d\",\"timestamp\":\"<ISO_TS>\"}\n{\"type\":\"message\",\"id\":\"d07f5fb0\",\"parentId\":\"1e8ae18c\",\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step two: summarise\"}],\"timestamp\":<EPOCH_MS>}}\n{\"type\":\"message\",\"id\":\"e15e77c7\",\"parentId\":\"d07f5fb0\",\"timestamp\":\"<ISO_TS>\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"acknowledged\"}],\"api\":\"<FAUX_ID>\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":755,\"output\":3,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":758,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":<EPOCH_MS>}}\n",
+ "harnessState": {
+  "schema": 1,
+  "entries": {
+   "prompt": {},
+   "memory": {
+    "t04_marker": {
+     "id": "t04_marker",
+     "kind": "memory",
+     "title": "T04 marker",
+     "content": "T04_MARKER was echoed successfully.",
+     "path": "study/t04",
+     "scope": "local",
+     "reference": {},
+     "arguments": {},
+     "metadata": {},
+     "source": "refine",
+     "created_at": "<ISO_TS>",
+     "updated_at": "<ISO_TS>",
+     "version": 1
+    }
+   },
+   "skill": {},
+   "subagent": {}
+  },
+  "refinements": [
+   {
+    "id": "refine_<TS_ID>",
+    "trigger": "Record the T04 marker lesson",
+    "changes": [
+     "create memory:t04_marker"
+    ],
+    "evidence": "Deterministic probe proposal.",
+    "outcome": "Marker recorded.",
+    "created_at": "<ISO_TS>"
+   }
+  ]
+ },
+ "refinement": {
+  "id": "refine_<TS_ID>",
+  "summary": "Record the T04 marker lesson",
+  "rationale": "Deterministic probe proposal.",
+  "expectedOutcome": "Marker recorded.",
+  "appliedEdits": [
+   {
+    "action": "create",
+    "kind": "memory",
+    "id": "t04_marker",
+    "title": "T04 marker",
+    "content": "T04_MARKER was echoed successfully.",
+    "path": "study/t04",
+    "reason": "probe",
+    "after": {
+     "id": "t04_marker",
+     "kind": "memory",
+     "title": "T04 marker",
+     "content": "T04_MARKER was echoed successfully.",
+     "path": "study/t04",
+     "scope": "local",
+     "reference": {},
+     "arguments": {},
+     "metadata": {},
+     "source": "refine",
+     "created_at": "<ISO_TS>",
+     "updated_at": "<ISO_TS>",
+     "version": 1
+    },
+    "applied": true
+   }
+  ],
+  "harnessStatePath": "/tmp/<TMP_SESSION_DIR>/session-artifacts/<UUID>/harness/harness_state.json",
+  "scope": "local"
+ },
+ "providerRequests": [
+  {
+   "systemPromptLength": 2481,
+   "userTexts": 1
+  },
+  {
+   "systemPromptLength": 2481,
+   "userTexts": 1
+  }
+ ],
+ "sessionFile": "/tmp/<TMP_SESSION_DIR>/sessions/<UUID>.jsonl",
+ "tempDir": "/tmp/<TMP_SESSION_DIR>"
+}

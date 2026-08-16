@@ -1,0 +1,22 @@
+Harness state (global): /tmp/joint-study-agentdir-t03-14696/harness/harness_state.json
+Call contract: installed Python skills use await <skill_import>(...) or a matching shell CLI; harness skill entries are Python REPL skills and must include a Python reference plus arguments. Spawn a subagent spec by composing a concise task prompt and calling handle = await rlm('sub-task'); admission returns immediately with rlm_child_id, name, session_dir, and model, never the child's answer. Results arrive only through explicit agent_message replies or files; children reply with await agent_message.send(message, receiver_role='parent'). Use await rlm.list_subagents() to recover direct child handles and await agent_message.send(..., receiver_role='child', receiver_name=handle.name) for follow-ups.
+prompt: 0
+memory: 15
+  - [global:aa_filler_00] Routine lesson 00 (aaa/filler, v1): Filler harness memory number 00 used to force accumulation.
+  - [global:aa_filler_01] Routine lesson 01 (aaa/filler, v1): Filler harness memory number 01 used to force accumulation.
+  - [global:aa_filler_02] Routine lesson 02 (aaa/filler, v1): Filler harness memory number 02 used to force accumulation.
+  - [global:aa_filler_03] Routine lesson 03 (aaa/filler, v1): Filler harness memory number 03 used to force accumulation.
+  - [global:aa_filler_04] Routine lesson 04 (aaa/filler, v1): Filler harness memory number 04 used to force accumulation.
+  - [global:aa_filler_05] Routine lesson 05 (aaa/filler, v1): Filler harness memory number 05 used to force accumulation.
+  - [global:aa_filler_06] Routine lesson 06 (aaa/filler, v1): Filler harness memory number 06 used to force accumulation.
+  - [global:aa_filler_07] Routine lesson 07 (aaa/filler, v1): Filler harness memory number 07 used to force accumulation.
+  - [global:aa_filler_08] Routine lesson 08 (aaa/filler, v1): Filler harness memory number 08 used to force accumulation.
+  - [global:aa_filler_09] Routine lesson 09 (aaa/filler, v1): Filler harness memory number 09 used to force accumulation.
+  - [global:aa_filler_10] Routine lesson 10 (aaa/filler, v1): Filler harness memory number 10 used to force accumulation.
+  - [global:aa_filler_11] Routine lesson 11 (aaa/filler, v1): Filler harness memory number 11 used to force accumulation.
+  - [global:aa_filler_12] Routine lesson 12 (aaa/filler, v1): Filler harness memory number 12 used to force accumulation.
+  - [global:aa_filler_13] Routine lesson 13 (aaa/filler, v1): Filler harness memory number 13 used to force accumulation.
+  - [global:zz_late_sorting_fact] ZZ late sorting fact (zzz/late, v1): HIDDEN_HARNESS_FACT_83D2 = the deploy key lives in vault path ops/prime/deploy.
+skill: 0
+subagent: 0
+refinements: 0

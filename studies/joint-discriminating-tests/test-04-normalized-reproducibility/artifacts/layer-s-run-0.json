@@ -1,0 +1,324 @@
+{
+  "events": [
+    {
+      "type": "agent_start"
+    },
+    {
+      "type": "turn_start"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "tool_execution_start"
+    },
+    {
+      "type": "tool_execution_end"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "turn_end"
+    },
+    {
+      "type": "turn_start"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "turn_end"
+    },
+    {
+      "type": "agent_end"
+    },
+    {
+      "type": "refine_complete"
+    },
+    {
+      "type": "agent_start"
+    },
+    {
+      "type": "turn_start"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "message_start"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_update"
+    },
+    {
+      "type": "message_end"
+    },
+    {
+      "type": "turn_end"
+    },
+    {
+      "type": "agent_end"
+    }
+  ],
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "step one: echo the marker"
+        }
+      ],
+      "timestamp": 1786849995056
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "toolCall",
+          "id": "tool:1786849995073:t627fglcnn",
+          "name": "echo",
+          "arguments": {
+            "value": "T04_MARKER"
+          }
+        }
+      ],
+      "api": "faux:1786849995035:vpmw6jow1ii",
+      "provider": "faux",
+      "model": "faux-1",
+      "usage": {
+        "input": 677,
+        "output": 7,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 684,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stopReason": "toolUse",
+      "timestamp": 1786849995073
+    },
+    {
+      "role": "toolResult",
+      "toolCallId": "tool:1786849995073:t627fglcnn",
+      "toolName": "echo",
+      "content": [
+        {
+          "type": "text",
+          "text": "echoed:T04_MARKER"
+        }
+      ],
+      "details": {},
+      "isError": false,
+      "timestamp": 1786849995080
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Summary: the marker was echoed once."
+        }
+      ],
+      "api": "faux:1786849995035:vpmw6jow1ii",
+      "provider": "faux",
+      "model": "faux-1",
+      "usage": {
+        "input": 695,
+        "output": 9,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 704,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stopReason": "stop",
+      "timestamp": 1786849995081
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "step two: summarise"
+        }
+      ],
+      "timestamp": 1786849995200
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "acknowledged"
+        }
+      ],
+      "api": "faux:1786849995035:vpmw6jow1ii",
+      "provider": "faux",
+      "model": "faux-1",
+      "usage": {
+        "input": 755,
+        "output": 3,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 758,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stopReason": "stop",
+      "timestamp": 1786849995200
+    }
+  ],
+  "sessionJsonl": "{\"type\":\"session\",\"version\":3,\"id\":\"01a0088f-291c-75ae-a92a-46ef3a41f8ba\",\"timestamp\":\"2026-08-16T03:13:15.036Z\",\"cwd\":\"/tmp/pi-suite-1786849995034-dof6tapmkos\",\"rlmDepth\":0}\n{\"type\":\"message\",\"id\":\"aa795190\",\"parentId\":null,\"timestamp\":\"2026-08-16T03:13:15.073Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step one: echo the marker\"}],\"timestamp\":1786849995056}}\n{\"type\":\"message\",\"id\":\"263d515d\",\"parentId\":\"aa795190\",\"timestamp\":\"2026-08-16T03:13:15.075Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"toolCall\",\"id\":\"tool:1786849995073:t627fglcnn\",\"name\":\"echo\",\"arguments\":{\"value\":\"T04_MARKER\"}}],\"api\":\"faux:1786849995035:vpmw6jow1ii\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":677,\"output\":7,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":684,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"toolUse\",\"timestamp\":1786849995073}}\n{\"type\":\"message\",\"id\":\"6125493a\",\"parentId\":\"263d515d\",\"timestamp\":\"2026-08-16T03:13:15.080Z\",\"message\":{\"role\":\"toolResult\",\"toolCallId\":\"tool:1786849995073:t627fglcnn\",\"toolName\":\"echo\",\"content\":[{\"type\":\"text\",\"text\":\"echoed:T04_MARKER\"}],\"details\":{},\"isError\":false,\"timestamp\":1786849995080}}\n{\"type\":\"message\",\"id\":\"272bff2e\",\"parentId\":\"6125493a\",\"timestamp\":\"2026-08-16T03:13:15.082Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Summary: the marker was echoed once.\"}],\"api\":\"faux:1786849995035:vpmw6jow1ii\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":695,\"output\":9,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":704,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786849995081}}\n{\"type\":\"custom\",\"customType\":\"prime-agent.refinement\",\"data\":{\"id\":\"refine_20260816031315157\",\"summary\":\"Record the T04 marker lesson\",\"rationale\":\"Deterministic probe proposal.\",\"expectedOutcome\":\"Marker recorded.\",\"appliedEdits\":[{\"action\":\"create\",\"kind\":\"memory\",\"id\":\"t04_marker\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"reason\":\"probe\",\"after\":{\"id\":\"t04_marker\",\"kind\":\"memory\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T03:13:15.159Z\",\"updated_at\":\"2026-08-16T03:13:15.159Z\",\"version\":1},\"applied\":true}],\"harnessStatePath\":\"/tmp/pi-suite-1786849995034-dof6tapmkos/session-artifacts/01a0088f-291c-75ae-a92a-46ef3a41f8ba/harness/harness_state.json\",\"scope\":\"local\"},\"id\":\"a19afceb\",\"parentId\":\"272bff2e\",\"timestamp\":\"2026-08-16T03:13:15.159Z\"}\n{\"type\":\"message\",\"id\":\"639d70db\",\"parentId\":\"a19afceb\",\"timestamp\":\"2026-08-16T03:13:15.215Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step two: summarise\"}],\"timestamp\":1786849995200}}\n{\"type\":\"message\",\"id\":\"e925fdb1\",\"parentId\":\"639d70db\",\"timestamp\":\"2026-08-16T03:13:15.216Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"acknowledged\"}],\"api\":\"faux:1786849995035:vpmw6jow1ii\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":755,\"output\":3,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":758,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786849995200}}\n",
+  "harnessState": {
+    "schema": 1,
+    "entries": {
+      "prompt": {},
+      "memory": {
+        "t04_marker": {
+          "id": "t04_marker",
+          "kind": "memory",
+          "title": "T04 marker",
+          "content": "T04_MARKER was echoed successfully.",
+          "path": "study/t04",
+          "scope": "local",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "refine",
+          "created_at": "2026-08-16T03:13:15.159Z",
+          "updated_at": "2026-08-16T03:13:15.159Z",
+          "version": 1
+        }
+      },
+      "skill": {},
+      "subagent": {}
+    },
+    "refinements": [
+      {
+        "id": "refine_20260816031315157",
+        "trigger": "Record the T04 marker lesson",
+        "changes": [
+          "create memory:t04_marker"
+        ],
+        "evidence": "Deterministic probe proposal.",
+        "outcome": "Marker recorded.",
+        "created_at": "2026-08-16T03:13:15.159Z"
+      }
+    ]
+  },
+  "refinement": {
+    "id": "refine_20260816031315157",
+    "summary": "Record the T04 marker lesson",
+    "rationale": "Deterministic probe proposal.",
+    "expectedOutcome": "Marker recorded.",
+    "appliedEdits": [
+      {
+        "action": "create",
+        "kind": "memory",
+        "id": "t04_marker",
+        "title": "T04 marker",
+        "content": "T04_MARKER was echoed successfully.",
+        "path": "study/t04",
+        "reason": "probe",
+        "after": {
+          "id": "t04_marker",
+          "kind": "memory",
+          "title": "T04 marker",
+          "content": "T04_MARKER was echoed successfully.",
+          "path": "study/t04",
+          "scope": "local",
+          "reference": {},
+          "arguments": {},
+          "metadata": {},
+          "source": "refine",
+          "created_at": "2026-08-16T03:13:15.159Z",
+          "updated_at": "2026-08-16T03:13:15.159Z",
+          "version": 1
+        },
+        "applied": true
+      }
+    ],
+    "harnessStatePath": "/tmp/pi-suite-1786849995034-dof6tapmkos/session-artifacts/01a0088f-291c-75ae-a92a-46ef3a41f8ba/harness/harness_state.json",
+    "scope": "local"
+  },
+  "providerRequests": [
+    {
+      "systemPromptLength": 2481,
+      "userTexts": 1
+    },
+    {
+      "systemPromptLength": 2481,
+      "userTexts": 1
+    }
+  ],
+  "sessionFile": "/tmp/pi-suite-1786849995034-dof6tapmkos/sessions/01a0088f-291c-75ae-a92a-46ef3a41f8ba.jsonl",
+  "tempDir": "/tmp/pi-suite-1786849995034-dof6tapmkos"
+}

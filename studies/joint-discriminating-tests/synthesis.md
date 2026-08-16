@@ -1,0 +1,262 @@
+# Synthesis
+
+Six probes, 89 assertions, all passing on the final run. Every result below is
+traceable to a raw artifact under `<probe>/artifacts/`.
+
+---
+
+## 1. Adjudication of the five candidate revised statements
+
+The brief asked whether five specific revised statements are supported. Each is
+accepted, revised, or rejected **solely on the experiments**.
+
+---
+
+### Statement 1
+
+> "There is no typed or deterministic linkage between autonomous gate outcomes
+> and refinement, although gate failures can reach refinement through shared
+> transcript state."
+
+**ACCEPTED.** RUNTIME-CONFIRMED.
+
+Every clause is independently demonstrated by `test-01`:
+
+- *No typed linkage* — `RefinementResult` keys are
+  `["appliedEdits","expectedOutcome","harnessStatePath","id","rationale","scope","summary"]`;
+  the serialized result does not contain the gate sentinel; neither
+  `refinement.ts` nor `autonomous.ts` references any of the other's symbols.
+- *No deterministic linkage* — the gate invocation counter is unchanged across
+  `refine()` (2 → 2). Refinement neither re-runs nor consults the gate. The
+  applied edit is exactly whatever the refiner reply proposed.
+- *Gate failures can reach refinement through shared transcript state* — the
+  sentinel `JOINT_GATE_SENTINEL_7F31`, emitted only on the failing gate's
+  stdout, appears verbatim inside the `<conversation>` block of the captured
+  refiner request, and in no other block.
+
+One qualification worth carrying forward: "can reach" is scoped to the
+trajectory window. `planRefinement` takes `slice(-80_000)` of the serialized
+conversation, so a gate failure far enough back is excluded. That boundary was
+not probed.
+
+---
+
+### Statement 2
+
+> "Default harness salience degrades under growth; full state remains
+> programmatically accessible, while practical autonomous retrieval remains
+> separately measurable."
+
+**ACCEPTED.** RUNTIME-CONFIRMED for the first two clauses; the third is a
+correct statement about what remains unmeasured.
+
+`test-03` seeded 15 global memory entries and placed
+`HIDDEN_HARNESS_FACT_83D2` outside the default rendered subset. The system
+prompt *actually sent to the provider* rendered 6 entries and the line
+`+9 more memory entries`; the fact was absent. It was then recovered by six
+independent paths: `loadHarnessState()`, the same renderer at a raised limit,
+`rlm.harness.list()`, `.get()`, `.snapshot()`, `rlm.get_harness_state()`, and
+end-to-end through a tool call inside a live agent loop.
+
+Two refinements to the wording are earned by the evidence:
+
+- **The degradation is signalled, not silent.** The prompt states the true count
+  (`memory: 15`) and the overflow (`+9 more`). "Degrades" is right; "hides" would
+  be wrong.
+- **The bound is renderer-specific, not global.** 6/kind in the system prompt,
+  20/kind in Python `overview()`, 40/kind in the refiner's own overview. The
+  same accumulation is displaced at one boundary and visible at another —
+  confirmed causally by T03.12, where the *same* Python renderer at limit 6 also
+  omits the fact.
+
+"Practical autonomous retrieval remains separately measurable" is exactly right
+and is the reason claims 4 and 5 are marked NOT TESTED rather than answered.
+
+---
+
+### Statement 3
+
+> "`/refine` mutations have meaningful session-tree ordering and before/after
+> provenance, while direct Python CRUD and absent complete prompt snapshots
+> prevent full effective-harness reconstruction."
+
+**ACCEPTED, with one clarification.** TEST-CONFIRMED + RUNTIME-CONFIRMED.
+
+`test-02`'s matrix supports every clause. `/refine` writes a `custom` session
+entry with `id`, `parentId` on the message spine, and a timestamp; post-mutation
+messages descend from it; `appliedEdits[].before` and `.after` are full entry
+snapshots. Direct CRUD writes no session entry, no refinement event, and no
+before value; writer identity survives only as `source: "agent"`.
+
+The clarification: **the two named causes are independent, and either alone is
+sufficient.** Absent complete prompt/harness snapshots block full
+effective-harness reconstruction *even in a session with no CRUD writer at all* —
+`/refine` scores only PARTIAL on that dimension, because per-edit before/after
+is not a full-state snapshot and no per-turn harness hash exists. Direct CRUD
+adds a second, independent blocker: it is invisible to the records, so its
+presence cannot even be detected. Reading the statement as "CRUD is what
+prevents reconstruction" would understate the problem.
+
+---
+
+### Statement 4
+
+> "Prime Agent records nominal and some per-response model identity, but does not
+> record enough effective configuration or immutable provider/model provenance to
+> establish controlled run equivalence."
+
+**ACCEPTED.** RUNTIME-CONFIRMED.
+
+`test-05` persisted and reloaded a session exercising provider selection, model
+change, thinking-level change, service-tier change, a routed `responseModel`, a
+`responseId`, usage and stop reason.
+
+*Recorded:* `model_change{provider, modelId}`, `thinking_level_change`,
+`service_tier_change` as tree-positioned events; `api`, `provider`, `model`,
+`usage`, `stopReason`, `timestamp` on every assistant response; `responseModel`
+and `responseId` when the provider supplies them — so "some per-response model
+identity" is precisely right, and better than "absent".
+
+*Not recorded:* temperature, seed, top_p/top_k, model revision/snapshot, model
+catalog hash/version, the system prompt bytes, any prompt hash, any per-request
+harness snapshot or hash, per-response thinking level or service tier, tool
+versions, skill versions.
+
+One finding strengthens the statement beyond what it claims: **change events
+record only the effective value after clamping, and only when it changes.**
+Requesting `priority` service tier on a model without fast-mode support left no
+trace whatsoever (T05.4b, T05.4c). A rejected request is therefore
+indistinguishable from a request never made — a reconstruction gap in the
+*nominal* record, not just the effective one.
+
+---
+
+### Statement 5
+
+> "The faux provider may be non-canonical at the event/identifier level while
+> remaining semantically reproducible after principled normalization."
+
+**ACCEPTED WITH NARROWER WORDING.** RUNTIME-CONFIRMED. Two changes are earned:
+"may be non-canonical" strengthens to "is non-canonical", and "semantically
+reproducible" must carve out input-token accounting, which is
+ENVIRONMENT-DEPENDENT. Revised form:
+
+> The faux provider **is** non-canonical at the event/identifier level, and is
+> semantically reproducible after principled normalization **for content, tool
+> behaviour, harness state, output-token accounting and outcomes**; input-token
+> accounting is not reproducible across processes, though its variance is fully
+> attributable to prompt-length framing rather than semantic drift.
+
+`test-04` measured 5 provider-layer runs and 3 independent session-layer
+processes:
+
+| Class | Verdict |
+| --- | --- |
+| BYTE-LEVEL | NOT REPRODUCIBLE — 5/5 and 3/3 distinct raw traces |
+| IDENTIFIER | NOT REPRODUCIBLE by default (5/5 distinct auto tool ids); REPRODUCIBLE when ids are supplied explicitly |
+| EVENT-FRAME | NOT REPRODUCIBLE at chunk-segmentation level (5/5 distinct segmentations; progress counts `[12,12,11]`); REPRODUCIBLE once segmentation framing is collapsed |
+| SEMANTIC SCRIPT | REPRODUCIBLE — terminal content, tool semantics, tool results, harness semantic state, output-token accounting and outcomes all identical. **Input**-token accounting is the one exception (below) |
+
+Two things the evidence adds:
+
+- **Identifier instability is a default, not a property.** `fauxToolCall`
+  accepts an explicit `id` and those are stable across all 5 runs. A harness
+  that supplies ids gets identifier reproducibility for free.
+- **The normalization did not have to be stretched, and one dimension resisted
+  it honestly.** No substantive content and no outcome field was normalized.
+  Input-token accounting turned out *not* to be reproducible across processes:
+  it varies by ±1. Rather than normalize usage to force equality — which the
+  contract forbids — the probe measures the variance and tests its cause. Input
+  tokens track system-prompt length exactly (2479 → 676, 2481/2483 → 677) while
+  output tokens are `[7, 9, 3]` in every run, and any two runs with equal
+  prompt lengths report equal input tokens. The cause is the temp session
+  path's variable-length random suffix crossing the 4-chars-per-token boundary
+  in `estimateTokens`. This is framing, not semantic drift — but it does mean
+  the statement's "semantically reproducible" must exclude input-token
+  accounting, which is **ENVIRONMENT-DEPENDENT**.
+
+The prior "nondeterministic evaluation surface" characterisation therefore needs
+narrowing, not withdrawal: it is accurate about bytes, ids, and chunk
+boundaries, and inaccurate as a statement about the layer an evaluator scores.
+
+---
+
+## 2. Classification of every previously disputed statement
+
+| # | Disputed statement | Classification | Basis |
+| --- | --- | --- | --- |
+| 1 | "Autonomous gates and `/refine` never touch; a gate failure cannot cause a refinement" | **SETTLED WITH NARROWER WORDING** | Rejected as stated. Correct form: no typed or deterministic linkage; an untyped transcript-mediated path does exist (T01.4) |
+| 2 | "A gate failure can reach the refiner" | **SETTLED** | RUNTIME-CONFIRMED (T01.4) |
+| 3 | "Refinement validates gate outcome" | **SETTLED** — rejected | Gate invocation count unchanged across refine (T01.6) |
+| 4 | "`/refine` mutations carry provenance" | **SETTLED** | Tree position, ordering, before, after all reconstructible (T02.A1–A6) |
+| 5 | "Harness mutations have no provenance" | **SETTLED WITH NARROWER WORDING** | True for direct Python CRUD; false for `/refine` (T02.B1–B6 vs T02.A1–A6) |
+| 6 | "Complete effective harness state at a turn is reconstructible" | **SETTLED** — rejected | PARTIAL for `/refine`, NOT RECONSTRUCTIBLE for CRUD; no per-turn snapshot or hash exists (T02.A7, T02.A8) |
+| 7 | "Accumulated harness state becomes invisible" | **SETTLED WITH NARROWER WORDING** | Absent from the default routing summary; retrievable by six paths (T03.3, T03.5–T03.13) |
+| 8 | "Full harness state remains programmatically accessible" | **SETTLED** | RUNTIME-CONFIRMED (T03.5–T03.10) |
+| 9 | "An agent will retrieve displaced harness state when it matters" | **STILL UNRESOLVED** | Claim 4 NOT TESTED — requires a real model |
+| 10 | "Displaced harness state costs task performance" | **STILL UNRESOLVED** | Claim 5 NOT TESTED — requires a real model and held-out tasks |
+| 11 | "The faux evaluation surface is nondeterministic" | **SETTLED WITH NARROWER WORDING** | True at byte/identifier/segmentation level; false at the semantic level (T04) |
+| 12 | "Faux runs are semantically reproducible" | **SETTLED** | All six semantic dimensions identical across 3 processes (T04.S5–S10) |
+| 13 | "Faux usage accounting is reproducible" | **ENVIRONMENT-DEPENDENT** — rejected for input tokens, accepted for output tokens | Output tokens identical in every run (T04.S10a); input tokens vary ±1 across processes, tracking system-prompt length, cause diagnosed (T04.S10b, T04.S10c) |
+| 14 | "Prime Agent records model configuration" | **SETTLED WITH NARROWER WORDING** | Nominal configuration yes; effective configuration no (T05) |
+| 15 | "Prime Agent records no per-response model identity" | **SETTLED** — rejected | `responseModel` and `responseId` persist when the provider supplies them (T05.6, T05.7) |
+| 16 | "Records establish controlled run equivalence" | **SETTLED** — rejected | Seed, temperature, snapshot, prompt bytes, harness hash all absent (T05 absence checks) |
+| 17 | "Requested configuration is recoverable from the record" | **SETTLED** — rejected | Only effective post-clamp values are recorded, and only on change (T05.4b, T05.4c) |
+| 18 | "Verifiers/prime-rl closes a score → refinement loop" | **SETTLED for this repository; DEFERRED for the external side** | No adapter, no reward/score concept, untyped free-text inbound only (EXT.1–EXT.4) |
+
+---
+
+## 3. What changed as a result of this phase
+
+**Two prior claims were rejected outright.** "Gates and `/refine` never touch"
+is false — the transcript path is real and was observed. "Prime Agent records no
+per-response model identity" is false — `responseModel` and `responseId` persist
+when supplied.
+
+**Four were narrowed rather than overturned.** Gate/refinement independence is
+true of *typing and determinism*, not of *information flow*. Provenance absence
+is true of *direct CRUD*, not of `/refine`. Invisibility is *bounded default
+rendering*, not inaccessibility. Nondeterminism is *framing-level*, not
+semantic.
+
+**Two new gaps surfaced that neither prior study had named.** First, clamped or
+rejected configuration requests leave no record at all — not a gap in effective
+configuration, but a gap in the *nominal* record, which had been treated as the
+part that *was* reliable. Second, faux input-token accounting is not reproducible
+across processes: it moves with the incidental length of the temp session path
+embedded in the system prompt. Both prior studies had treated usage as a stable
+quantity under the faux provider.
+
+**Two remain genuinely open and are not answerable without a real model:**
+whether an agent spontaneously retrieves displaced harness state, and whether
+that retrieval affects task outcome. Both were deliberately left untested rather
+than approximated with a faux provider whose decisions the probe itself authors.
+
+---
+
+## 4. Boundary
+
+This phase stops here, as instructed. The next question —
+*does continual harness refinement actually improve future task outcomes?* — is
+materially different and requires design decisions this study did not make:
+task set, held-out evaluation, real model and provider, evaluator independence,
+static vs refinement conditions, outcome-conditioned refinement,
+candidate/review/promotion, replication, and cost/quota.
+
+Three findings here constrain that design and should be carried into it:
+
+1. **Q5's boundary limits what "controlled" can mean.** Without seed,
+   temperature, model snapshot, prompt bytes, or a per-request harness hash in
+   the record, two runs cannot be shown equivalent from artifacts alone. Any
+   controlled comparison must add its own provenance capture.
+2. **Q2's matrix determines what a refinement-condition arm can prove.** If the
+   experiment permits direct `rlm.harness` CRUD alongside `/refine`, harness
+   mutations become partly unattributable and the arms stop being cleanly
+   separable. Either restrict writers to `/refine`, or add snapshotting.
+3. **Q4 sets the achievable reproducibility target.** Semantic-script
+   reproducibility is attainable and is the right equality relation for
+   assertions; byte or event-frame equality is not, and should not be built into
+   any harness's pass criteria. Note specifically that **token-usage equality is
+   not a safe assertion even under a faux provider** — input accounting moves
+   with incidental prompt-framing length. A cost or budget comparison between
+   experimental arms needs a tolerance, not an equality check.

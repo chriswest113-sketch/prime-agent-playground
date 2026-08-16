@@ -1,0 +1,27 @@
+[PASS] T05.1: the session reloads from disk -- entries=9
+[PASS] T05.2: model changes are persisted as typed change events carrying provider + modelId -- [{"provider":"faux","modelId":"faux-requested"},{"provider":"faux","modelId":"faux-second"}]
+[PASS] T05.3: thinking-level changes are persisted as typed change events -- ["medium","high"]
+[PASS] T05.4: service-tier changes are persisted as typed change events -- ["standard"]
+[PASS] T05.4b: only the EFFECTIVE (clamped) service tier is recorded: the requested `priority` tier left no trace -- recorded tiers: ["standard"]; "priority" was requested
+[PASS] T05.4c: change events are emitted only on an effective change, so a no-op request is unrecorded -- two setServiceTier calls produced 1 change event(s)
+[PASS] T05.5: each assistant response records provider, api and the requested model id -- [{"provider":"faux","api":"faux:1786850000153:un5gm0wpwt","model":"faux-requested"},{"provider":"faux","api":"faux:1786850000153:un5gm0wpwt","model":"faux-second"}]
+[PASS] T05.6: a routed/concrete responseModel that differs from the requested model IS persisted per response when the provider supplies it -- [{"model":"faux-requested","responseModel":"faux-concrete-routed-0925"},{"model":"faux-second","responseModel":null}]
+[PASS] T05.7: a provider response id IS persisted per response when the provider supplies one -- ["resp_T05_FIXED_0001",null]
+[PASS] T05.8: responseModel / responseId are OPTIONAL: the response that did not supply them records neither
+[PASS] T05.9: usage and stopReason are persisted per response
+[PASS] T05.abs.temperature: NOT RECORDED: temperature
+[PASS] T05.abs.seed: NOT RECORDED: seed
+[PASS] T05.abs.topP_topK_sampling_params: NOT RECORDED: topP / topK sampling params
+[PASS] T05.abs.model_revision_snapshot: NOT RECORDED: model revision / snapshot
+[PASS] T05.abs.model_catalog_hash_version: NOT RECORDED: model catalog hash/version
+[PASS] T05.abs.full_effective_system_prompt: NOT RECORDED: full effective system prompt
+[PASS] T05.abs.system_prompt_hash: NOT RECORDED: system prompt hash
+[PASS] T05.abs.harness_snapshot_per_request: NOT RECORDED: harness snapshot per request
+[PASS] T05.abs.harness_hash_per_request: NOT RECORDED: harness hash per request
+[PASS] T05.abs.per_response_thinking_level: NOT RECORDED: per-response thinking level
+[PASS] T05.abs.per_response_service_tier: NOT RECORDED: per-response service tier
+[PASS] T05.abs.tool_versions: NOT RECORDED: tool versions
+[PASS] T05.abs.skill_versions: NOT RECORDED: skill versions
+[PASS] T05.abs.provider_baseUrl_per_response: NOT RECORDED: provider baseUrl per response
+
+all assertions passed: true

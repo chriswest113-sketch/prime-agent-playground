@@ -1,0 +1,12 @@
+[PASS] T01.1: the deliberately failing gate actually executed -- gate invocations = 2
+[PASS] T01.2: the gate-failure continuation carrying the sentinel entered the session trajectory as a user message -- continuation length 388
+[PASS] T01.3: the refiner planning request was captured through the faux provider (no credentials used)
+[PASS] T01.4: the gate sentinel appears inside the <conversation> block supplied to the refiner
+[PASS] T01.5: the sentinel reaches the refiner ONLY through <conversation>, not through a dedicated gate field
+[PASS] T01.6: C: the autonomous gate is NOT re-run as part of refinement -- before=2 after=2
+[PASS] T01.7: B: the persisted RefinementResult carries no gate-typed field -- gate-shaped keys: []
+[PASS] T01.8: B: the RefinementResult does not record the gate outcome that preceded it
+[PASS] T01.9: B: neither module imports or references the other's types (no static typed linkage) -- refinement->gate: []; autonomous->refinement: []
+[PASS] T01.10: D: the applied edits come from the refiner reply, so gate text can only influence refinement probabilistically -- applied: ["create memory:t01_probe_memory"]
+
+all assertions passed: true

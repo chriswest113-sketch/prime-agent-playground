@@ -1,0 +1,475 @@
+{
+  "environment": {
+    "node": "v22.22.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cwd": "/home/user/prime-agent-playground",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t02-14625",
+    "providerCredentialsPresent": {
+      "ANTHROPIC_API_KEY": false,
+      "ANTHROPIC_OAUTH_TOKEN": false,
+      "OPENAI_API_KEY": false,
+      "GEMINI_API_KEY": false,
+      "GROQ_API_KEY": false,
+      "XAI_API_KEY": false,
+      "OPENROUTER_API_KEY": false,
+      "MISTRAL_API_KEY": false,
+      "KIMI_API_KEY": false,
+      "ZAI_API_KEY": false,
+      "PRIME_API_KEY": false
+    }
+  },
+  "writerA_refine": {
+    "sessionFile": "/tmp/pi-suite-1786849989250-on984wwdbno/sessions/01a0088f-1283-7638-ad66-0e397531f392.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786849989250-on984wwdbno/session-artifacts/01a0088f-1283-7638-ad66-0e397531f392/harness/harness_state.json",
+    "jsonlEntryTypes": [
+      "session",
+      "custom",
+      "message"
+    ],
+    "jsonlSummary": [
+      {
+        "index": 0,
+        "type": "session",
+        "id": "01a0088f-1283-7638-ad66-0e397531f392",
+        "parentId": null,
+        "timestamp": "2026-08-16T03:13:09.252Z"
+      },
+      {
+        "index": 1,
+        "type": "custom",
+        "id": "28d9a35d",
+        "parentId": null,
+        "timestamp": "2026-08-16T03:13:09.275Z",
+        "customType": "prime-agent.refinement"
+      },
+      {
+        "index": 2,
+        "type": "message",
+        "id": "e53c9962",
+        "parentId": "28d9a35d",
+        "timestamp": "2026-08-16T03:13:09.324Z",
+        "role": "user",
+        "text": "message A: establish the baseline"
+      },
+      {
+        "index": 3,
+        "type": "message",
+        "id": "c1e7363b",
+        "parentId": "e53c9962",
+        "timestamp": "2026-08-16T03:13:09.326Z",
+        "role": "assistant",
+        "text": "assistant reply to message A (refine)"
+      },
+      {
+        "index": 4,
+        "type": "custom",
+        "id": "4f355aac",
+        "parentId": "c1e7363b",
+        "timestamp": "2026-08-16T03:13:09.382Z",
+        "customType": "prime-agent.refinement"
+      },
+      {
+        "index": 5,
+        "type": "message",
+        "id": "6a1900a3",
+        "parentId": "4f355aac",
+        "timestamp": "2026-08-16T03:13:09.428Z",
+        "role": "user",
+        "text": "message B: after the refinement"
+      },
+      {
+        "index": 6,
+        "type": "message",
+        "id": "cf757bbc",
+        "parentId": "6a1900a3",
+        "timestamp": "2026-08-16T03:13:09.428Z",
+        "role": "assistant",
+        "text": "assistant reply to message B (refine)"
+      }
+    ],
+    "refinementEntry": {
+      "type": "custom",
+      "customType": "prime-agent.refinement",
+      "data": {
+        "id": "refine_20260816031309381",
+        "summary": "Record the distinctive T02 harness edit",
+        "rationale": "Probe requires a single distinctive, attributable edit.",
+        "expectedOutcome": "The edit is attributable to a point in the session tree.",
+        "appliedEdits": [
+          {
+            "action": "update",
+            "kind": "memory",
+            "id": "t02_distinctive_edit",
+            "title": "T02 distinctive edit",
+            "content": "T02_HARNESS_EDIT_MARKER_A1 written by the TypeScript /refine writer between A and B.",
+            "path": "study/t02",
+            "reason": "probe",
+            "before": {
+              "id": "t02_distinctive_edit",
+              "kind": "memory",
+              "title": "T02 distinctive edit",
+              "content": "T02_HARNESS_EDIT_MARKER_V1 seeded before message A.",
+              "path": "study/t02",
+              "scope": "local",
+              "reference": {},
+              "arguments": {},
+              "metadata": {},
+              "source": "refine",
+              "created_at": "2026-08-16T03:13:09.274Z",
+              "updated_at": "2026-08-16T03:13:09.274Z",
+              "version": 1
+            },
+            "after": {
+              "id": "t02_distinctive_edit",
+              "kind": "memory",
+              "title": "T02 distinctive edit",
+              "content": "T02_HARNESS_EDIT_MARKER_A1 written by the TypeScript /refine writer between A and B.",
+              "path": "study/t02",
+              "scope": "local",
+              "reference": {},
+              "arguments": {},
+              "metadata": {},
+              "source": "refine",
+              "created_at": "2026-08-16T03:13:09.274Z",
+              "updated_at": "2026-08-16T03:13:09.382Z",
+              "version": 2
+            },
+            "applied": true
+          }
+        ],
+        "harnessStatePath": "/tmp/pi-suite-1786849989250-on984wwdbno/session-artifacts/01a0088f-1283-7638-ad66-0e397531f392/harness/harness_state.json",
+        "scope": "local"
+      },
+      "id": "4f355aac",
+      "parentId": "c1e7363b",
+      "timestamp": "2026-08-16T03:13:09.382Z"
+    },
+    "refinementEntryIndex": 4,
+    "messagesBeforeRefinement": [
+      "message A: establish the baseline",
+      "assistant reply to message A (refine)"
+    ],
+    "messagesAfterRefinement": [
+      "message B: after the refinement",
+      "assistant reply to message B (refine)"
+    ],
+    "refinementOnMessageSpine": true,
+    "persistedBeforeState": {
+      "id": "t02_distinctive_edit",
+      "kind": "memory",
+      "title": "T02 distinctive edit",
+      "content": "T02_HARNESS_EDIT_MARKER_V1 seeded before message A.",
+      "path": "study/t02",
+      "scope": "local",
+      "reference": {},
+      "arguments": {},
+      "metadata": {},
+      "source": "refine",
+      "created_at": "2026-08-16T03:13:09.274Z",
+      "updated_at": "2026-08-16T03:13:09.274Z",
+      "version": 1
+    },
+    "persistedAfterState": {
+      "id": "t02_distinctive_edit",
+      "kind": "memory",
+      "title": "T02 distinctive edit",
+      "content": "T02_HARNESS_EDIT_MARKER_A1 written by the TypeScript /refine writer between A and B.",
+      "path": "study/t02",
+      "scope": "local",
+      "reference": {},
+      "arguments": {},
+      "metadata": {},
+      "source": "refine",
+      "created_at": "2026-08-16T03:13:09.274Z",
+      "updated_at": "2026-08-16T03:13:09.382Z",
+      "version": 2
+    },
+    "harnessStateEntry": {
+      "id": "t02_distinctive_edit",
+      "kind": "memory",
+      "title": "T02 distinctive edit",
+      "content": "T02_HARNESS_EDIT_MARKER_A1 written by the TypeScript /refine writer between A and B.",
+      "path": "study/t02",
+      "scope": "local",
+      "reference": {},
+      "arguments": {},
+      "metadata": {},
+      "source": "refine",
+      "created_at": "2026-08-16T03:13:09.274Z",
+      "updated_at": "2026-08-16T03:13:09.382Z",
+      "version": 2
+    },
+    "harnessStateRefinements": [
+      {
+        "id": "refine_20260816031309272",
+        "trigger": "Seed the T02 entry before message A",
+        "changes": [
+          "create memory:t02_distinctive_edit"
+        ],
+        "evidence": "Probe requires a single distinctive, attributable edit.",
+        "outcome": "The edit is attributable to a point in the session tree.",
+        "created_at": "2026-08-16T03:13:09.274Z"
+      },
+      {
+        "id": "refine_20260816031309381",
+        "trigger": "Record the distinctive T02 harness edit",
+        "changes": [
+          "update memory:t02_distinctive_edit"
+        ],
+        "evidence": "Probe requires a single distinctive, attributable edit.",
+        "outcome": "The edit is attributable to a point in the session tree.",
+        "created_at": "2026-08-16T03:13:09.382Z"
+      }
+    ],
+    "refineResultId": "refine_20260816031309381",
+    "setupRefineResultId": "refine_20260816031309272",
+    "refinementEntryCount": 2,
+    "setupCreateEditHadBeforeKey": true,
+    "assistantMessageKeys": [
+      "api",
+      "content",
+      "model",
+      "provider",
+      "role",
+      "stopReason",
+      "timestamp",
+      "usage"
+    ]
+  },
+  "writerB_crud": {
+    "sessionFile": "/tmp/pi-suite-1786849989504-mjz15oq5gz/sessions/01a0088f-1380-734a-ba72-1f45c73344d0.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786849989504-mjz15oq5gz/session-artifacts/01a0088f-1380-734a-ba72-1f45c73344d0/harness/harness_state.json",
+    "pythonStdout": {
+      "id": "t02_distinctive_edit",
+      "source": "agent",
+      "version": 1,
+      "created_at": "2026-08-16T03:13:09.650557+00:00",
+      "updated_at": "2026-08-16T03:13:09.650592+00:00",
+      "scope": "local"
+    },
+    "jsonlSummary": [
+      {
+        "index": 0,
+        "type": "session",
+        "id": "01a0088f-1380-734a-ba72-1f45c73344d0",
+        "parentId": null,
+        "timestamp": "2026-08-16T03:13:09.504Z"
+      },
+      {
+        "index": 1,
+        "type": "message",
+        "id": "be054396",
+        "parentId": null,
+        "timestamp": "2026-08-16T03:13:09.531Z",
+        "role": "user",
+        "text": "message A: establish the baseline"
+      },
+      {
+        "index": 2,
+        "type": "message",
+        "id": "25194aeb",
+        "parentId": "be054396",
+        "timestamp": "2026-08-16T03:13:09.532Z",
+        "role": "assistant",
+        "text": ""
+      },
+      {
+        "index": 3,
+        "type": "message",
+        "id": "c0a2bcde",
+        "parentId": "25194aeb",
+        "timestamp": "2026-08-16T03:13:09.679Z",
+        "role": "user",
+        "text": "message B: after the CRUD mutation"
+      },
+      {
+        "index": 4,
+        "type": "message",
+        "id": "53d41fe0",
+        "parentId": "c0a2bcde",
+        "timestamp": "2026-08-16T03:13:09.680Z",
+        "role": "assistant",
+        "text": "assistant reply to message B (crud)"
+      }
+    ],
+    "jsonlEntryTypesAfterCrud": [
+      "message"
+    ],
+    "anyHarnessEntryInJsonl": false,
+    "harnessStateEntry": {
+      "id": "t02_distinctive_edit",
+      "kind": "memory",
+      "title": "T02 distinctive edit",
+      "content": "T02_HARNESS_EDIT_MARKER_B1 written by the direct Python CRUD writer.",
+      "path": "study/t02",
+      "scope": "local",
+      "reference": {},
+      "arguments": {},
+      "metadata": {},
+      "source": "agent",
+      "created_at": "2026-08-16T03:13:09.650557+00:00",
+      "updated_at": "2026-08-16T03:13:09.650592+00:00",
+      "version": 1
+    },
+    "harnessStateRefinements": []
+  },
+  "reconstructionMatrix": [
+    {
+      "dimension": "position in the session tree",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "custom entry `prime-agent.refinement` carries id + parentId on the message spine",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "no session entry is written at all"
+    },
+    {
+      "dimension": "timestamp / ordering",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "entry.timestamp plus append order plus the refine_<UTC> id",
+      "crud": "PARTIAL",
+      "crudEvidence": "entry.updated_at is wall-clock only; it cannot be ordered against session entries with certainty"
+    },
+    {
+      "dimension": "before state of the edited entry",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "appliedEdits[].before (null for a create, populated for update/delete)",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "upsert overwrites in place; no prior value is retained anywhere"
+    },
+    {
+      "dimension": "after state of the edited entry",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "appliedEdits[].after is a full entry snapshot",
+      "crud": "PARTIAL",
+      "crudEvidence": "current harness_state.json shows the latest value only; superseded values are lost"
+    },
+    {
+      "dimension": "which messages preceded the mutation",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "message entries appended before the refinement entry",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "no anchor exists in the session file to split before/after"
+    },
+    {
+      "dimension": "which messages followed the mutation",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "message entries descending from the refinement entry",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "same - no anchor"
+    },
+    {
+      "dimension": "harness state applying to message A (edited entry only)",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "appliedEdits[].before gives the pre-mutation value of every touched entry",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "no before value is recorded"
+    },
+    {
+      "dimension": "harness state applying to message B (edited entry only)",
+      "refine": "RECONSTRUCTIBLE",
+      "refineEvidence": "appliedEdits[].after plus harness_state.json",
+      "crud": "PARTIAL",
+      "crudEvidence": "only if no later writer touched the same entry"
+    },
+    {
+      "dimension": "COMPLETE effective harness state at message A / message B",
+      "refine": "PARTIAL",
+      "refineEvidence": "per-edit before/after only; no full-state snapshot or hash is persisted per turn, and a concurrent CRUD writer is invisible",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "no snapshot, no event, no anchor"
+    },
+    {
+      "dimension": "effective system prompt actually sent with each request",
+      "refine": "NOT RECONSTRUCTIBLE",
+      "refineEvidence": "assistant message entries record no systemPrompt and no prompt hash",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "same"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "T02.A0",
+      "claim": "a create edit records NO before key (correct: nothing existed), so before-state reconstruction must be tested with an update",
+      "pass": true
+    },
+    {
+      "id": "T02.A1",
+      "claim": "the /refine mutation is recorded in the session JSONL",
+      "pass": true
+    },
+    {
+      "id": "T02.A2",
+      "claim": "the refinement entry has a tree position (id + parentId) and a timestamp",
+      "pass": true,
+      "detail": "id=4f355aac parentId=c1e7363b ts=2026-08-16T03:13:09.382Z"
+    },
+    {
+      "id": "T02.A3",
+      "claim": "messages before and after the refinement are separable by tree/append order",
+      "pass": true,
+      "detail": "before=2 after=2"
+    },
+    {
+      "id": "T02.A4",
+      "claim": "post-refinement messages descend from the refinement entry in the parent chain",
+      "pass": true
+    },
+    {
+      "id": "T02.A5",
+      "claim": "the refinement record carries an explicit before state for the edited entry",
+      "pass": true,
+      "detail": "before={\"id\":\"t02_distinctive_edit\",\"kind\":\"memory\",\"title\":\"T02 distinctive edit\",\"content\":\"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.\",\"path\":\"study/t02\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T03:13:09.274Z\",\"updated_at\":\"2026-08-16T03:13:09.274Z\",\"version\":1}"
+    },
+    {
+      "id": "T02.A6",
+      "claim": "the refinement record carries an explicit after state for the edited entry",
+      "pass": true
+    },
+    {
+      "id": "T02.A7",
+      "claim": "the refinement record does NOT contain a full harness snapshot (only per-edit before/after)",
+      "pass": true,
+      "detail": "RefinementResult keys: [\"appliedEdits\",\"expectedOutcome\",\"harnessStatePath\",\"id\",\"rationale\",\"scope\",\"summary\"]"
+    },
+    {
+      "id": "T02.A8",
+      "claim": "no assistant message entry records the effective system prompt or a harness hash",
+      "pass": true,
+      "detail": "assistant message keys: [\"api\",\"content\",\"model\",\"provider\",\"role\",\"stopReason\",\"timestamp\",\"usage\"]"
+    },
+    {
+      "id": "T02.B1",
+      "claim": "the direct Python CRUD mutation persisted to the session-local harness store",
+      "pass": true,
+      "detail": "source=agent version=1"
+    },
+    {
+      "id": "T02.B2",
+      "claim": "the direct CRUD mutation appends NO entry to the session JSONL",
+      "pass": true
+    },
+    {
+      "id": "T02.B3",
+      "claim": "the direct CRUD mutation records NO refinement event in harness_state.json",
+      "pass": true,
+      "detail": "refinements=0"
+    },
+    {
+      "id": "T02.B4",
+      "claim": "the CRUD-written entry retains a wall-clock timestamp but no session-tree anchor",
+      "pass": true,
+      "detail": "entry keys: [\"arguments\",\"content\",\"created_at\",\"id\",\"kind\",\"metadata\",\"path\",\"reference\",\"scope\",\"source\",\"title\",\"updated_at\",\"version\"]"
+    },
+    {
+      "id": "T02.B5",
+      "claim": "the CRUD-written entry carries no before state (prior value is unrecoverable from records)",
+      "pass": true
+    },
+    {
+      "id": "T02.B6",
+      "claim": "writer identity survives only as the coarse `source` field, not as an actor/turn id",
+      "pass": true,
+      "detail": "source=agent"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[PASS] T03.1: claim 1 STORED: the hidden fact is persisted in harness state -- id=zz_late_sorting_fact
+[PASS] T03.2: the default summary renders only 6 of 15 stored memory entries -- rendered=6 stored=15
+[PASS] T03.3: claim 2 NOT IN DEFAULT ROUTING SUMMARY: the hidden fact is absent from the system prompt actually sent
+[PASS] T03.4: the omission is signalled, not silent: an explicit overflow count is rendered -- - +9 more memory entries
+[PASS] T03.5: claim 3 RETRIEVABLE via TypeScript loadHarnessState()
+[PASS] T03.6: claim 3 RETRIEVABLE via the same renderer with a raised entry limit (adjustable overview)
+[PASS] T03.7: claim 3 RETRIEVABLE via Python rlm.harness.list()
+[PASS] T03.8: claim 3 RETRIEVABLE via Python rlm.harness.get()
+[PASS] T03.9: claim 3 RETRIEVABLE via Python rlm.harness.snapshot()
+[PASS] T03.10: claim 3 RETRIEVABLE via Python rlm.get_harness_state()
+[PASS] T03.11: the Python overview() default (20/kind) DOES surface the fact - the bound differs from the TS prompt renderer's 6/kind
+[PASS] T03.12: bounding, not storage, is what hides the fact: the same Python overview at limit 6 also omits it
+[PASS] T03.13: claim 3 (end-to-end): a tool call inside the agent loop recovers the hidden fact into the conversation
+[PASS] T03.14: the tool turn's own system prompt still omitted the fact (recovery came from the tool, not the prompt)
+
+all assertions passed: true

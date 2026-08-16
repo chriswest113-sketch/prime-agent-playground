@@ -1,0 +1,6 @@
+[PASS] EXT.1: no version-matched Verifiers/prime-rl adapter, environment module, or consumer exists in this repository -- python adapter files: []; every one of the 37 references falls into a known non-integration kind: ["CO-DEPLOYMENT ARTIFACT (git pathspec excluding a verifiers working directory from gate snapshots)","DOCUMENTATION (prose describing external tools reachable via the `prime` CLI)","OUTBOUND TELEMETRY SURFACE (ACP `_meta` payload a verifiers-aware client may read)","PROJECT PROSE","TEST REFERENCE"]
+[PASS] EXT.2: the coding-agent source contains no reward/score concept at all -- hits: []
+[PASS] EXT.3: an evaluator signal can only enter refinement as untyped free text inside <user_refine_instructions> -- blocks: ["current_harness_state","refinement_history","conversation","scope_policy","user_refine_instructions"]
+[PASS] EXT.4: the refiner request has no typed score/reward field
+
+all assertions passed: true
