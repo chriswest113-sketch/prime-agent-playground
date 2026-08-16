@@ -237,8 +237,9 @@ ENVIRONMENT-DEPENDENT. Revised form:
 > The faux provider **is** non-canonical at the event/identifier level, and is
 > semantically reproducible after principled normalization **for content, tool
 > behaviour, harness state, output-token accounting and outcomes**; input-token
-> accounting is not reproducible across processes, though its variance is fully
-> attributable to prompt-length framing rather than semantic drift.
+> accounting is not reproducible across processes; the observed variance is
+> consistent with, and mechanistically explained by, prompt-length framing, but
+> sole causation was not experimentally established.
 
 `test-04` measured 5 provider-layer runs and 3 independent session-layer
 processes:
