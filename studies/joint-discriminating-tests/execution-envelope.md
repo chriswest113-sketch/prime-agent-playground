@@ -94,7 +94,8 @@ network call to any model provider occurs.
 `studies/` is outside the repository's `tsconfig` `include` and biome
 `files.includes`, so `npm run check` does **not** examine the probes. That gap
 hid a real defect in the first round (an invalid `ServiceTier` literal in Test
-05, which invalidated that probe's service-tier evidence). A local
+05, which invalidated that probe's service-tier evidence; eight diagnostics in
+total at `91ce174`). A local
 `studies/joint-discriminating-tests/tsconfig.json` now covers them:
 
 ```bash

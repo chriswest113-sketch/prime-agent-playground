@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-t03-10053",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t03-11349",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,
@@ -20,7 +20,7 @@
     }
   },
   "defaultSummary": {
-    "systemPromptLength": 9598,
+    "systemPromptLength": 9596,
     "harnessSectionLength": 3200,
     "defaultEntryLimit": 6,
     "memoryEntriesStored": 15,

@@ -121,29 +121,29 @@
           "text": "step one: echo the marker"
         }
       ],
-      "timestamp": 1786854127092
+      "timestamp": 1786860421840
     },
     {
       "role": "assistant",
       "content": [
         {
           "type": "toolCall",
-          "id": "tool:1786854127109:nilfjxv56a",
+          "id": "tool:1786860421861:wil5gdr6cv",
           "name": "echo",
           "arguments": {
             "value": "T04_MARKER"
           }
         }
       ],
-      "api": "faux:1786854127070:q17vq8p76g",
+      "api": "faux:1786860421815:mfj4767wkl",
       "provider": "faux",
       "model": "faux-1",
       "usage": {
-        "input": 676,
+        "input": 677,
         "output": 7,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "totalTokens": 683,
+        "totalTokens": 684,
         "cost": {
           "input": 0,
           "output": 0,
@@ -153,11 +153,11 @@
         }
       },
       "stopReason": "toolUse",
-      "timestamp": 1786854127109
+      "timestamp": 1786860421861
     },
     {
       "role": "toolResult",
-      "toolCallId": "tool:1786854127109:nilfjxv56a",
+      "toolCallId": "tool:1786860421861:wil5gdr6cv",
       "toolName": "echo",
       "content": [
         {
@@ -167,7 +167,7 @@
       ],
       "details": {},
       "isError": false,
-      "timestamp": 1786854127116
+      "timestamp": 1786860421868
     },
     {
       "role": "assistant",
@@ -177,7 +177,7 @@
           "text": "Summary: the marker was echoed once."
         }
       ],
-      "api": "faux:1786854127070:q17vq8p76g",
+      "api": "faux:1786860421815:mfj4767wkl",
       "provider": "faux",
       "model": "faux-1",
       "usage": {
@@ -195,7 +195,7 @@
         }
       },
       "stopReason": "stop",
-      "timestamp": 1786854127117
+      "timestamp": 1786860421869
     },
     {
       "role": "user",
@@ -205,7 +205,7 @@
           "text": "step two: summarise"
         }
       ],
-      "timestamp": 1786854127234
+      "timestamp": 1786860421990
     },
     {
       "role": "assistant",
@@ -215,7 +215,7 @@
           "text": "acknowledged"
         }
       ],
-      "api": "faux:1786854127070:q17vq8p76g",
+      "api": "faux:1786860421815:mfj4767wkl",
       "provider": "faux",
       "model": "faux-1",
       "usage": {
@@ -233,10 +233,10 @@
         }
       },
       "stopReason": "stop",
-      "timestamp": 1786854127234
+      "timestamp": 1786860421990
     }
   ],
-  "sessionJsonl": "{\"type\":\"session\",\"version\":3,\"id\":\"01a008ce-35df-7297-97be-942cf5cd6a1e\",\"timestamp\":\"2026-08-16T04:22:07.071Z\",\"cwd\":\"/tmp/pi-suite-1786854127069-70vyz3vbhw\",\"rlmDepth\":0}\n{\"type\":\"message\",\"id\":\"0f5bb2e6\",\"parentId\":null,\"timestamp\":\"2026-08-16T04:22:07.109Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step one: echo the marker\"}],\"timestamp\":1786854127092}}\n{\"type\":\"message\",\"id\":\"8f84da78\",\"parentId\":\"0f5bb2e6\",\"timestamp\":\"2026-08-16T04:22:07.111Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"toolCall\",\"id\":\"tool:1786854127109:nilfjxv56a\",\"name\":\"echo\",\"arguments\":{\"value\":\"T04_MARKER\"}}],\"api\":\"faux:1786854127070:q17vq8p76g\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":676,\"output\":7,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":683,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"toolUse\",\"timestamp\":1786854127109}}\n{\"type\":\"message\",\"id\":\"dad58708\",\"parentId\":\"8f84da78\",\"timestamp\":\"2026-08-16T04:22:07.116Z\",\"message\":{\"role\":\"toolResult\",\"toolCallId\":\"tool:1786854127109:nilfjxv56a\",\"toolName\":\"echo\",\"content\":[{\"type\":\"text\",\"text\":\"echoed:T04_MARKER\"}],\"details\":{},\"isError\":false,\"timestamp\":1786854127116}}\n{\"type\":\"message\",\"id\":\"0f2b1e12\",\"parentId\":\"dad58708\",\"timestamp\":\"2026-08-16T04:22:07.117Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Summary: the marker was echoed once.\"}],\"api\":\"faux:1786854127070:q17vq8p76g\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":695,\"output\":9,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":704,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786854127117}}\n{\"type\":\"custom\",\"customType\":\"prime-agent.refinement\",\"data\":{\"id\":\"refine_20260816042207191\",\"summary\":\"Record the T04 marker lesson\",\"rationale\":\"Deterministic probe proposal.\",\"expectedOutcome\":\"Marker recorded.\",\"appliedEdits\":[{\"action\":\"create\",\"kind\":\"memory\",\"id\":\"t04_marker\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"reason\":\"probe\",\"after\":{\"id\":\"t04_marker\",\"kind\":\"memory\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T04:22:07.193Z\",\"updated_at\":\"2026-08-16T04:22:07.193Z\",\"version\":1},\"applied\":true}],\"harnessStatePath\":\"/tmp/pi-suite-1786854127069-70vyz3vbhw/session-artifacts/01a008ce-35df-7297-97be-942cf5cd6a1e/harness/harness_state.json\",\"scope\":\"local\"},\"id\":\"f3f4a3ee\",\"parentId\":\"0f2b1e12\",\"timestamp\":\"2026-08-16T04:22:07.193Z\"}\n{\"type\":\"message\",\"id\":\"1a725e6a\",\"parentId\":\"f3f4a3ee\",\"timestamp\":\"2026-08-16T04:22:07.246Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step two: summarise\"}],\"timestamp\":1786854127234}}\n{\"type\":\"message\",\"id\":\"32e910ba\",\"parentId\":\"1a725e6a\",\"timestamp\":\"2026-08-16T04:22:07.247Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"acknowledged\"}],\"api\":\"faux:1786854127070:q17vq8p76g\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":755,\"output\":3,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":758,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786854127234}}\n",
+  "sessionJsonl": "{\"type\":\"session\",\"version\":3,\"id\":\"01a0092e-42b9-76e8-a885-e736beeb4482\",\"timestamp\":\"2026-08-16T06:07:01.817Z\",\"cwd\":\"/tmp/pi-suite-1786860421815-zcccy5s5qsh\",\"rlmDepth\":0}\n{\"type\":\"message\",\"id\":\"91da0291\",\"parentId\":null,\"timestamp\":\"2026-08-16T06:07:01.860Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step one: echo the marker\"}],\"timestamp\":1786860421840}}\n{\"type\":\"message\",\"id\":\"cf621c3a\",\"parentId\":\"91da0291\",\"timestamp\":\"2026-08-16T06:07:01.863Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"toolCall\",\"id\":\"tool:1786860421861:wil5gdr6cv\",\"name\":\"echo\",\"arguments\":{\"value\":\"T04_MARKER\"}}],\"api\":\"faux:1786860421815:mfj4767wkl\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":677,\"output\":7,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":684,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"toolUse\",\"timestamp\":1786860421861}}\n{\"type\":\"message\",\"id\":\"6f788a64\",\"parentId\":\"cf621c3a\",\"timestamp\":\"2026-08-16T06:07:01.868Z\",\"message\":{\"role\":\"toolResult\",\"toolCallId\":\"tool:1786860421861:wil5gdr6cv\",\"toolName\":\"echo\",\"content\":[{\"type\":\"text\",\"text\":\"echoed:T04_MARKER\"}],\"details\":{},\"isError\":false,\"timestamp\":1786860421868}}\n{\"type\":\"message\",\"id\":\"f2a6614b\",\"parentId\":\"6f788a64\",\"timestamp\":\"2026-08-16T06:07:01.870Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"Summary: the marker was echoed once.\"}],\"api\":\"faux:1786860421815:mfj4767wkl\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":695,\"output\":9,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":704,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786860421869}}\n{\"type\":\"custom\",\"customType\":\"prime-agent.refinement\",\"data\":{\"id\":\"refine_20260816060701948\",\"summary\":\"Record the T04 marker lesson\",\"rationale\":\"Deterministic probe proposal.\",\"expectedOutcome\":\"Marker recorded.\",\"appliedEdits\":[{\"action\":\"create\",\"kind\":\"memory\",\"id\":\"t04_marker\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"reason\":\"probe\",\"after\":{\"id\":\"t04_marker\",\"kind\":\"memory\",\"title\":\"T04 marker\",\"content\":\"T04_MARKER was echoed successfully.\",\"path\":\"study/t04\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T06:07:01.950Z\",\"updated_at\":\"2026-08-16T06:07:01.950Z\",\"version\":1},\"applied\":true}],\"harnessStatePath\":\"/tmp/pi-suite-1786860421815-zcccy5s5qsh/session-artifacts/01a0092e-42b9-76e8-a885-e736beeb4482/harness/harness_state.json\",\"scope\":\"local\"},\"id\":\"39343337\",\"parentId\":\"f2a6614b\",\"timestamp\":\"2026-08-16T06:07:01.950Z\"}\n{\"type\":\"message\",\"id\":\"8b1e7e47\",\"parentId\":\"39343337\",\"timestamp\":\"2026-08-16T06:07:02.006Z\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"step two: summarise\"}],\"timestamp\":1786860421990}}\n{\"type\":\"message\",\"id\":\"1ec593be\",\"parentId\":\"8b1e7e47\",\"timestamp\":\"2026-08-16T06:07:02.007Z\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"text\",\"text\":\"acknowledged\"}],\"api\":\"faux:1786860421815:mfj4767wkl\",\"provider\":\"faux\",\"model\":\"faux-1\",\"usage\":{\"input\":755,\"output\":3,\"cacheRead\":0,\"cacheWrite\":0,\"totalTokens\":758,\"cost\":{\"input\":0,\"output\":0,\"cacheRead\":0,\"cacheWrite\":0,\"total\":0}},\"stopReason\":\"stop\",\"timestamp\":1786860421990}}\n",
   "harnessState": {
     "schema": 1,
     "entries": {
@@ -253,8 +253,8 @@
           "arguments": {},
           "metadata": {},
           "source": "refine",
-          "created_at": "2026-08-16T04:22:07.193Z",
-          "updated_at": "2026-08-16T04:22:07.193Z",
+          "created_at": "2026-08-16T06:07:01.950Z",
+          "updated_at": "2026-08-16T06:07:01.950Z",
           "version": 1
         }
       },
@@ -263,19 +263,19 @@
     },
     "refinements": [
       {
-        "id": "refine_20260816042207191",
+        "id": "refine_20260816060701948",
         "trigger": "Record the T04 marker lesson",
         "changes": [
           "create memory:t04_marker"
         ],
         "evidence": "Deterministic probe proposal.",
         "outcome": "Marker recorded.",
-        "created_at": "2026-08-16T04:22:07.193Z"
+        "created_at": "2026-08-16T06:07:01.950Z"
       }
     ]
   },
   "refinement": {
-    "id": "refine_20260816042207191",
+    "id": "refine_20260816060701948",
     "summary": "Record the T04 marker lesson",
     "rationale": "Deterministic probe proposal.",
     "expectedOutcome": "Marker recorded.",
@@ -299,26 +299,26 @@
           "arguments": {},
           "metadata": {},
           "source": "refine",
-          "created_at": "2026-08-16T04:22:07.193Z",
-          "updated_at": "2026-08-16T04:22:07.193Z",
+          "created_at": "2026-08-16T06:07:01.950Z",
+          "updated_at": "2026-08-16T06:07:01.950Z",
           "version": 1
         },
         "applied": true
       }
     ],
-    "harnessStatePath": "/tmp/pi-suite-1786854127069-70vyz3vbhw/session-artifacts/01a008ce-35df-7297-97be-942cf5cd6a1e/harness/harness_state.json",
+    "harnessStatePath": "/tmp/pi-suite-1786860421815-zcccy5s5qsh/session-artifacts/01a0092e-42b9-76e8-a885-e736beeb4482/harness/harness_state.json",
     "scope": "local"
   },
   "providerRequests": [
     {
-      "systemPromptLength": 2479,
+      "systemPromptLength": 2481,
       "userTexts": 1
     },
     {
-      "systemPromptLength": 2479,
+      "systemPromptLength": 2481,
       "userTexts": 1
     }
   ],
-  "sessionFile": "/tmp/pi-suite-1786854127069-70vyz3vbhw/sessions/01a008ce-35df-7297-97be-942cf5cd6a1e.jsonl",
-  "tempDir": "/tmp/pi-suite-1786854127069-70vyz3vbhw"
+  "sessionFile": "/tmp/pi-suite-1786860421815-zcccy5s5qsh/sessions/01a0092e-42b9-76e8-a885-e736beeb4482.jsonl",
+  "tempDir": "/tmp/pi-suite-1786860421815-zcccy5s5qsh"
 }

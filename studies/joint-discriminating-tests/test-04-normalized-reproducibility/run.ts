@@ -508,7 +508,12 @@ const inputDeltas = (() => {
 	const perTurn = inputTokens(traces[0]).map((_, turn) => traces.map((trace) => inputTokens(trace)[turn]));
 	return perTurn.map((values) => Math.max(...values) - Math.min(...values));
 })();
-/** Framing fully explains the variance when equal prompt lengths imply equal input tokens. */
+/**
+ * Necessary condition of the framing account: equal prompt lengths must imply
+ * equal input tokens. Satisfying it is consistent with framing being the cause;
+ * it does not by itself exclude other contributors. Establishing sole causation
+ * would need a direct intervention (e.g. pinning the session path length).
+ */
 const framingExplainsInputVariance = traces.every((traceA, indexA) =>
 	traces.every((traceB, indexB) => {
 		if (indexA >= indexB) return true;
@@ -538,7 +543,9 @@ raw.layerS = {
 		systemPromptLengthsEqual: promptLengthsEqual,
 		framingExplainsVariance: framingExplainsInputVariance,
 		diagnosis:
-			"faux estimateTokens = ceil(chars/4) over the serialized prompt; the system prompt embeds the temp session path, whose random suffix varies in length between runs, so input tokens can cross a quantisation boundary by +/-1.",
+			"Mechanistic account, consistent with the observations but not proven sole cause: faux estimateTokens = ceil(chars/4) over the serialized prompt; the system prompt embeds the temp session path, whose random suffix varies in length between runs, so input tokens can cross a quantisation boundary by +/-1.",
+		causationCaveat:
+			"The probe tests a NECESSARY condition (equal prompt length => equal input tokens). No intervention pinning path length was performed, so sole causation is not experimentally established.",
 	},
 	tempDirs: traces.map((trace) => trace.tempDir),
 	tempDirLengths: traces.map((trace) => String(trace.tempDir).length),
@@ -597,7 +604,7 @@ log.record(
 );
 log.record(
 	"T04.S10c",
-	"Layer S: any INPUT token variance is fully explained by volatile prompt-length framing, not by semantic drift (runs with equal system-prompt lengths report equal input tokens)",
+	"Layer S: the INPUT token variance is CONSISTENT WITH prompt-length framing rather than semantic drift - runs with equal system-prompt lengths report equal input tokens. This is a necessary condition of the framing account, not proof of sole causation",
 	framingExplainsInputVariance,
 	`inputTokensEqual=${inputTokensEqual} promptLengthsEqual=${promptLengthsEqual}`,
 );
@@ -625,7 +632,7 @@ raw.classification = {
 	EVENT_FRAME:
 		"NOT REPRODUCIBLE at chunk-segmentation level; REPRODUCIBLE once chunk-segmentation framing is collapsed (deltas concatenated, progress runs coalesced)",
 	SEMANTIC_SCRIPT: Object.values(semantic).every(Boolean)
-		? `REPRODUCIBLE for terminal content, tool semantics, tool results, harness semantic state, output-token accounting and outcomes. INPUT-token accounting is ENVIRONMENT-DEPENDENT: observed per-turn deltas ${JSON.stringify(inputDeltas)}, fully explained by volatile prompt-length framing (${framingExplainsInputVariance ? "diagnosis confirmed" : "diagnosis NOT confirmed"}).`
+		? `REPRODUCIBLE for terminal content, tool semantics, tool results, harness semantic state, output-token accounting and outcomes. INPUT-token accounting is ENVIRONMENT-DEPENDENT: observed per-turn deltas ${JSON.stringify(inputDeltas)}, consistent with and mechanistically explained by prompt-length framing (${framingExplainsInputVariance ? "necessary condition holds" : "necessary condition FAILS"}); sole causation not established by this implication alone.`
 		: `PARTIAL: ${JSON.stringify(semantic)}`,
 };
 raw.assertions = log.entries;

@@ -5,7 +5,7 @@
 [PASS] T05.4b: CLAMPED request: `priority` was requested but only the effective `default` is recorded - the requested value is lost, though an event IS written -- recorded tiers: ["flex","default"]; requested sequence was ["flex","priority","priority"]
 [PASS] T05.4c: NO-OP request: a second `priority` request resolving to the already-current `default` writes no event at all -- three setServiceTier calls produced 2 change event(s): ["flex","default"]
 [PASS] T05.4d: an ACCEPTED tier is recorded verbatim, so the loss is specific to clamping rather than general -- first recorded tier: flex
-[PASS] T05.5: each assistant response records provider, api and the requested model id -- [{"provider":"faux","api":"faux:1786854128845:ppcjnyzabib","model":"faux-requested"},{"provider":"faux","api":"faux:1786854128845:ppcjnyzabib","model":"faux-second"}]
+[PASS] T05.5: each assistant response records provider, api and the requested model id -- [{"provider":"faux","api":"faux:1786860423929:yw62ia0tyn9","model":"faux-requested"},{"provider":"faux","api":"faux:1786860423929:yw62ia0tyn9","model":"faux-second"}]
 [PASS] T05.6: a routed/concrete responseModel that differs from the requested model IS persisted per response when the provider supplies it -- [{"model":"faux-requested","responseModel":"faux-concrete-routed-0925"},{"model":"faux-second","responseModel":null}]
 [PASS] T05.7: a provider response id IS persisted per response when the provider supplies one -- ["resp_T05_FIXED_0001",null]
 [PASS] T05.8: responseModel / responseId are OPTIONAL: the response that did not supply them records neither

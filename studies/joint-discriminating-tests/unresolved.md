@@ -52,9 +52,11 @@ writes; and whether the `_HarnessProxy` degraded/in-memory fallback paths
 input-token accounting is *not* reproducible across processes: it varies by ±1,
 tracking the length of the temp session path embedded in the system prompt
 (2479 chars → 676 tokens; 2481/2483 → 677). Output tokens were identical in
-every run. The probe asserts the causal diagnosis rather than the equality:
-runs with equal system-prompt lengths report equal input tokens, so framing is
-the complete explanation.
+every run. The probe asserts a necessary condition of the causal diagnosis
+rather than the equality: runs with equal system-prompt lengths report equal
+input tokens, which is consistent with framing being the mechanism. Sole
+causation is NOT established — no intervention pinning the path length was
+performed.
 
 Still open: whether the same framing account holds under longer or differently
 shaped paths, deeper sessions, or prompt-cache retention (`withUsageEstimate`
@@ -131,18 +133,30 @@ Test 05 separates accepted, clamped and no-op service-tier requests. A path that
 what it records, is untested.
 
 ### U19 — Reverse-replay beyond the tested shape
-T02.C1 replays create, update and delete across three refinements on a linear
-branch. Rollback chains (`rollbackProposal`), branch points, forks, and
-global-scope refinements were not replayed. Whether reverse-replay stays exact
-across those is unknown.
+**Partly resolved.** The mixed-scope case is now tested and was a real defect:
+an unfiltered replay is wrong across scopes even with `/refine` as the only
+writer, and filtering on the recorded `harnessStatePath` is exact (T02.C6–C8).
+
+Still untested, and explicitly preserved as such: compaction; forks and branch
+divergence; concurrent sessions writing the same store; global-history
+interactions beyond the single exercised sequence; crash / torn-write
+conditions; rollback chains (`rollbackProposal`); and writer classes other than
+`/refine` and `rlm.harness` CRUD. Reconstruction also covers the `entries` map
+only — `HarnessState.refinements[]` and `schema` are not replayed.
 
 ### U20 — Detecting a foreign harness writer after the fact
-T02.C3 shows an interleaved CRUD write makes reverse-replay return a complete
-but wrong state with no marker. Whether any signal exists that would let an
-investigator *detect* the contamination — a version counter discontinuity, an
-`updated_at` inconsistency, a `source` mismatch — was not investigated. This
-matters directly for whether a future experiment can rely on writer purity or
-must enforce it.
+**Resolved affirmatively for the tested fixture, and the earlier entry here was
+wrong.** This item previously said the question "was not investigated" while
+T02.C3 simultaneously asserted no marker existed. Investigating it showed four
+record-consistency signals fire on the contaminated fixture and none on the
+clean one: `CHAIN-BREAK`, `VERSION-GAP`, `SOURCE-MISMATCH`, `ORPHAN`
+(T02.C3/C4). The detector is now part of the durable probe.
+
+Still open: whether these four detect *every* foreign mutation. A CRUD write
+that preserved the version chain and `source`, and touched only entries the
+refinement history also touches, might evade all four — untested. Also open:
+**attribution** — the signals bound which entries were affected but recover
+neither the foreign write's content nor its position in the session (T02.C5).
 
 ### U17 — Sort-order sensitivity of the default summary
 Test 03 placed the hidden fact late by `path` and `title`. Which of the three

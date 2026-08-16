@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-ext-10376",
+    "agentDirEnv": "/tmp/joint-study-agentdir-ext-11669",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,

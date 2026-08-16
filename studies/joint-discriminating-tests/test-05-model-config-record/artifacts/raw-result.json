@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-t05-10314",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t05-11611",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,
@@ -158,15 +158,15 @@
           "text": "first response under model A"
         }
       ],
-      "api": "faux:1786854128845:ppcjnyzabib",
+      "api": "faux:1786860423929:yw62ia0tyn9",
       "provider": "faux",
       "model": "faux-requested",
       "usage": {
-        "input": 2428,
+        "input": 2429,
         "output": 7,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "totalTokens": 2435,
+        "totalTokens": 2436,
         "cost": {
           "input": 0,
           "output": 0,
@@ -177,7 +177,7 @@
       },
       "stopReason": "stop",
       "responseId": "resp_T05_FIXED_0001",
-      "timestamp": 1786854128889,
+      "timestamp": 1786860423979,
       "responseModel": "faux-concrete-routed-0925"
     },
     {
@@ -188,7 +188,7 @@
           "text": "second response under model B"
         }
       ],
-      "api": "faux:1786854128845:ppcjnyzabib",
+      "api": "faux:1786860423929:yw62ia0tyn9",
       "provider": "faux",
       "model": "faux-second",
       "usage": {
@@ -206,7 +206,7 @@
         }
       },
       "stopReason": "stop",
-      "timestamp": 1786854128993
+      "timestamp": 1786860424095
     }
   ],
   "headerKeys": [
@@ -221,17 +221,17 @@
     "modelChanges": [
       {
         "type": "model_change",
-        "id": "2393d2be",
+        "id": "5bb9e823",
         "parentId": null,
-        "timestamp": "2026-08-16T04:22:08.867Z",
+        "timestamp": "2026-08-16T06:07:03.956Z",
         "provider": "faux",
         "modelId": "faux-requested"
       },
       {
         "type": "model_change",
-        "id": "7cf5b5e6",
-        "parentId": "94bbb39a",
-        "timestamp": "2026-08-16T04:22:08.972Z",
+        "id": "4972746c",
+        "parentId": "f86b2a94",
+        "timestamp": "2026-08-16T06:07:04.074Z",
         "provider": "faux",
         "modelId": "faux-second"
       }
@@ -239,32 +239,32 @@
     "thinkingChanges": [
       {
         "type": "thinking_level_change",
-        "id": "f4b9034d",
-        "parentId": "2393d2be",
-        "timestamp": "2026-08-16T04:22:08.869Z",
+        "id": "ac9790c9",
+        "parentId": "5bb9e823",
+        "timestamp": "2026-08-16T06:07:03.958Z",
         "thinkingLevel": "medium"
       },
       {
         "type": "thinking_level_change",
-        "id": "68e941bc",
-        "parentId": "7cf5b5e6",
-        "timestamp": "2026-08-16T04:22:08.972Z",
+        "id": "519190d9",
+        "parentId": "4972746c",
+        "timestamp": "2026-08-16T06:07:04.075Z",
         "thinkingLevel": "high"
       }
     ],
     "tierChanges": [
       {
         "type": "service_tier_change",
-        "id": "c6322871",
-        "parentId": "f4b9034d",
-        "timestamp": "2026-08-16T04:22:08.869Z",
+        "id": "508d1420",
+        "parentId": "ac9790c9",
+        "timestamp": "2026-08-16T06:07:03.958Z",
         "serviceTier": "flex"
       },
       {
         "type": "service_tier_change",
-        "id": "73a631bc",
-        "parentId": "c6322871",
-        "timestamp": "2026-08-16T04:22:08.869Z",
+        "id": "4189f68b",
+        "parentId": "508d1420",
+        "timestamp": "2026-08-16T06:07:03.958Z",
         "serviceTier": "default"
       }
     ]
@@ -316,7 +316,7 @@
       "id": "T05.5",
       "claim": "each assistant response records provider, api and the requested model id",
       "pass": true,
-      "detail": "[{\"provider\":\"faux\",\"api\":\"faux:1786854128845:ppcjnyzabib\",\"model\":\"faux-requested\"},{\"provider\":\"faux\",\"api\":\"faux:1786854128845:ppcjnyzabib\",\"model\":\"faux-second\"}]"
+      "detail": "[{\"provider\":\"faux\",\"api\":\"faux:1786860423929:yw62ia0tyn9\",\"model\":\"faux-requested\"},{\"provider\":\"faux\",\"api\":\"faux:1786860423929:yw62ia0tyn9\",\"model\":\"faux-second\"}]"
     },
     {
       "id": "T05.6",

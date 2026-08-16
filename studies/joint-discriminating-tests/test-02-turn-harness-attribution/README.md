@@ -81,9 +81,14 @@ npx tsx studies/joint-discriminating-tests/test-02-turn-harness-attribution/run.
 [PASS] T02.B4: the CRUD-written entry retains a wall-clock timestamp but no session-tree anchor -- entry keys: ["arguments","content","created_at","id","kind","metadata","path","reference","scope","source","title","updated_at","version"]
 [PASS] T02.B5: the CRUD-written entry carries no before state (prior value is unrecoverable from records)
 [PASS] T02.B6: writer identity survives only as the coarse `source` field, not as an actor/turn id -- source=agent
-[PASS] T02.C1: a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint -- checkpointA exact=true checkpointB exact=true over 3 refinements
-[PASS] T02.C2: one interleaved direct CRUD write breaks reverse reconstruction -- checkpointA exact=false
-[PASS] T02.C3: and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state -- reconstructed A had 3 memory entries and looked valid
+[PASS] T02.C1: a single-scope, single-branch /refine-ONLY history reverse-replays to the EXACT harness entry set at an earlier checkpoint -- checkpointA exact=true checkpointB exact=true over 3 refinements
+[PASS] T02.C2: CORRUPTION: one interleaved direct CRUD write makes reverse reconstruction wrong -- checkpointA exact=false; reconstructed A still looked well-formed with 3 memory entries
+[PASS] T02.C3: DETECTION: in this fixture the contamination IS detectable from production records alone - all four record-consistency signals fire -- CHAIN-BREAK memory:rc_x / VERSION-GAP before.version=3 prior after.version=2 / SOURCE-MISMATCH before.source=agent / ORPHAN memory:rc_hidden
+[PASS] T02.C4: the detector is specific, not merely noisy: the clean /refine-only history produces ZERO signals -- clean signals: []
+[PASS] T02.C5: ATTRIBUTION is NOT established: the signals bound which entries were touched, but recover neither the foreign write's content nor its position in the session
+[PASS] T02.C6: production records DO carry the store identity needed to filter history -- scopes=["global","local","global","local"] distinct harnessStatePath values=2
+[PASS] T02.C7: the NAIVE unfiltered replay is WRONG on a mixed-scope session even though /refine is the only writer -- ground truth=["l_entry"] naive=["g_entry","l_entry"]
+[PASS] T02.C8: the SCOPE-AWARE replay reconstructs the same mixed-scope checkpoint exactly -- scope-aware=["l_entry"]
 ```
 
 Session entry types written by the `/refine` run: `session`, `custom`,
@@ -101,8 +106,9 @@ Session entry types written by the `/refine` run: `session`, `custom`,
 | which messages followed the mutation | **RECONSTRUCTIBLE** | message entries descending from the refinement entry | **NOT RECONSTRUCTIBLE** | same — no anchor |
 | harness state applying to message A (edited entry only) | **RECONSTRUCTIBLE** | `appliedEdits[].before` gives the pre-mutation value of every touched entry | **NOT RECONSTRUCTIBLE** | no before value is recorded |
 | harness state applying to message B (edited entry only) | **RECONSTRUCTIBLE** | `appliedEdits[].after` plus `harness_state.json` | **PARTIAL** | only if no later writer touched the same entry |
-| COMPLETE harness state at an earlier checkpoint, `/refine` as the ONLY writer | **RECONSTRUCTIBLE** | T02.C1: reverse-replaying ordered `appliedEdits` off the final state reproduces the checkpoint **exactly**, despite no full-state snapshot being persisted | **NOT RECONSTRUCTIBLE** | no ordered edit record exists to replay |
-| COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present | **NOT RECONSTRUCTIBLE** | T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong **silently** | **NOT RECONSTRUCTIBLE** | same, and the foreign writer is the CRUD writer itself |
+| COMPLETE harness **entry set** — single-scope, single-branch, `/refine` only | **RECONSTRUCTIBLE** | T02.C1: scope-aware reverse-replay of ordered `appliedEdits` off the final state reproduces the checkpoint **exactly**, despite no full-state snapshot. This is the `entries` map only — `HarnessState.refinements[]` and `schema` are not reconstructed | **NOT RECONSTRUCTIBLE** | no ordered edit record exists to replay |
+| COMPLETE harness entry set when records span MORE THAN ONE harness store | **RECONSTRUCTIBLE ONLY IF SCOPE-AWARE** | T02.C6–C8: global and local refinements share one session JSONL. Unfiltered replay injects global entries into the local reconstruction and is wrong **even with `/refine` as the only writer**; filtering by the recorded `harnessStatePath` is exact | **NOT RECONSTRUCTIBLE** | no ordered edit record exists to filter or replay |
+| COMPLETE harness entry set with a foreign (non-`/refine`) writer present | **NOT RECONSTRUCTIBLE, BUT DETECTABLE** | T02.C2 corruption; T02.C3/C4 the four signals fire on the contaminated fixture and none on the clean one; T02.C5 detection is not attribution | **NOT RECONSTRUCTIBLE** | same, and the foreign writer is the CRUD writer itself |
 | effective system prompt actually sent with each request | **NOT RECONSTRUCTIBLE** | assistant message entries record no `systemPrompt` and no prompt hash | **NOT RECONSTRUCTIBLE** | same |
 
 ## Result
@@ -114,18 +120,40 @@ Python CRUD produces none of it: no session entry, no refinement event, no
 before value, and writer identity degrades to the single coarse string
 `source: "agent"`.
 
-**Correction from the audit.** The first version of this study marked complete
+**Correction 1 (Codex audit).** The first version of this study marked complete
 effective harness state as PARTIAL for `/refine`, reasoning that no full-state
 snapshot is persisted. That reasoning was wrong. Writer C shows a `/refine`-only
-history reverse-replays to the **exact** earlier state: `appliedEdits` carries
-both `before` and `after` for every touched entry, so the ordered edit log is
-itself a complete differential record. The snapshot is unnecessary.
+history reverse-replays to the **exact** earlier entry set: `appliedEdits`
+carries both `before` and `after` for every touched entry, so the ordered edit
+log is itself a complete differential record. The snapshot is unnecessary.
 
-What actually breaks reconstruction is a **foreign writer**, and the failure
-mode is worse than a gap: one interleaved CRUD write makes the replay produce a
-complete, well-formed, *wrong* state, with nothing in the records marking that a
-foreign write occurred. An investigator would get a confident wrong answer
-rather than an error.
+**Correction 2 (self-audit), two parts.** The correction above then overstated
+in two directions of its own.
+
+*It claimed the foreign-writer failure is silent.* It is not. Using only
+production records, four signals fire on the contaminated fixture and **zero**
+on the clean one:
+
+| Signal | Meaning |
+| --- | --- |
+| `CHAIN-BREAK` | a recorded `before` ≠ the prior recorded `after` for that entry |
+| `VERSION-GAP` | entry version advanced outside the `/refine` edit chain (3 vs prior 2) |
+| `SOURCE-MISMATCH` | `before.source` became `agent` after a prior `refine` |
+| `ORPHAN` | a final-state entry with no refinement edit history at all |
+
+Three claims must stay separate: **corruption** (established), **detection**
+(established for this fixture, and specific), and **attribution** (not
+established — the signals bound which entries were touched but recover neither
+the write's content nor its position). The four signals are not generalized to
+every possible CRUD mutation; a write preserving the version chain and `source`
+and touching only already-tracked entries was not tested.
+
+*It framed writer purity as sufficient.* It is not. `_applyRefine` appends a
+refinement session entry for **global** scope too, so one JSONL can hold records
+for two stores. Replaying them all against the local store is wrong with
+`/refine` as the only writer (T02.C7). The records already carry
+`harnessStatePath` and `scope` (T02.C6); the replay helper now filters on it, and
+the filtered replay is exact (T02.C8).
 
 **What disappears specifically under direct CRUD:** the session-tree anchor
 (hence the before/after message split), the ordering guarantee relative to
@@ -157,7 +185,15 @@ That is a writer *class* label, not an identity.
   watching file mtimes could order it. The claim is only that the **records**
   do not carry it.
 - That reverse-replay is robust beyond the tested shape. Writer C exercised
-  create, update and delete across three refinements on a linear branch. Rollback
-  chains, branching, and global-scope refinements were not replayed.
+  create, update and delete across three refinements on a linear branch, plus one
+  mixed-scope sequence. **Untested:** compaction, forks and branch divergence,
+  concurrent sessions, global-history interactions beyond the exercised case,
+  crash / torn-write conditions, rollback chains, and writer classes other than
+  `/refine` and `rlm.harness` CRUD.
+- That the four contamination signals detect *every* foreign mutation. They
+  detect the one tested. A mutation preserving the version chain and `source`,
+  confined to entries the refinement history also touches, might evade all four.
+- That reconstruction recovers the whole `HarnessState`. Only `entries` is
+  reconstructed and compared; `refinements[]` and `schema` are not.
 - Whether the RLM kernel, in a real IPython session, adds any provenance the
   bare Python API does not. No kernel was available in this environment.

@@ -4,7 +4,7 @@
     "platform": "linux",
     "arch": "x64",
     "cwd": "/home/user/prime-agent-playground",
-    "agentDirEnv": "/tmp/joint-study-agentdir-t02-9963",
+    "agentDirEnv": "/tmp/joint-study-agentdir-t02-11249",
     "providerCredentialsPresent": {
       "ANTHROPIC_API_KEY": false,
       "ANTHROPIC_OAUTH_TOKEN": false,
@@ -38,8 +38,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:57.983Z",
-            "updated_at": "2026-08-16T04:21:57.983Z",
+            "created_at": "2026-08-16T06:06:50.940Z",
+            "updated_at": "2026-08-16T06:06:50.940Z",
             "version": 1
           },
           "rc_y": {
@@ -53,8 +53,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:57.983Z",
-            "updated_at": "2026-08-16T04:21:57.983Z",
+            "created_at": "2026-08-16T06:06:50.940Z",
+            "updated_at": "2026-08-16T06:06:50.940Z",
             "version": 1
           }
         },
@@ -75,8 +75,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:57.983Z",
-            "updated_at": "2026-08-16T04:21:57.983Z",
+            "created_at": "2026-08-16T06:06:50.940Z",
+            "updated_at": "2026-08-16T06:06:50.940Z",
             "version": 1
           },
           "rc_y": {
@@ -90,14 +90,15 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:57.983Z",
-            "updated_at": "2026-08-16T04:21:57.983Z",
+            "created_at": "2026-08-16T06:06:50.940Z",
+            "updated_at": "2026-08-16T06:06:50.940Z",
             "version": 1
           }
         },
         "skill": {},
         "subagent": {}
-      }
+      },
+      "contaminationSignals": []
     },
     "withInterleavedCrud": {
       "checkpointAExact": false,
@@ -116,8 +117,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:58.129Z",
-            "updated_at": "2026-08-16T04:21:58.129Z",
+            "created_at": "2026-08-16T06:06:51.097Z",
+            "updated_at": "2026-08-16T06:06:51.097Z",
             "version": 1
           },
           "rc_y": {
@@ -131,8 +132,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:58.129Z",
-            "updated_at": "2026-08-16T04:21:58.129Z",
+            "created_at": "2026-08-16T06:06:51.097Z",
+            "updated_at": "2026-08-16T06:06:51.097Z",
             "version": 1
           }
         },
@@ -153,8 +154,8 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:58.129Z",
-            "updated_at": "2026-08-16T04:21:58.129Z",
+            "created_at": "2026-08-16T06:06:51.097Z",
+            "updated_at": "2026-08-16T06:06:51.097Z",
             "version": 1
           },
           "rc_hidden": {
@@ -168,8 +169,8 @@
             "arguments": {},
             "metadata": {},
             "source": "agent",
-            "created_at": "2026-08-16T04:21:58.243873+00:00",
-            "updated_at": "2026-08-16T04:21:58.243879+00:00",
+            "created_at": "2026-08-16T06:06:51.216290+00:00",
+            "updated_at": "2026-08-16T06:06:51.216297+00:00",
             "version": 1
           },
           "rc_y": {
@@ -183,19 +184,57 @@
             "arguments": {},
             "metadata": {},
             "source": "refine",
-            "created_at": "2026-08-16T04:21:58.129Z",
-            "updated_at": "2026-08-16T04:21:58.129Z",
+            "created_at": "2026-08-16T06:06:51.097Z",
+            "updated_at": "2026-08-16T06:06:51.097Z",
             "version": 1
           }
         },
         "skill": {},
         "subagent": {}
-      }
+      },
+      "contaminationSignals": [
+        "CHAIN-BREAK memory:rc_x at refine_20260816060651229: recorded before !== prior recorded after",
+        "VERSION-GAP memory:rc_x at refine_20260816060651229: before.version=3, prior after.version=2",
+        "SOURCE-MISMATCH memory:rc_x at refine_20260816060651229: before.source=agent",
+        "ORPHAN memory:rc_hidden: present in final state, absent from every refinement record"
+      ],
+      "contaminationSignalKinds": [
+        "CHAIN-BREAK",
+        "VERSION-GAP",
+        "SOURCE-MISMATCH",
+        "ORPHAN"
+      ]
+    },
+    "mixedScope": {
+      "scopes": [
+        "global",
+        "local",
+        "global",
+        "local"
+      ],
+      "distinctStatePaths": 2,
+      "groundTruthIds": [
+        "l_entry"
+      ],
+      "naiveIds": [
+        "g_entry",
+        "l_entry"
+      ],
+      "scopeAwareIds": [
+        "l_entry"
+      ],
+      "naiveExact": false,
+      "scopeAwareExact": true
+    },
+    "claimSeparation": {
+      "corruption": "the reconstruction is wrong (T02.C2)",
+      "detection": "the records are internally inconsistent, so contamination is visible (T02.C3, T02.C4)",
+      "attribution": "identifying WHAT the foreign write was, and WHEN - NOT established; the signals bound the affected entries but do not recover the mutation"
     }
   },
   "writerA_refine": {
-    "sessionFile": "/tmp/pi-suite-1786854117427-ir58lpw2wt/sessions/01a008ce-1035-70ee-b88d-9c92fd94218b.jsonl",
-    "harnessStatePath": "/tmp/pi-suite-1786854117427-ir58lpw2wt/session-artifacts/01a008ce-1035-70ee-b88d-9c92fd94218b/harness/harness_state.json",
+    "sessionFile": "/tmp/pi-suite-1786860410331-m8lmi9jjcbg/sessions/01a0092e-15dd-7328-bbe6-acfce20c680d.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786860410331-m8lmi9jjcbg/session-artifacts/01a0092e-15dd-7328-bbe6-acfce20c680d/harness/harness_state.json",
     "jsonlEntryTypes": [
       "session",
       "custom",
@@ -205,59 +244,59 @@
       {
         "index": 0,
         "type": "session",
-        "id": "01a008ce-1035-70ee-b88d-9c92fd94218b",
+        "id": "01a0092e-15dd-7328-bbe6-acfce20c680d",
         "parentId": null,
-        "timestamp": "2026-08-16T04:21:57.429Z"
+        "timestamp": "2026-08-16T06:06:50.333Z"
       },
       {
         "index": 1,
         "type": "custom",
-        "id": "dca7223b",
+        "id": "481d0a83",
         "parentId": null,
-        "timestamp": "2026-08-16T04:21:57.454Z",
+        "timestamp": "2026-08-16T06:06:50.360Z",
         "customType": "prime-agent.refinement"
       },
       {
         "index": 2,
         "type": "message",
-        "id": "1ebe531c",
-        "parentId": "dca7223b",
-        "timestamp": "2026-08-16T04:21:57.509Z",
+        "id": "86e85056",
+        "parentId": "481d0a83",
+        "timestamp": "2026-08-16T06:06:50.419Z",
         "role": "user",
         "text": "message A: establish the baseline"
       },
       {
         "index": 3,
         "type": "message",
-        "id": "b57eb8c0",
-        "parentId": "1ebe531c",
-        "timestamp": "2026-08-16T04:21:57.510Z",
+        "id": "bdc7d952",
+        "parentId": "86e85056",
+        "timestamp": "2026-08-16T06:06:50.421Z",
         "role": "assistant",
         "text": "assistant reply to message A (refine)"
       },
       {
         "index": 4,
         "type": "custom",
-        "id": "e1a78ab9",
-        "parentId": "b57eb8c0",
-        "timestamp": "2026-08-16T04:21:57.565Z",
+        "id": "d01eedb3",
+        "parentId": "bdc7d952",
+        "timestamp": "2026-08-16T06:06:50.480Z",
         "customType": "prime-agent.refinement"
       },
       {
         "index": 5,
         "type": "message",
-        "id": "7e32f006",
-        "parentId": "e1a78ab9",
-        "timestamp": "2026-08-16T04:21:57.607Z",
+        "id": "0dc8f9f4",
+        "parentId": "d01eedb3",
+        "timestamp": "2026-08-16T06:06:50.526Z",
         "role": "user",
         "text": "message B: after the refinement"
       },
       {
         "index": 6,
         "type": "message",
-        "id": "d8649e72",
-        "parentId": "7e32f006",
-        "timestamp": "2026-08-16T04:21:57.608Z",
+        "id": "386f6889",
+        "parentId": "0dc8f9f4",
+        "timestamp": "2026-08-16T06:06:50.527Z",
         "role": "assistant",
         "text": "assistant reply to message B (refine)"
       }
@@ -266,7 +305,7 @@
       "type": "custom",
       "customType": "prime-agent.refinement",
       "data": {
-        "id": "refine_20260816042157564",
+        "id": "refine_20260816060650478",
         "summary": "Record the distinctive T02 harness edit",
         "rationale": "Probe requires distinctive, attributable edits.",
         "expectedOutcome": "The edits are attributable to a point in the session tree.",
@@ -290,8 +329,8 @@
               "arguments": {},
               "metadata": {},
               "source": "refine",
-              "created_at": "2026-08-16T04:21:57.454Z",
-              "updated_at": "2026-08-16T04:21:57.454Z",
+              "created_at": "2026-08-16T06:06:50.359Z",
+              "updated_at": "2026-08-16T06:06:50.359Z",
               "version": 1
             },
             "after": {
@@ -305,19 +344,19 @@
               "arguments": {},
               "metadata": {},
               "source": "refine",
-              "created_at": "2026-08-16T04:21:57.454Z",
-              "updated_at": "2026-08-16T04:21:57.565Z",
+              "created_at": "2026-08-16T06:06:50.359Z",
+              "updated_at": "2026-08-16T06:06:50.479Z",
               "version": 2
             },
             "applied": true
           }
         ],
-        "harnessStatePath": "/tmp/pi-suite-1786854117427-ir58lpw2wt/session-artifacts/01a008ce-1035-70ee-b88d-9c92fd94218b/harness/harness_state.json",
+        "harnessStatePath": "/tmp/pi-suite-1786860410331-m8lmi9jjcbg/session-artifacts/01a0092e-15dd-7328-bbe6-acfce20c680d/harness/harness_state.json",
         "scope": "local"
       },
-      "id": "e1a78ab9",
-      "parentId": "b57eb8c0",
-      "timestamp": "2026-08-16T04:21:57.565Z"
+      "id": "d01eedb3",
+      "parentId": "bdc7d952",
+      "timestamp": "2026-08-16T06:06:50.480Z"
     },
     "refinementEntryIndex": 4,
     "messagesBeforeRefinement": [
@@ -340,8 +379,8 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T04:21:57.454Z",
-      "updated_at": "2026-08-16T04:21:57.454Z",
+      "created_at": "2026-08-16T06:06:50.359Z",
+      "updated_at": "2026-08-16T06:06:50.359Z",
       "version": 1
     },
     "persistedAfterState": {
@@ -355,8 +394,8 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T04:21:57.454Z",
-      "updated_at": "2026-08-16T04:21:57.565Z",
+      "created_at": "2026-08-16T06:06:50.359Z",
+      "updated_at": "2026-08-16T06:06:50.479Z",
       "version": 2
     },
     "harnessStateEntry": {
@@ -370,34 +409,34 @@
       "arguments": {},
       "metadata": {},
       "source": "refine",
-      "created_at": "2026-08-16T04:21:57.454Z",
-      "updated_at": "2026-08-16T04:21:57.565Z",
+      "created_at": "2026-08-16T06:06:50.359Z",
+      "updated_at": "2026-08-16T06:06:50.479Z",
       "version": 2
     },
     "harnessStateRefinements": [
       {
-        "id": "refine_20260816042157451",
+        "id": "refine_20260816060650356",
         "trigger": "Seed the T02 entry before message A",
         "changes": [
           "create memory:t02_distinctive_edit"
         ],
         "evidence": "Probe requires distinctive, attributable edits.",
         "outcome": "The edits are attributable to a point in the session tree.",
-        "created_at": "2026-08-16T04:21:57.454Z"
+        "created_at": "2026-08-16T06:06:50.359Z"
       },
       {
-        "id": "refine_20260816042157564",
+        "id": "refine_20260816060650478",
         "trigger": "Record the distinctive T02 harness edit",
         "changes": [
           "update memory:t02_distinctive_edit"
         ],
         "evidence": "Probe requires distinctive, attributable edits.",
         "outcome": "The edits are attributable to a point in the session tree.",
-        "created_at": "2026-08-16T04:21:57.565Z"
+        "created_at": "2026-08-16T06:06:50.479Z"
       }
     ],
-    "refineResultId": "refine_20260816042157564",
-    "setupRefineResultId": "refine_20260816042157451",
+    "refineResultId": "refine_20260816060650478",
+    "setupRefineResultId": "refine_20260816060650356",
     "refinementEntryCount": 2,
     "setupCreateEditHadBeforeKey": true,
     "assistantMessageKeys": [
@@ -412,57 +451,57 @@
     ]
   },
   "writerB_crud": {
-    "sessionFile": "/tmp/pi-suite-1786854117681-i7ibta657mi/sessions/01a008ce-1131-7552-b8af-32f24f2ddf50.jsonl",
-    "harnessStatePath": "/tmp/pi-suite-1786854117681-i7ibta657mi/session-artifacts/01a008ce-1131-7552-b8af-32f24f2ddf50/harness/harness_state.json",
+    "sessionFile": "/tmp/pi-suite-1786860410604-63cn0yt5bio/sessions/01a0092e-16ed-72ea-a525-69d8eb788675.jsonl",
+    "harnessStatePath": "/tmp/pi-suite-1786860410604-63cn0yt5bio/session-artifacts/01a0092e-16ed-72ea-a525-69d8eb788675/harness/harness_state.json",
     "pythonStdout": {
       "id": "t02_distinctive_edit",
       "source": "agent",
       "version": 1,
-      "created_at": "2026-08-16T04:21:57.822015+00:00",
-      "updated_at": "2026-08-16T04:21:57.822073+00:00",
+      "created_at": "2026-08-16T06:06:50.758799+00:00",
+      "updated_at": "2026-08-16T06:06:50.758835+00:00",
       "scope": "local"
     },
     "jsonlSummary": [
       {
         "index": 0,
         "type": "session",
-        "id": "01a008ce-1131-7552-b8af-32f24f2ddf50",
+        "id": "01a0092e-16ed-72ea-a525-69d8eb788675",
         "parentId": null,
-        "timestamp": "2026-08-16T04:21:57.681Z"
+        "timestamp": "2026-08-16T06:06:50.605Z"
       },
       {
         "index": 1,
         "type": "message",
-        "id": "55952ea9",
+        "id": "06102622",
         "parentId": null,
-        "timestamp": "2026-08-16T04:21:57.704Z",
+        "timestamp": "2026-08-16T06:06:50.635Z",
         "role": "user",
         "text": "message A: establish the baseline"
       },
       {
         "index": 2,
         "type": "message",
-        "id": "11ac0ae7",
-        "parentId": "55952ea9",
-        "timestamp": "2026-08-16T04:21:57.704Z",
+        "id": "28a8ab0b",
+        "parentId": "06102622",
+        "timestamp": "2026-08-16T06:06:50.636Z",
         "role": "assistant",
         "text": ""
       },
       {
         "index": 3,
         "type": "message",
-        "id": "2bd0ac94",
-        "parentId": "11ac0ae7",
-        "timestamp": "2026-08-16T04:21:57.845Z",
+        "id": "2881cb85",
+        "parentId": "28a8ab0b",
+        "timestamp": "2026-08-16T06:06:50.788Z",
         "role": "user",
         "text": "message B: after the CRUD mutation"
       },
       {
         "index": 4,
         "type": "message",
-        "id": "6412d946",
-        "parentId": "2bd0ac94",
-        "timestamp": "2026-08-16T04:21:57.846Z",
+        "id": "b6fcb882",
+        "parentId": "2881cb85",
+        "timestamp": "2026-08-16T06:06:50.789Z",
         "role": "assistant",
         "text": "assistant reply to message B (crud)"
       }
@@ -482,8 +521,8 @@
       "arguments": {},
       "metadata": {},
       "source": "agent",
-      "created_at": "2026-08-16T04:21:57.822015+00:00",
-      "updated_at": "2026-08-16T04:21:57.822073+00:00",
+      "created_at": "2026-08-16T06:06:50.758799+00:00",
+      "updated_at": "2026-08-16T06:06:50.758835+00:00",
       "version": 1
     },
     "harnessStateRefinements": []
@@ -546,16 +585,23 @@
       "crudEvidence": "only if no later writer touched the same entry"
     },
     {
-      "dimension": "COMPLETE harness state at an earlier checkpoint, /refine as the ONLY writer",
+      "dimension": "COMPLETE harness ENTRY SET at an earlier checkpoint - single-scope, single-branch, /refine as the only writer",
       "refine": "RECONSTRUCTIBLE",
-      "refineEvidence": "T02.C1: reverse-replaying ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot being persisted",
+      "refineEvidence": "T02.C1: scope-aware reverse-replay of ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot. Note this is the `entries` map only - HarnessState.refinements[] and schema are not reconstructed",
       "crud": "NOT RECONSTRUCTIBLE",
       "crudEvidence": "no ordered edit record exists to replay"
     },
     {
-      "dimension": "COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present",
-      "refine": "NOT RECONSTRUCTIBLE",
-      "refineEvidence": "T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong SILENTLY - it still yields a complete, well-formed state with no marker that a foreign write occurred",
+      "dimension": "COMPLETE harness ENTRY SET when refinement records span MORE THAN ONE harness store",
+      "refine": "RECONSTRUCTIBLE ONLY IF SCOPE-AWARE",
+      "refineEvidence": "T02.C6-C8: global and local refinements share one session JSONL. An unfiltered replay injects global entries into the local reconstruction and is wrong even with /refine as the only writer; filtering by the recorded harnessStatePath is exact",
+      "crud": "NOT RECONSTRUCTIBLE",
+      "crudEvidence": "no ordered edit record exists to filter or replay"
+    },
+    {
+      "dimension": "COMPLETE harness ENTRY SET with a foreign (non-/refine) writer present",
+      "refine": "NOT RECONSTRUCTIBLE, BUT DETECTABLE",
+      "refineEvidence": "T02.C2: one interleaved CRUD write makes the replay wrong while still yielding a well-formed state. T02.C3/C4: in this fixture the contamination is detectable from production records alone - CHAIN-BREAK, VERSION-GAP, SOURCE-MISMATCH and ORPHAN all fire, and zero fire on the clean history. T02.C5: detection is not attribution",
       "crud": "NOT RECONSTRUCTIBLE",
       "crudEvidence": "same, and the foreign writer is the CRUD writer itself"
     },
@@ -582,7 +628,7 @@
       "id": "T02.A2",
       "claim": "the refinement entry has a tree position (id + parentId) and a timestamp",
       "pass": true,
-      "detail": "id=e1a78ab9 parentId=b57eb8c0 ts=2026-08-16T04:21:57.565Z"
+      "detail": "id=d01eedb3 parentId=bdc7d952 ts=2026-08-16T06:06:50.480Z"
     },
     {
       "id": "T02.A3",
@@ -599,7 +645,7 @@
       "id": "T02.A5",
       "claim": "the refinement record carries an explicit before state for the edited entry",
       "pass": true,
-      "detail": "before={\"id\":\"t02_distinctive_edit\",\"kind\":\"memory\",\"title\":\"T02 distinctive edit\",\"content\":\"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.\",\"path\":\"study/t02\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T04:21:57.454Z\",\"updated_at\":\"2026-08-16T04:21:57.454Z\",\"version\":1}"
+      "detail": "before={\"id\":\"t02_distinctive_edit\",\"kind\":\"memory\",\"title\":\"T02 distinctive edit\",\"content\":\"T02_HARNESS_EDIT_MARKER_V1 seeded before message A.\",\"path\":\"study/t02\",\"scope\":\"local\",\"reference\":{},\"arguments\":{},\"metadata\":{},\"source\":\"refine\",\"created_at\":\"2026-08-16T06:06:50.359Z\",\"updated_at\":\"2026-08-16T06:06:50.359Z\",\"version\":1}"
     },
     {
       "id": "T02.A6",
@@ -654,21 +700,51 @@
     },
     {
       "id": "T02.C1",
-      "claim": "a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint (complete state IS reconstructible)",
+      "claim": "a single-scope, single-branch /refine-ONLY history reverse-replays to the EXACT harness entry set at an earlier checkpoint",
       "pass": true,
       "detail": "checkpointA exact=true checkpointB exact=true over 3 refinements"
     },
     {
       "id": "T02.C2",
-      "claim": "one interleaved direct CRUD write breaks reverse reconstruction",
+      "claim": "CORRUPTION: one interleaved direct CRUD write makes reverse reconstruction wrong",
       "pass": true,
-      "detail": "checkpointA exact=false"
+      "detail": "checkpointA exact=false; reconstructed A still looked well-formed with 3 memory entries"
     },
     {
       "id": "T02.C3",
-      "claim": "and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state, with no marker in the records that a foreign write occurred",
+      "claim": "DETECTION: in this fixture the contamination IS detectable from production records alone - all four record-consistency signals fire",
       "pass": true,
-      "detail": "reconstructed A had 3 memory entries and looked valid"
+      "detail": "signals: [\"CHAIN-BREAK memory:rc_x at refine_20260816060651229: recorded before !== prior recorded after\",\"VERSION-GAP memory:rc_x at refine_20260816060651229: before.version=3, prior after.version=2\",\"SOURCE-MISMATCH memory:rc_x at refine_20260816060651229: before.source=agent\",\"ORPHAN memory:rc_hidden: present in final state, absent from every refinement record\"]"
+    },
+    {
+      "id": "T02.C4",
+      "claim": "the detector is specific, not merely noisy: the clean /refine-only history produces ZERO signals",
+      "pass": true,
+      "detail": "clean signals: []"
+    },
+    {
+      "id": "T02.C5",
+      "claim": "ATTRIBUTION is NOT established: the signals bound which entries were touched, but recover neither the foreign write's content nor its position in the session",
+      "pass": true,
+      "detail": "recorded as a scope limit, not a measured result - no probe here attempts attribution"
+    },
+    {
+      "id": "T02.C6",
+      "claim": "production records DO carry the store identity needed to filter history (scope + harnessStatePath)",
+      "pass": true,
+      "detail": "scopes=[\"global\",\"local\",\"global\",\"local\"] distinct harnessStatePath values=2"
+    },
+    {
+      "id": "T02.C7",
+      "claim": "the NAIVE unfiltered replay is WRONG on a mixed-scope session even though /refine is the only writer",
+      "pass": true,
+      "detail": "ground truth=[\"l_entry\"] naive=[\"g_entry\",\"l_entry\"]"
+    },
+    {
+      "id": "T02.C8",
+      "claim": "the SCOPE-AWARE replay reconstructs the same mixed-scope checkpoint exactly",
+      "pass": true,
+      "detail": "scope-aware=[\"l_entry\"]"
     }
   ]
 }

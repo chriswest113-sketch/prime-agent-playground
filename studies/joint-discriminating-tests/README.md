@@ -31,7 +31,7 @@ studies/joint-discriminating-tests/
 ├── results-matrix.md                the master matrix + preserved negative results
 ├── synthesis.md                     adjudication of the five candidate statements; SETTLED/… classification
 ├── unresolved.md                    everything still open, and why
-├── audit-response.md                independent Codex audit of 91ce174 + adjudication
+├── audit-response.md                Codex audit of 91ce174, plus the self-audit of 76f329e
 ├── tsconfig.json                    so the probes are actually type-checked
 ├── run-all.sh                       re-run every probe
 ├── _lib/probe.ts                    shared helpers (isolation, artifacts, assertion log)
@@ -74,18 +74,21 @@ real defect — see `audit-response.md`.
 | # | Question | Result |
 | --- | --- | --- |
 | 1 | Gate → refinement coupling | **UNTYPED TRANSCRIPT-MEDIATED TRANSPORT** — gate text reaches a subsequently invoked refinement; no typed linkage, no post-refinement gate validation. Transport, not causation |
-| 2 | Turn-level harness attribution | Writer-purity-dependent. A `/refine`-only history reconstructs complete state exactly by reverse-replay; one foreign CRUD write breaks it **silently** |
+| 2 | Turn-level harness attribution | Depends on writer purity **and** scope discipline. A single-scope `/refine` history reconstructs its entry set exactly by scope-aware reverse-replay; naive replay across mixed scopes is wrong even with no foreign writer; a foreign CRUD write corrupts reconstruction but **is detectable** in the tested fixture |
 | 3 | Routing visibility vs retrieval | **DEGRADED DEFAULT SALIENCE**, not absolute invisibility — displaced state is signalled and retrievable through six API surfaces over one store |
 | 4 | Faux reproducibility | Non-canonical at byte/identifier/segmentation level; **semantically reproducible** after principled normalization, with input-token accounting a diagnosed environment-dependent exception |
 | 5 | Model / configuration record | Nominal configuration recorded; effective configuration not. A clamped request records the post-clamp value and loses the request; a no-op records nothing |
 | — | External evaluator loop | No typed, internally closed score → refinement protocol here. `DEFERRED — EXTERNAL REFERENCE STUDY REQUIRED` for the external side |
 
-Latest full run: **6/6 probes PASS**, 93 assertions.
+Latest full run: **6/6 probes PASS**, 98 assertions.
 
-An independent Codex audit reproduced the suite in a different environment and
-raised six scope corrections, all accepted — two of which required new tests
-because this study had asserted claims it never tested. See
-`audit-response.md`.
+This record has been corrected twice. An independent Codex audit of `91ce174`
+reproduced the suite in a different environment and raised six scope
+corrections, all accepted. A subsequent self-audit of the resulting correction
+found that it had overstated in two new places — claiming foreign-writer
+contamination leaves "no marker in the records", and treating writer purity as
+sufficient for reconstruction — plus a wrong diagnostic count. Both passes are
+recorded in `audit-response.md`; neither is erased.
 
 ## Guarantees
 

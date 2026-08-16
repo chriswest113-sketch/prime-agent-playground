@@ -107,7 +107,7 @@ npx tsx studies/joint-discriminating-tests/test-04-normalized-reproducibility/ru
 [PASS] T04.S9: Layer S SEMANTIC: assertions/outcomes are identical
 [PASS] T04.S10a: Layer S SEMANTIC: OUTPUT token accounting is identical across runs -- output tokens per run: [[7,9,3],[7,9,3],[7,9,3]]
 [PASS] T04.S10b: Layer S (observation, not a pass condition): INPUT token accounting across runs -- input tokens per run: [[676,695,755],[676,695,755],[677,695,755]]; per-turn max delta: [1,0,0]; system prompt lengths: [[2479,2479],[2479,2479],[2481,2481]]
-[PASS] T04.S10c: Layer S: any INPUT token variance is fully explained by volatile prompt-length framing, not by semantic drift -- inputTokensEqual=false promptLengthsEqual=false
+[PASS] T04.S10c: Layer S: the INPUT token variance is CONSISTENT WITH prompt-length framing rather than semantic drift - runs with equal system-prompt lengths report equal input tokens. This is a necessary condition of the framing account, not proof of sole causation
 [PASS] T04.S11: Layer S: whole-trace normalization is NOT claimed to produce equality -- normalizedWholeTraceEqual=false
 ```
 
@@ -147,9 +147,12 @@ by 1.
 
 **Discriminating assertion (T04.S10c).** The question is not "are input tokens
 equal" but "is inequality explained by framing or by semantic drift". The probe
-asserts that any two runs with *equal system-prompt lengths* report *equal input
-tokens*. That held in every run — so prompt-length framing is the complete
-explanation, and no semantic drift is present.
+asserts a **necessary condition** of the framing account: any two runs with
+*equal system-prompt lengths* must report *equal input tokens*. That held in
+every run, so the observations are consistent with framing and show no sign of
+semantic drift. This does **not** prove sole causation — establishing that would
+need a direct intervention, such as pinning the session-path length and
+confirming the variance disappears. Not performed.
 
 ### Whole-trace normalization
 
@@ -194,7 +197,9 @@ Equality appears only when segmentation is coalesced as well.
   post-hoc-refined rather than fixed in advance.
 - That input-token accounting is reproducible. It demonstrably is not, across
   processes, in this environment. The claim established is narrower: the
-  variance is fully attributable to prompt-length framing.
+  variance is consistent with, and mechanistically explained by, prompt-length
+  framing. Sole causation is not established: the probe tests a necessary
+  condition, not an intervention.
 - That the framing diagnosis generalises to real providers, whose usage
   accounting is server-side and subject to cache state.
 - That "semantically reproducible" implies "canonical". The faux provider is

@@ -34,8 +34,9 @@ probe passed `"standard"`, which is *not* in the `ServiceTier` union
 have rejected it, but `studies/` was outside the repository's `tsconfig`
 include, so nothing checked it and the value flowed through at runtime. That
 made the original tier evidence invalid. A `studies/joint-discriminating-tests/tsconfig.json`
-now type-checks the probes, and the sequence was redone with valid values to
-separate three distinct cases:
+now type-checks the probes — it surfaced eight diagnostics at `91ce174`
+(test-01 ×1, test-02 ×1, test-04 ×5, test-05 ×1) — and the sequence was redone
+with valid values to separate three distinct cases:
 
 | Request | Effective | Event written | What is lost |
 | --- | --- | --- | --- |

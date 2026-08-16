@@ -13,7 +13,7 @@
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import {
 	AssertionLog,
 	environmentRecord,
@@ -396,21 +396,60 @@ try {
 // happens when a direct CRUD write is interleaved.
 // =====================================================================
 type Entries = Record<string, Record<string, Record<string, unknown>>>;
+type HarnessEntryRecord = Record<string, unknown>;
+interface AppliedEditRecord {
+	action?: string;
+	kind: string;
+	id: string;
+	applied: boolean;
+	before?: HarnessEntryRecord;
+	after?: HarnessEntryRecord;
+}
+interface RefinementRecord {
+	id: string;
+	scope?: string;
+	harnessStatePath?: string;
+	appliedEdits: AppliedEditRecord[];
+}
 
 /**
  * Reverse-replay `refinements` (oldest-first) off `finalEntries` to recover the
  * state as of the checkpoint immediately before the first replayed refinement.
+ *
+ * NOTE ON SCOPE. A self-audit of the first version of this probe found that
+ * replaying EVERY `prime-agent.refinement` session entry against one store is
+ * wrong: `_applyRefine` appends that entry for global refinements too, so a
+ * session mixing scopes replays global edits into the local store. Production
+ * records already carry `scope` and `harnessStatePath`; callers must pass a
+ * `targetStatePath` so the history is filtered to the store being
+ * reconstructed. `naive: true` reproduces the original unfiltered behaviour so
+ * the two can be compared in the same run.
  */
-function reverseReplay(finalEntries: Entries, refinements: Array<{ appliedEdits: Array<Record<string, unknown>> }>): Entries {
+function reverseReplay(
+	finalEntries: Entries,
+	refinements: RefinementRecord[],
+	options: { targetStatePath?: string; naive?: boolean } = {},
+): Entries {
+	const history = options.naive
+		? refinements
+		: refinements.filter((refinement) => {
+				if (!options.targetStatePath) return true;
+				// harnessStatePath is the authoritative store identity; `scope` is a
+				// secondary label and legacy records may lack it.
+				if (refinement.harnessStatePath) {
+					return resolve(refinement.harnessStatePath) === resolve(options.targetStatePath);
+				}
+				return true;
+			});
 	const state = JSON.parse(JSON.stringify(finalEntries)) as Entries;
-	for (const refinement of [...refinements].reverse()) {
+	for (const refinement of [...history].reverse()) {
 		for (const edit of [...refinement.appliedEdits].reverse()) {
 			if (!edit.applied) continue;
 			const kind = String(edit.kind);
 			const id = String(edit.id);
 			state[kind] ??= {};
 			if (edit.before) {
-				state[kind][id] = edit.before as Record<string, unknown>;
+				state[kind][id] = edit.before;
 			} else {
 				delete state[kind][id];
 			}
@@ -419,8 +458,67 @@ function reverseReplay(finalEntries: Entries, refinements: Array<{ appliedEdits:
 	return state;
 }
 
+/**
+ * Contamination detector. Uses ONLY production records - the ordered refinement
+ * edit history plus the final harness_state.json - and looks for internal
+ * inconsistencies that a `/refine`-only history cannot produce.
+ *
+ * This exists because the first version of this study asserted that an
+ * interleaved foreign write leaves "no marker in the records". A self-audit
+ * refuted that. Detection is a strictly weaker claim than attribution: these
+ * signals show that SOMETHING outside the recorded edit history touched the
+ * store, not what it was or when.
+ */
+function detectContamination(finalEntries: Entries, refinements: RefinementRecord[]): string[] {
+	const signals: string[] = [];
+	const lastAfter = new Map<string, HarnessEntryRecord>();
+	const everTouched = new Set<string>();
+
+	for (const refinement of refinements) {
+		for (const edit of refinement.appliedEdits) {
+			if (!edit.applied) continue;
+			const key = `${edit.kind}:${edit.id}`;
+			everTouched.add(key);
+			const previous = lastAfter.get(key);
+			if (previous) {
+				if (JSON.stringify(edit.before ?? null) !== JSON.stringify(previous)) {
+					signals.push(`CHAIN-BREAK ${key} at ${refinement.id}: recorded before !== prior recorded after`);
+				}
+				const previousVersion = Number(previous.version);
+				const beforeVersion = edit.before ? Number(edit.before.version) : Number.NaN;
+				if (Number.isFinite(beforeVersion) && beforeVersion !== previousVersion) {
+					signals.push(
+						`VERSION-GAP ${key} at ${refinement.id}: before.version=${beforeVersion}, prior after.version=${previousVersion}`,
+					);
+				}
+				if (edit.before && edit.before.source !== "refine") {
+					signals.push(`SOURCE-MISMATCH ${key} at ${refinement.id}: before.source=${String(edit.before.source)}`);
+				}
+			}
+			if (edit.after) lastAfter.set(key, edit.after);
+			else lastAfter.delete(key);
+		}
+	}
+
+	for (const [kind, records] of Object.entries(finalEntries)) {
+		for (const [id] of Object.entries(records)) {
+			const key = `${kind}:${id}`;
+			if (!everTouched.has(key)) {
+				signals.push(`ORPHAN ${key}: present in final state, absent from every refinement record`);
+			}
+		}
+	}
+	return signals;
+}
+
 function readEntries(harnessStatePath: string): Entries {
 	return (JSON.parse(readFileSync(harnessStatePath, "utf8")) as { entries: Entries }).entries;
+}
+
+function readRefinementRecords(sessionFile: string): RefinementRecord[] {
+	return readJsonl(sessionFile)
+		.filter((entry) => entry.type === "custom" && entry.customType === "prime-agent.refinement")
+		.map((entry) => entry.data as RefinementRecord);
 }
 
 async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
@@ -428,6 +526,7 @@ async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
 	reconstructed: Entries[];
 	exactMatches: boolean[];
 	refinementCount: number;
+	contaminationSignals: string[];
 }> {
 	const harness = await buildSession();
 	try {
@@ -501,12 +600,10 @@ async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
 		const finalEntries = readEntries(statePath);
 
 		// Rebuild history from the SESSION RECORD only, in append order.
-		const refinements = readJsonl(harness.sessionManager.getSessionFile()!)
-			.filter((entry) => entry.type === "custom" && entry.customType === "prime-agent.refinement")
-			.map((entry) => entry.data as { appliedEdits: Array<Record<string, unknown>> });
-
-		const reconstructedB = reverseReplay(finalEntries, refinements.slice(2));
-		const reconstructedA = reverseReplay(finalEntries, refinements.slice(1));
+		const refinements = readRefinementRecords(harness.sessionManager.getSessionFile()!);
+		const replayOptions = { targetStatePath: statePath };
+		const reconstructedB = reverseReplay(finalEntries, refinements.slice(2), replayOptions);
+		const reconstructedA = reverseReplay(finalEntries, refinements.slice(1), replayOptions);
 
 		const exact = (a: Entries, b: Entries) => JSON.stringify(a) === JSON.stringify(b);
 		return {
@@ -514,6 +611,76 @@ async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
 			reconstructed: [reconstructedA, reconstructedB, finalEntries],
 			exactMatches: [exact(reconstructedA, checkpointA), exact(reconstructedB, checkpointB), true],
 			refinementCount: refinements.length,
+			contaminationSignals: detectContamination(finalEntries, refinements),
+		};
+	} finally {
+		harness.cleanup();
+	}
+}
+
+/**
+ * Mixed-scope probe: `/refine` is the ONLY writer, but the session interleaves
+ * global-scope and local-scope refinements. Both land in the same session
+ * JSONL, so an unfiltered replay pulls global edits into the local store.
+ */
+async function runMixedScopeProbe(): Promise<{
+	scopes: string[];
+	distinctStatePaths: number;
+	groundTruthIds: string[];
+	naiveIds: string[];
+	scopeAwareIds: string[];
+	naiveExact: boolean;
+	scopeAwareExact: boolean;
+}> {
+	const harness = await buildSession();
+	try {
+		harness.appendResponses([fauxAssistantMessage("starting work")]);
+		await harness.session.prompt("begin");
+		await settle(30);
+
+		const statePath = join(harness.sessionManager.getSessionArtifactDir()!, "harness", "harness_state.json");
+
+		// global create -> local create -> [checkpoint] -> global update -> local update
+		harness.appendResponses([
+			multiProposal([{ action: "create", kind: "memory", id: "g_entry", title: "G", content: "g-v1", path: "glob" }], "seed global"),
+		]);
+		await harness.session.refine({ global: true });
+		await settle(25);
+
+		harness.appendResponses([
+			multiProposal([{ action: "create", kind: "memory", id: "l_entry", title: "L", content: "l-v1", path: "loc" }], "seed local"),
+		]);
+		await harness.session.refine({});
+		await settle(25);
+		const localCheckpoint = readEntries(statePath);
+
+		harness.appendResponses([
+			multiProposal([{ action: "update", kind: "memory", id: "g_entry", title: "G", content: "g-v2", path: "glob" }], "advance global"),
+		]);
+		await harness.session.refine({ global: true });
+		await settle(25);
+
+		harness.appendResponses([
+			multiProposal([{ action: "update", kind: "memory", id: "l_entry", title: "L", content: "l-v2", path: "loc" }], "advance local"),
+		]);
+		await harness.session.refine({});
+		await settle(25);
+
+		const finalLocal = readEntries(statePath);
+		const refinements = readRefinementRecords(harness.sessionManager.getSessionFile()!);
+		const tail = refinements.slice(2);
+		const naive = reverseReplay(finalLocal, tail, { naive: true });
+		const scopeAware = reverseReplay(finalLocal, tail, { targetStatePath: statePath });
+		const exact = (a: Entries, b: Entries) => JSON.stringify(a) === JSON.stringify(b);
+
+		return {
+			scopes: refinements.map((refinement) => refinement.scope ?? "(absent)"),
+			distinctStatePaths: new Set(refinements.map((refinement) => refinement.harnessStatePath ?? "(absent)")).size,
+			groundTruthIds: Object.keys(localCheckpoint.memory ?? {}).sort(),
+			naiveIds: Object.keys(naive.memory ?? {}).sort(),
+			scopeAwareIds: Object.keys(scopeAware.memory ?? {}).sort(),
+			naiveExact: exact(naive, localCheckpoint),
+			scopeAwareExact: exact(scopeAware, localCheckpoint),
 		};
 	} finally {
 		harness.cleanup();
@@ -522,6 +689,12 @@ async function runReconstructionProbe(interleaveCrudWrite: boolean): Promise<{
 
 const cleanReplay = await runReconstructionProbe(false);
 const contaminatedReplay = await runReconstructionProbe(true);
+const mixedScope = await runMixedScopeProbe();
+
+const SIGNAL_KINDS = ["CHAIN-BREAK", "VERSION-GAP", "SOURCE-MISMATCH", "ORPHAN"];
+const contaminatedSignalKinds = SIGNAL_KINDS.filter((kind) =>
+	contaminatedReplay.contaminationSignals.some((signal) => signal.startsWith(kind)),
+);
 
 raw.reverseReconstruction = {
 	refineOnly: {
@@ -530,39 +703,85 @@ raw.reverseReconstruction = {
 		checkpointBExact: cleanReplay.exactMatches[1],
 		checkpointA: cleanReplay.checkpoints[0],
 		reconstructedA: cleanReplay.reconstructed[0],
+		contaminationSignals: cleanReplay.contaminationSignals,
 	},
 	withInterleavedCrud: {
 		checkpointAExact: contaminatedReplay.exactMatches[0],
 		checkpointBExact: contaminatedReplay.exactMatches[1],
 		checkpointA: contaminatedReplay.checkpoints[0],
 		reconstructedA: contaminatedReplay.reconstructed[0],
+		contaminationSignals: contaminatedReplay.contaminationSignals,
+		contaminationSignalKinds: contaminatedSignalKinds,
+	},
+	mixedScope,
+	claimSeparation: {
+		corruption: "the reconstruction is wrong (T02.C2)",
+		detection: "the records are internally inconsistent, so contamination is visible (T02.C3, T02.C4)",
+		attribution:
+			"identifying WHAT the foreign write was, and WHEN - NOT established; the signals bound the affected entries but do not recover the mutation",
 	},
 };
 
 log.record(
 	"T02.C1",
-	"a /refine-ONLY history reverse-replays to the EXACT harness state at an earlier checkpoint (complete state IS reconstructible)",
+	"a single-scope, single-branch /refine-ONLY history reverse-replays to the EXACT harness entry set at an earlier checkpoint",
 	cleanReplay.exactMatches[0] && cleanReplay.exactMatches[1],
 	`checkpointA exact=${cleanReplay.exactMatches[0]} checkpointB exact=${cleanReplay.exactMatches[1]} over ${cleanReplay.refinementCount} refinements`,
 );
 log.record(
 	"T02.C2",
-	"one interleaved direct CRUD write breaks reverse reconstruction",
+	"CORRUPTION: one interleaved direct CRUD write makes reverse reconstruction wrong",
 	!contaminatedReplay.exactMatches[0],
-	`checkpointA exact=${contaminatedReplay.exactMatches[0]}`,
+	`checkpointA exact=${contaminatedReplay.exactMatches[0]}; reconstructed A still looked well-formed with ${Object.keys(contaminatedReplay.reconstructed[0].memory ?? {}).length} memory entries`,
 );
 log.record(
 	"T02.C3",
-	"and it breaks it SILENTLY: the replay still yields a complete, well-formed - but wrong - state, with no marker in the records that a foreign write occurred",
-	!contaminatedReplay.exactMatches[0] &&
-		Object.keys(contaminatedReplay.reconstructed[0].memory ?? {}).length > 0,
-	`reconstructed A had ${Object.keys(contaminatedReplay.reconstructed[0].memory ?? {}).length} memory entries and looked valid`,
+	"DETECTION: in this fixture the contamination IS detectable from production records alone - all four record-consistency signals fire",
+	contaminatedSignalKinds.length === SIGNAL_KINDS.length,
+	`signals: ${JSON.stringify(contaminatedReplay.contaminationSignals)}`,
+);
+log.record(
+	"T02.C4",
+	"the detector is specific, not merely noisy: the clean /refine-only history produces ZERO signals",
+	cleanReplay.contaminationSignals.length === 0,
+	`clean signals: ${JSON.stringify(cleanReplay.contaminationSignals)}`,
+);
+log.record(
+	"T02.C5",
+	"ATTRIBUTION is NOT established: the signals bound which entries were touched, but recover neither the foreign write's content nor its position in the session",
+	true,
+	"recorded as a scope limit, not a measured result - no probe here attempts attribution",
+);
+
+// ---- Mixed-scope: /refine is the only writer, and replay still breaks ----
+log.record(
+	"T02.C6",
+	"production records DO carry the store identity needed to filter history (scope + harnessStatePath)",
+	mixedScope.distinctStatePaths === 2 && mixedScope.scopes.includes("global") && mixedScope.scopes.includes("local"),
+	`scopes=${JSON.stringify(mixedScope.scopes)} distinct harnessStatePath values=${mixedScope.distinctStatePaths}`,
+);
+log.record(
+	"T02.C7",
+	"the NAIVE unfiltered replay is WRONG on a mixed-scope session even though /refine is the only writer",
+	!mixedScope.naiveExact,
+	`ground truth=${JSON.stringify(mixedScope.groundTruthIds)} naive=${JSON.stringify(mixedScope.naiveIds)}`,
+);
+log.record(
+	"T02.C8",
+	"the SCOPE-AWARE replay reconstructs the same mixed-scope checkpoint exactly",
+	mixedScope.scopeAwareExact,
+	`scope-aware=${JSON.stringify(mixedScope.scopeAwareIds)}`,
 );
 
 // =====================================================================
 // Reconstruction matrix
 // =====================================================================
-type Verdict = "RECONSTRUCTIBLE" | "PARTIAL" | "NOT RECONSTRUCTIBLE";
+type Verdict =
+	| "RECONSTRUCTIBLE"
+	| "RECONSTRUCTIBLE ONLY IF SCOPE-AWARE"
+	| "PARTIAL"
+	| "NOT RECONSTRUCTIBLE"
+	| "NOT RECONSTRUCTIBLE, BUT DETECTABLE";
 interface Row {
 	dimension: string;
 	refine: Verdict;
@@ -629,18 +848,27 @@ const matrix: Row[] = [
 		crudEvidence: "only if no later writer touched the same entry",
 	},
 	{
-		dimension: "COMPLETE harness state at an earlier checkpoint, /refine as the ONLY writer",
+		dimension:
+			"COMPLETE harness ENTRY SET at an earlier checkpoint - single-scope, single-branch, /refine as the only writer",
 		refine: "RECONSTRUCTIBLE",
 		refineEvidence:
-			"T02.C1: reverse-replaying ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot being persisted",
+			"T02.C1: scope-aware reverse-replay of ordered appliedEdits off the final state reproduces the checkpoint EXACTLY, despite no full-state snapshot. Note this is the `entries` map only - HarnessState.refinements[] and schema are not reconstructed",
 		crud: "NOT RECONSTRUCTIBLE",
 		crudEvidence: "no ordered edit record exists to replay",
 	},
 	{
-		dimension: "COMPLETE harness state at an earlier checkpoint, with ANY foreign writer present",
-		refine: "NOT RECONSTRUCTIBLE",
+		dimension: "COMPLETE harness ENTRY SET when refinement records span MORE THAN ONE harness store",
+		refine: "RECONSTRUCTIBLE ONLY IF SCOPE-AWARE",
 		refineEvidence:
-			"T02.C2/C3: one interleaved CRUD write makes the replay wrong, and wrong SILENTLY - it still yields a complete, well-formed state with no marker that a foreign write occurred",
+			"T02.C6-C8: global and local refinements share one session JSONL. An unfiltered replay injects global entries into the local reconstruction and is wrong even with /refine as the only writer; filtering by the recorded harnessStatePath is exact",
+		crud: "NOT RECONSTRUCTIBLE",
+		crudEvidence: "no ordered edit record exists to filter or replay",
+	},
+	{
+		dimension: "COMPLETE harness ENTRY SET with a foreign (non-/refine) writer present",
+		refine: "NOT RECONSTRUCTIBLE, BUT DETECTABLE",
+		refineEvidence:
+			"T02.C2: one interleaved CRUD write makes the replay wrong while still yielding a well-formed state. T02.C3/C4: in this fixture the contamination is detectable from production records alone - CHAIN-BREAK, VERSION-GAP, SOURCE-MISMATCH and ORPHAN all fire, and zero fire on the clean history. T02.C5: detection is not attribution",
 		crud: "NOT RECONSTRUCTIBLE",
 		crudEvidence: "same, and the foreign writer is the CRUD writer itself",
 	},

@@ -1,6 +1,6 @@
 # Synthesis
 
-Six probes, 93 assertions, all passing on the final run. Every result below is
+Six probes, 98 assertions, all passing on the final run. Every result below is
 traceable to a raw artifact under `<probe>/artifacts/`.
 
 ---
@@ -114,19 +114,61 @@ assertion, not a result — and it is false. A `/refine`-only history
 `before` *and* `after` for every touched entry, so the ordered edit log is
 itself a complete differential record and the snapshot is unnecessary.
 
-Revised form:
+Revised form (narrowed twice — once after the Codex audit, once after the
+self-audit that followed it):
 
-> `/refine` mutations have session-tree ordering and before/after provenance,
-> and a `/refine`-only history reconstructs complete harness state at any earlier
-> checkpoint by reverse-replaying its ordered edit log. What prevents
-> reconstruction is a **foreign writer** — direct Python CRUD — not the absence
-> of snapshots. Absent prompt snapshots separately prevent recovering the
-> effective system prompt, which is a different quantity.
+> For a tested single-branch `/refine` history, earlier harness state is exactly
+> reconstructible by reverse-replaying the ordered edit history **for the
+> relevant recorded harness scope / state path**. Naively mixing refinement
+> records from different harness stores produces an incorrect reconstruction
+> even with `/refine` as the only writer. What the reconstruction recovers is
+> the harness **entry set**, not the whole `HarnessState`. Absent prompt
+> snapshots separately prevent recovering the effective system prompt, which is
+> a different quantity.
 
-And the failure mode is worse than the original claim implied: one interleaved
-CRUD write does not produce an error or a gap. It produces a complete,
-well-formed, **wrong** state, with nothing in the records marking that a foreign
-write occurred (T02.C2, T02.C3). An investigator gets a confident wrong answer.
+Two corrections the self-audit forced, both recorded rather than quietly folded
+in:
+
+- **"Writer purity is sufficient" was wrong.** `_applyRefine` appends a
+  `prime-agent.refinement` session entry for *global* refinements too, so a
+  session mixing scopes puts records for two different stores in one JSONL. An
+  unfiltered replay injects global entries into the local reconstruction and is
+  wrong with `/refine` as the only writer (T02.C7). Filtering by the recorded
+  `harnessStatePath` is exact (T02.C8). The records already carry the needed
+  identity (T02.C6); the first version of the probe simply ignored it.
+- **"No marker in the records" was false.** See Statement 3b.
+
+### Statement 3b — contamination is detectable, which the study first denied
+
+The first correction pass claimed an interleaved CRUD write produces a wrong
+state "with no marker in the records that a foreign write occurred". A
+self-audit refuted this using only production records. Three claims must be kept
+apart:
+
+| Claim | Status |
+| --- | --- |
+| **Corruption** — the reconstruction is wrong | **ESTABLISHED** (T02.C2) |
+| **Detection** — the contamination is visible in the records | **ESTABLISHED for this fixture** (T02.C3), and specific: zero signals on the clean history (T02.C4) |
+| **Attribution** — recovering what the foreign write was, and when | **NOT ESTABLISHED** (T02.C5) |
+
+Four independent record-consistency signals fire on the contaminated fixture:
+`CHAIN-BREAK` (a recorded `before` ≠ the prior recorded `after`), `VERSION-GAP`
+(entry version advances outside the `/refine` edit chain), `SOURCE-MISMATCH`
+(`before.source` becomes `agent` after a prior `refine`), and `ORPHAN` (a
+final-state entry with no refinement edit history). All four are now asserted by
+the durable probe.
+
+The calibrated finding:
+
+> An interleaved direct CRUD write invalidates naive `/refine`-history
+> reconstruction. In the tested fixture the contamination is detectable from
+> production-record inconsistencies (chain break, version gap, source mismatch,
+> and orphan state), although detection does not itself reconstruct or fully
+> attribute the foreign write.
+
+These four signals are **not** generalized to every possible CRUD mutation. A
+write that happened to preserve the version chain and `source`, and touched only
+entries the refinement history also touches, was not tested.
 
 ---
 
@@ -217,9 +259,11 @@ Two things the evidence adds:
   output tokens are `[7, 9, 3]` in every run, and any two runs with equal
   prompt lengths report equal input tokens. The cause is the temp session
   path's variable-length random suffix crossing the 4-chars-per-token boundary
-  in `estimateTokens`. This is framing, not semantic drift — but it does mean
-  the statement's "semantically reproducible" must exclude input-token
-  accounting, which is **ENVIRONMENT-DEPENDENT**.
+  in `estimateTokens`. The evidence is consistent with framing and shows no
+  semantic drift, but the probe tests a necessary condition rather than
+  intervening, so sole causation is not established. Either way the statement's
+  "semantically reproducible" must exclude input-token accounting, which is
+  **ENVIRONMENT-DEPENDENT**.
 
 The prior "nondeterministic evaluation surface" characterisation therefore needs
 narrowing, not withdrawal: it is accurate about bytes, ids, and chunk
@@ -236,7 +280,7 @@ boundaries, and inaccurate as a statement about the layer an evaluator scores.
 | 3 | "Refinement validates gate outcome" | **SETTLED** — rejected | Gate invocation count unchanged across refine (T01.6) |
 | 4 | "`/refine` mutations carry provenance" | **SETTLED** | Tree position, ordering, before, after all reconstructible (T02.A1–A6) |
 | 5 | "Harness mutations have no provenance" | **SETTLED WITH NARROWER WORDING** | True for direct Python CRUD; false for `/refine` (T02.B1–B6 vs T02.A1–A6) |
-| 6 | "Complete effective harness state at a turn is reconstructible" | **SETTLED WITH NARROWER WORDING** — the study's own original verdict is corrected | TRUE for a `/refine`-only history via reverse-replay (T02.C1); FALSE once any foreign writer is present, and it fails silently (T02.C2/C3). Recovering the effective *system prompt* remains impossible either way (T02.A8) |
+| 6 | "Complete effective harness state at a turn is reconstructible" | **SETTLED WITH NARROWER WORDING** — corrected twice, both times against this study's own claim | TRUE for the harness *entry set* of a single-branch, single-scope `/refine` history under **scope-aware** replay (T02.C1); FALSE under naive replay across mixed scopes even with `/refine` as the only writer (T02.C7/C8); FALSE with a foreign writer, though contamination is detectable in the tested fixture (T02.C2–C5). Recovering the effective *system prompt* remains impossible either way (T02.A8) |
 | 7 | "Accumulated harness state becomes invisible" | **SETTLED WITH NARROWER WORDING** | Absent from the default routing summary; retrievable by six paths (T03.3, T03.5–T03.13) |
 | 8 | "Full harness state remains programmatically accessible" | **SETTLED** | RUNTIME-CONFIRMED through six API surfaces over one store (T03.5–T03.10) |
 | 9 | "An agent will retrieve displaced harness state when it matters" | **STILL UNRESOLVED** | Claim 4 NOT TESTED — requires a real model |
@@ -259,10 +303,13 @@ is false — the transcript path is real and was observed. "Prime Agent records 
 per-response model identity" is false — `responseModel` and `responseId` persist
 when supplied.
 
-**One of this study's own claims was rejected on audit.** The first version
-marked complete harness-state reconstruction as PARTIAL for `/refine` on the
-strength of an argument rather than a test. Reverse-replay of the ordered edit
-log reconstructs it exactly. See `audit-response.md`.
+**Two of this study's own claims were rejected on audit, in successive passes.**
+The first version marked complete harness-state reconstruction as PARTIAL for
+`/refine` on the strength of an argument rather than a test; reverse-replay of
+the ordered edit log reconstructs it exactly. The correction that established
+that then overstated in the opposite direction, claiming the foreign-writer
+failure leaves "no marker in the records" — also asserted rather than tested,
+and also false. See `audit-response.md`.
 
 **Four were narrowed rather than overturned.** Gate/refinement independence is
 true of *typing and determinism*, not of *information flow*. Provenance absence
@@ -276,15 +323,67 @@ requested one, and a no-op request records nothing — a gap in the *nominal*
 record, which had been treated as the part that *was* reliable. Second, faux
 input-token accounting is not reproducible across processes: it moves with the
 incidental length of the temp session path embedded in the system prompt; both
-prior studies had treated usage as stable under the faux provider. Third, and
-most consequential for the next phase: a foreign writer does not merely create a
-reconstruction gap, it makes reverse-replay return a confident wrong answer with
-no marker that anything is missing.
+prior studies had treated usage as stable under the faux provider. Third, and most
+consequential for the next phase: a foreign writer makes reverse-replay return a
+confident wrong answer — but the contamination is detectable from record
+inconsistencies, so an experiment can audit writer purity rather than merely
+assume it.
 
 **Two remain genuinely open and are not answerable without a real model:**
 whether an agent spontaneously retrieves displaced harness state, and whether
 that retrieval affects task outcome. Both were deliberately left untested rather
 than approximated with a faux provider whose decisions the probe itself authors.
+
+---
+
+## 3b. Admitted findings, stated at their tested boundary
+
+After two correction passes, these are the seven claims the artifact stands
+behind, each scoped to what was actually run.
+
+**A. TRANSPORT.** Gate-failure continuation text can enter a *subsequently
+invoked* refinement request through the shared trajectory. This does not
+establish triggering, scheduling, or behavioural influence on the refiner.
+Transport itself is deterministic given invocation and an in-window
+continuation.
+
+**B. RECONSTRUCTION.** Scope-aware reverse replay of the tested `/refine` edit
+history reconstructs the earlier harness **entry set** exactly, with no
+full-state snapshot. Scope-aware is load-bearing: naive replay across records
+from more than one harness store is wrong even with `/refine` as the only
+writer. `HarnessState.refinements[]` and `schema` are not reconstructed.
+
+**C. CONTAMINATION.** A direct CRUD write invalidates that reconstruction. In
+the tested fixture the contamination is detectable from production-record
+inconsistencies — chain break, version gap, source mismatch, orphan state — with
+zero false positives on the clean history. The study does **not** establish
+universal detectability of every foreign mutation, and detection is not
+attribution: the signals bound which entries were touched but recover neither
+the write's content nor its position.
+
+**D. ROUTING.** Default harness salience degrades under accumulation; the
+omission is signalled, not silent. Displaced state remains accessible through
+multiple interfaces over one store. Autonomous retrieval and task benefit remain
+untested.
+
+**E. FAUX REPRODUCIBILITY.** For one fixed scripted flow, selected semantic
+projections survive volatile-framing normalization. Model content is
+fixture-authored, so the load-bearing part is that the surrounding pipeline
+preserved it. This does not generalize to provider behavioural determinism.
+Input-token accounting is an environment-dependent exception, consistent with
+and mechanistically explained by prompt-length framing — a necessary condition
+was tested, not sole causation.
+
+**F. CONFIGURATION.** Persisted records capture useful requested / effective /
+change information but are insufficient for controlled run equivalence.
+Accepted, clamped and no-op service-tier behaviour are three distinct outcomes
+and must stay distinguished: accepted is recorded verbatim, clamped writes an
+event carrying the post-clamp value and loses the request, no-op writes nothing.
+**No rejected request was tested.**
+
+**G. EXTERNAL EVALUATION.** No typed, internally closed score → refinement
+protocol was found in this repository. External implementation remains
+unstudied.
 
 ---
 
@@ -304,13 +403,15 @@ Three findings here constrain that design and should be carried into it:
    the record, two runs cannot be shown equivalent from artifacts alone. Any
    controlled comparison must add its own provenance capture.
 2. **Q2's matrix determines what a refinement-condition arm can prove, and the
-   requirement is writer purity.** A `/refine`-only history is fully
-   reconstructible with no extra instrumentation — that is a stronger position
-   than the first draft of this study believed. But allowing direct
-   `rlm.harness` CRUD alongside `/refine` does not merely degrade attribution:
-   it makes reverse-replay produce a plausible wrong state silently. Either
-   restrict writers to `/refine`, or add per-turn snapshotting, or at minimum
-   add a tamper marker so a foreign write is detectable after the fact.
+   requirements are writer purity AND scope discipline.** A single-scope,
+   single-branch `/refine` history is fully reconstructible with no extra
+   instrumentation — stronger than the first draft believed. But two things
+   break it. Mixing global and local refinements breaks a naive replay even with
+   no foreign writer, so any reconstruction must filter by the recorded
+   `harnessStatePath`. And a direct `rlm.harness` CRUD write makes replay
+   produce a plausible wrong state — detectable, in the tested fixture, via the
+   four record-consistency signals, so a reconstruction pipeline should run that
+   detector as a precondition rather than assume purity.
 3. **Q4 sets the achievable reproducibility target.** Semantic-script
    reproducibility is attainable and is the right equality relation for
    assertions; byte or event-frame equality is not, and should not be built into

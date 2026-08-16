@@ -1,4 +1,16 @@
-# Response to the independent Codex audit
+# Correction history
+
+Two correction passes are recorded below, in order. Neither is rewritten by the
+other. The point is to preserve the actual epistemic sequence — including that
+the same failure mode (asserting in prose what the assertion does not test)
+recurred after being flagged once.
+
+- **Pass 1** — independent Codex audit of `91ce174` → commit `76f329e1`.
+- **Pass 2** — self-audit of `76f329e1` → this commit.
+
+---
+
+# Pass 1 — response to the independent Codex audit
 
 An independent Codex audit of commit `91ce174` reproduced the full six-probe
 suite in a materially different environment (Node 20.20.2 / npm 11.4.2 /
@@ -67,10 +79,16 @@ Testing it also produced a finding neither the study nor the audit had:
        foreign write occurred
 ```
 
-This is a worse failure than the original claim described. Reconstruction under
-a foreign writer does not fail loudly or leave a gap — it returns a plausible,
-complete, wrong answer. That constraint now propagates into the next phase's
-design guidance.
+> **SUPERSEDED — historical Pass 1 output, preserved deliberately.** The
+> `T02.C3` line above is the false claim Pass 2 retracted: the contamination
+> *is* detectable from production records. That assertion's pass condition never
+> tested the "no marker" clause. The current probe asserts detection instead.
+> See Pass 2 §A. This block is kept so the mistake is part of the record.
+
+The corruption half of this stands: reconstruction under a foreign writer
+returns a plausible, complete, wrong answer rather than an error. That
+constraint propagates into the next phase's design guidance — now paired with
+the detector that makes it auditable.
 
 ### Audit point 5 — clamped vs rejected (the evidence was invalid)
 
@@ -86,7 +104,9 @@ probes. The original Q5 service-tier evidence was therefore produced with an
 invalid value and is withdrawn.
 
 Fixed by adding `studies/joint-discriminating-tests/tsconfig.json`, which
-surfaced seven type errors across four probes (all now fixed), and by rebuilding
+surfaced **eight diagnostics** across four probes at `91ce174` — test-01 ×1,
+test-02 ×1, test-04 ×5, test-05 ×1 (a later self-audit corrected this count
+from the "seven" first reported) — all now fixed, and by rebuilding
 the tier sequence with valid values to separate three genuinely distinct cases:
 
 | Request | Effective | Event written | What is lost |
@@ -104,9 +124,10 @@ above.
 ## One correction to the audit's own framing
 
 The audit's reproduction record says the suite ran **89 assertions**. That was
-accurate for `91ce174`. After the changes above the suite is **93 assertions**:
-`test-02` gained three (T02.C1–C3) and `test-05` gained one (T05.4d), while
-T05.4b and T05.4c were rewritten rather than added.
+accurate for `91ce174`. After the Pass 1 changes the suite was **93
+assertions**: `test-02` gained three (T02.C1–C3) and `test-05` gained one
+(T05.4d), while T05.4b and T05.4c were rewritten rather than added. (Pass 2
+takes it to 98 — see the end of this file.)
 
 Also worth stating plainly, since the PR description for `91ce174` implied
 otherwise: the claim that pre-commit checks validated this work was wrong. They
@@ -143,3 +164,109 @@ must not be used verbatim as premises.
 The corrections it listed are complete. The caveat stands regardless: the next
 phase should treat the revised statements as scoped findings about this
 codebase, not as premises.
+
+
+---
+
+# Pass 2 — SELF-AUDIT / SECOND CORRECTION
+
+**Audit target:** `76f329e1d11b6ceb7c5747f1ff8ac46f6cf994ca` (the Pass 1
+correction). Read-only; no branch modified during the audit.
+
+## What reproduced
+
+| Check | Result |
+| --- | --- |
+| Study typecheck (`tsgo -p studies/joint-discriminating-tests/tsconfig.json`) | **PASS**, 0 errors; all 7 study `.ts` files confirmed in `--listFiles` |
+| Probes | **6/6 PASS** |
+| Assertions | **93/93 PASS**, 0 failed |
+| `run-all.sh` ordering | typecheck precedes the probe loop; `set -o pipefail` present |
+| Production source touched | **none** — the `91ce174 → 76f329e` delta is 46 files, all under `studies/` |
+| Repository `npm run check` covers `studies/` | **No** — root tsconfig `--listFiles` returns 0 study files; `biome check studies/…` reports "Checked 0 files". The study's own explicit typecheck is the only coverage |
+
+Same host as the target, so this is *not* cross-environment corroboration the
+way the Codex audit was.
+
+## What the self-audit nevertheless found
+
+### A. The "no marker" claim was false
+
+`76f329e1` asserted that an interleaved CRUD write yields a wrong reconstruction
+"with no marker in the records that a foreign write occurred". A detector
+written from scratch, using only the ordered refinement records plus the final
+`harness_state.json`, produced **four signals on the contaminated history and
+zero on the clean one**:
+
+```
+CHAIN-BREAK     memory:rc_x — recorded before !== prior recorded after
+VERSION-GAP     memory:rc_x — before.version=3, prior after.version=2
+SOURCE-MISMATCH memory:rc_x — before.source=agent (prior after.source=refine)
+ORPHAN          memory:rc_hidden — in final state, absent from every refinement record
+```
+
+The defect is the same class the Codex audit flagged: `T02.C3`'s pass condition
+only checked `!exact && non-empty`. It never tested the "no marker" clause its
+own text asserted. `unresolved.md` U20 simultaneously admitted the question "was
+not investigated" — so the artifact both asserted and disclaimed the same thing.
+
+Retracted. The detector is now part of the durable probe (T02.C3, T02.C4), and
+corruption / detection / attribution are kept as three separate claims (T02.C5).
+The four signals are **not** generalized to every possible CRUD mutation.
+
+### B. Writer purity is not sufficient — the replay ignored recorded scope
+
+The Pass 1 replay helper collected every `prime-agent.refinement` session entry
+and replayed them against one store. But `_applyRefine` appends that entry for
+**global** refinements too, so one JSONL can carry records for two stores. On a
+session interleaving scopes, with `/refine` as the **only** writer:
+
+```
+scopes recorded        : ["global","local","global","local"]   (2 distinct harnessStatePath values)
+ground truth LOCAL ids : ["l_entry"]
+naive replay           : ["g_entry","l_entry"]   exact = false
+scope-aware replay     : ["l_entry"]             exact = true
+```
+
+The records already carried the identity needed to filter (`scope`,
+`harnessStatePath`); the helper simply ignored it. Fixed, and the mixed-scope
+case is now an explicit assertion (T02.C6–C8). The "writer purity is sufficient"
+framing is withdrawn.
+
+### C. Q4 causality language was still too strong
+
+The Codex audit asked that the input-token diagnosis be phrased as *consistent
+with and explained by* rather than experimentally proven. Pass 1 addressed the
+fixture-scope half of that point but left "fully explained by" / "fully
+attributable to" in place. The probe tests a **necessary** condition (equal
+prompt lengths ⇒ equal input tokens) over 3 runs and 2 distinct lengths; no
+intervention pinning path length was performed. Wording narrowed accordingly.
+
+### D. The diagnostic count was wrong
+
+Pass 1 reported "seven type errors". Reproducing `91ce174` in a detached
+worktree with the new tsconfig yields **eight** diagnostics: test-01 ×1,
+test-02 ×1, test-04 ×5, test-05 ×1. This count refers to the prior artifact, not
+to current errors — the suite typechecks clean today. Corrected wherever stated.
+
+## Verdict recorded at the time
+
+Delta-audit verdict: **MATERIAL ISSUES** — the corrections reproduced and all six
+Codex points were addressed, but a demonstrably false claim had been introduced
+across five documents. Readiness: **YES WITH LIMITATIONS**, conditional on the
+three fixes above, which this commit applies.
+
+## Suite size after this correction
+
+Pass 2's reproduction figures (93/93) describe the audited commit `76f329e1`.
+Applying the corrections adds five assertions to `test-02` — T02.C4, C5, C6, C7,
+C8, with C3 rewritten from the false claim to the detection result — bringing
+the suite to **98 assertions across 6 probes**, all passing.
+
+## The pattern worth keeping
+
+Twice now, this study has stated in prose something its assertions did not test,
+and been wrong both times — first about reconstruction being impossible, then
+about contamination being undetectable. Both overstatements ran in the direction
+of a cleaner story. That is the standing risk in this artifact, and the reason
+assertion text and pass conditions should be read against each other rather than
+trusted separately.
